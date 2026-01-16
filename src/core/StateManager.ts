@@ -1,8 +1,17 @@
-import type { GameState, CharacterId, SaveData, ShiftPhase } from '@/types';
+import type { GameState, CharacterId, SaveData, ShiftPhase, DreamscapeState } from '@/types';
 import { eventBus } from './EventBus';
+import { dreamscapeSystem } from '@/systems/DreamscapeSystem';
 
 const SAVE_KEY = 'mmc-save';
 const SAVE_VERSION = 1;
+
+function createInitialDreamscapeState(): DreamscapeState {
+  return {
+    routes: {},
+    currentApproachDirection: null,
+    urgencyLevel: 0.2,
+  };
+}
 
 function createInitialState(): GameState {
   return {
@@ -22,6 +31,7 @@ function createInitialState(): GameState {
     shiftPhase: 'briefing',
     shiftTasksCompleted: [],
     rumors: [],
+    dreamscape: createInitialDreamscapeState(),
   };
 }
 
@@ -125,9 +135,21 @@ export class StateManager {
     return [...this.state.shiftTasksCompleted];
   }
 
+  // --- Dreamscape ---
+  getDreamscapeState(): DreamscapeState {
+    return this.state.dreamscape;
+  }
+
+  setDreamscapeState(state: DreamscapeState): void {
+    this.state.dreamscape = { ...state };
+  }
+
   // --- Persistence ---
   save(): boolean {
     try {
+      // Sync dreamscape state from system before saving
+      this.state.dreamscape = { ...dreamscapeSystem.getState() };
+
       const saveData: SaveData = {
         version: SAVE_VERSION,
         timestamp: Date.now(),
@@ -184,7 +206,12 @@ export class StateManager {
         shiftPhase: data.state.shiftPhase ?? 'briefing',
         shiftTasksCompleted: data.state.shiftTasksCompleted ?? [],
         rumors: data.state.rumors ?? [],
+        dreamscape: data.state.dreamscape ?? createInitialDreamscapeState(),
       };
+
+      // Sync dreamscape system with loaded state
+      dreamscapeSystem.restoreState(this.state.dreamscape);
+
       return true;
     } catch (error) {
       console.error('Failed to load game:', error);
@@ -202,6 +229,7 @@ export class StateManager {
 
   reset(): void {
     this.state = createInitialState();
+    dreamscapeSystem.reset();
   }
 }
 

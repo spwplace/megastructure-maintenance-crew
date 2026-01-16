@@ -96,6 +96,7 @@ export interface GameState {
   shiftPhase: ShiftPhase;
   shiftTasksCompleted: string[];
   rumors: string[];
+  dreamscape: DreamscapeState;
 }
 
 // --- Events ---
@@ -166,4 +167,37 @@ export type TextSpeed = 'fast' | 'normal' | 'slow';
 export interface GameSettings {
   textSpeed: TextSpeed;
   autoSave: boolean;
+}
+
+// --- Dreamscape System ---
+export interface RouteData {
+  traversals: number;
+  lastTraversed: number;
+  discoveredClues: string[];
+}
+
+export type FamiliarityLevel = 'unknown' | 'glimpsed' | 'walked' | 'familiar' | 'known';
+
+export type DreamlogicClueType = 'sound' | 'wear' | 'graffiti' | 'feeling' | 'memory';
+
+export interface DreamlogicClue {
+  id: string;
+  text: string;
+  type: DreamlogicClueType;
+  minFamiliarity: FamiliarityLevel;
+  routes?: string[]; // Optional: only show on specific routes
+  condition?: () => boolean; // Optional: additional condition
+}
+
+export interface DreamscapeState {
+  routes: Record<string, RouteData>;
+  currentApproachDirection: string | null;
+  urgencyLevel: number; // 0-1, affects perceived route duration
+}
+
+export interface TransitionConfig {
+  duration: number;
+  effectClass: string;
+  sceneFilter: string;
+  clue: DreamlogicClue | null;
 }

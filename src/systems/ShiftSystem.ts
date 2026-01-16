@@ -4,6 +4,7 @@ import { stateManager } from '@/core/StateManager';
 import { sceneManager } from './SceneManager';
 import { dialogueSystem } from './DialogueSystem';
 import { uiManager } from '@/ui/UIManager';
+import { dreamscapeSystem } from './DreamscapeSystem';
 
 /**
  * Manages the shift cycle that structures gameplay
@@ -184,6 +185,9 @@ export class ShiftSystem {
     this.state.emergencyActive = true;
     this.syncToStateManager();
 
+    // Increase urgency - routes feel longer under stress
+    dreamscapeSystem.setUrgencyLevel(0.9);
+
     eventBus.emit('emergency:start', {
       previousPhase,
       shift: this.state.number,
@@ -201,6 +205,9 @@ export class ShiftSystem {
     this.state.emergencyActive = false;
     this.state.phase = returnToPhase;
     this.syncToStateManager();
+
+    // Return urgency to normal levels
+    dreamscapeSystem.setUrgencyLevel(0.2);
 
     eventBus.emit('emergency:end', { shift: this.state.number });
     eventBus.emit('shift:phase', { phase: returnToPhase, shift: this.state.number });

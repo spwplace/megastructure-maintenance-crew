@@ -1,3 +1,16 @@
+import type { DreamlogicClue, DreamlogicClueType } from '@/types';
+
+/**
+ * Icon mapping for dreamscape clue types
+ */
+const CLUE_ICONS: Record<DreamlogicClueType, string> = {
+  sound: '♪',
+  wear: '◈',
+  graffiti: '✎',
+  feeling: '◇',
+  memory: '◉',
+};
+
 /**
  * Manages DOM interactions and UI state
  */
@@ -428,6 +441,86 @@ export class UIManager {
 
     // Auto-remove after animation
     setTimeout(() => announcement.remove(), 2000);
+  }
+
+  // --- Dreamscape Effects ---
+  private dreamscapeClueElement: HTMLElement | null = null;
+
+  /**
+   * Add a transition effect class to the game container
+   */
+  addTransitionEffect(effectClass: string): void {
+    const gameEl = document.getElementById('game');
+    if (gameEl && effectClass) {
+      gameEl.classList.add(effectClass);
+    }
+  }
+
+  /**
+   * Remove a transition effect class from the game container
+   */
+  removeTransitionEffect(effectClass: string): void {
+    const gameEl = document.getElementById('game');
+    if (gameEl && effectClass) {
+      gameEl.classList.remove(effectClass);
+    }
+  }
+
+  /**
+   * Apply a CSS filter to the scene layer
+   */
+  setSceneFilter(filter: string): void {
+    const sceneLayer = this.elements.get('scene-layer');
+    if (sceneLayer) {
+      sceneLayer.style.filter = filter;
+      sceneLayer.style.transition = 'filter 800ms ease-out';
+    }
+  }
+
+  /**
+   * Clear the scene filter
+   */
+  clearSceneFilter(): void {
+    const sceneLayer = this.elements.get('scene-layer');
+    if (sceneLayer) {
+      sceneLayer.style.filter = 'none';
+    }
+  }
+
+  /**
+   * Show a dreamscape environmental clue
+   * Displayed above the dialogue box with fade in/hold/fade out
+   */
+  showDreamscapeClue(clue: DreamlogicClue): void {
+    // Remove any existing clue
+    this.hideDreamscapeClue();
+
+    const uiLayer = this.elements.get('ui-layer');
+    if (!uiLayer) return;
+
+    this.dreamscapeClueElement = document.createElement('div');
+    this.dreamscapeClueElement.className = `dreamscape-clue dreamscape-clue-${clue.type}`;
+    this.dreamscapeClueElement.innerHTML = `
+      <span class="dreamscape-clue-icon">${CLUE_ICONS[clue.type]}</span>
+      <span class="dreamscape-clue-text">${clue.text}</span>
+    `;
+    uiLayer.appendChild(this.dreamscapeClueElement);
+
+    // Auto-hide after animation (fade in 500ms, hold 2500ms, fade out 500ms)
+    setTimeout(() => {
+      if (this.dreamscapeClueElement) {
+        this.dreamscapeClueElement.classList.add('fade-out');
+        setTimeout(() => this.hideDreamscapeClue(), 500);
+      }
+    }, 3000);
+  }
+
+  /**
+   * Hide the dreamscape clue
+   */
+  hideDreamscapeClue(): void {
+    this.dreamscapeClueElement?.remove();
+    this.dreamscapeClueElement = null;
   }
 }
 

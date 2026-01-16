@@ -1,8 +1,9 @@
-import type { Scene, SceneId } from '@/types';
+import type { Scene, SceneId, TransitionConfig } from '@/types';
 import { uiManager } from '@/ui/UIManager';
 import { stateManager } from '@/core/StateManager';
 import { eventBus } from '@/core/EventBus';
 import { dialogueSystem } from './DialogueSystem';
+import { dreamscapeSystem } from './DreamscapeSystem';
 
 /**
  * Manages scene loading, transitions, and state
@@ -41,6 +42,13 @@ export class SceneManager {
     }
 
     this.transitioning = true;
+    const fromSceneId = this.currentScene?.id ?? 'menu';
+
+    // Prepare dreamscape transition before navigating
+    let transitionConfig: TransitionConfig | null = null;
+    if (transition && this.currentScene) {
+      transitionConfig = dreamscapeSystem.prepareTransition(fromSceneId, sceneId);
+    }
 
     // Exit current scene
     if (this.currentScene) {
@@ -48,9 +56,12 @@ export class SceneManager {
       this.currentScene.onExit?.();
     }
 
-    // Transition effect
-    if (transition && this.currentScene) {
-      await uiManager.fadeTransition(400);
+    // Transition effect with dreamscape duration and effects
+    if (transition && this.currentScene && transitionConfig) {
+      // Apply effect class during transition
+      uiManager.addTransitionEffect(transitionConfig.effectClass);
+      await uiManager.fadeTransition(transitionConfig.duration);
+      uiManager.removeTransitionEffect(transitionConfig.effectClass);
     }
 
     // Enter new scene
@@ -60,6 +71,19 @@ export class SceneManager {
 
     // Set up scene visuals
     this.setupSceneVisuals(scene);
+
+    // Apply dreamscape scene filter based on familiarity
+    if (transitionConfig) {
+      uiManager.setSceneFilter(transitionConfig.sceneFilter);
+
+      // Show dreamscape clue if one was selected
+      if (transitionConfig.clue) {
+        uiManager.showDreamscapeClue(transitionConfig.clue);
+      }
+
+      // Record the completed transition
+      dreamscapeSystem.recordTransition(fromSceneId, sceneId);
+    }
 
     // Handle scene-specific logic
     await this.handleSceneType(scene);
