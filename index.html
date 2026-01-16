@@ -59,6 +59,29 @@
           <div class="loading-fill"></div>
         </div>
       </div>
+
+      <!-- Settings panel -->
+      <div id="settings-panel" class="menu hidden">
+        <h2 class="settings-title">Settings</h2>
+        <div class="settings-content">
+          <div class="setting-row">
+            <label for="text-speed">Text Speed</label>
+            <select id="text-speed" class="setting-select">
+              <option value="fast">Fast</option>
+              <option value="normal" selected>Normal</option>
+              <option value="slow">Slow</option>
+            </select>
+          </div>
+          <div class="setting-row">
+            <label for="auto-save">Auto-Save</label>
+            <input type="checkbox" id="auto-save" class="setting-checkbox" checked>
+          </div>
+        </div>
+        <div class="settings-buttons">
+          <button class="menu-button" data-action="settings-close">Back</button>
+          <button class="menu-button danger" data-action="return-menu">Return to Menu</button>
+        </div>
+      </div>
     </div>
   </div>
 

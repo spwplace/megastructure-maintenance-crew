@@ -101,7 +101,7 @@ export class UIManager {
   }
 
   // --- Dialogue ---
-  showDialogue(speaker: string | null, text: string): void {
+  showDialogue(speaker: string | null, text: string, speakerColor?: string | null): void {
     const container = this.elements.get('dialogue-container');
     const nameEl = this.elements.get('speaker-name');
     const textEl = this.elements.get('dialogue-text');
@@ -109,6 +109,12 @@ export class UIManager {
     if (!container || !nameEl || !textEl) return;
 
     nameEl.textContent = speaker ?? '';
+    // Apply character-specific color
+    if (speakerColor) {
+      nameEl.style.color = speakerColor;
+    } else {
+      nameEl.style.color = '';
+    }
     textEl.textContent = text;
     container.classList.remove('hidden');
   }
@@ -121,13 +127,21 @@ export class UIManager {
 
     choicesEl.innerHTML = '';
 
-    choices.forEach((choice) => {
+    choices.forEach((choice, index) => {
       const button = document.createElement('button');
       button.className = 'dialogue-choice';
-      button.textContent = choice.text;
+      // Add number prefix for keyboard navigation hint
+      button.textContent = `${index + 1}. ${choice.text}`;
+      button.setAttribute('tabindex', '0');
       button.addEventListener('click', choice.callback);
       choicesEl.appendChild(button);
     });
+
+    // Focus first choice for keyboard navigation
+    const firstChoice = choicesEl.querySelector('.dialogue-choice') as HTMLButtonElement;
+    if (firstChoice) {
+      setTimeout(() => firstChoice.focus(), 50);
+    }
   }
 
   clearDialogueChoices(): void {
@@ -329,6 +343,91 @@ export class UIManager {
   private hideRumorsPanel(): void {
     this.rumorsPanel?.remove();
     this.rumorsPanel = null;
+  }
+
+  // --- Downtime UI ---
+  private downtimeBanner: HTMLElement | null = null;
+  private crewGrid: HTMLElement | null = null;
+
+  showDowntimeUI(
+    crewMembers: Array<{ id: string; name: string; role: string; color: string }>,
+    onCrewClick: (id: string) => void,
+    onRestClick: () => void
+  ): void {
+    this.hideDowntimeUI(); // Clear any existing
+
+    const uiLayer = this.elements.get('ui-layer');
+    if (!uiLayer) return;
+
+    // Downtime banner
+    this.downtimeBanner = document.createElement('div');
+    this.downtimeBanner.className = 'downtime-banner';
+    this.downtimeBanner.innerHTML = `
+      <h3>REST PERIOD</h3>
+      <p>Talk to crew or rest to end shift</p>
+    `;
+    uiLayer.appendChild(this.downtimeBanner);
+
+    // Crew grid
+    this.crewGrid = document.createElement('div');
+    this.crewGrid.className = 'crew-grid';
+
+    // Add crew cards
+    crewMembers.forEach((crew) => {
+      const card = document.createElement('div');
+      card.className = 'crew-card';
+      card.style.color = crew.color;
+      card.innerHTML = `
+        <div class="crew-card-icon" style="border-color: ${crew.color}; color: ${crew.color};">
+          ${crew.name.charAt(0)}
+        </div>
+        <div class="crew-card-name">${crew.name}</div>
+        <div class="crew-card-role">${crew.role}</div>
+      `;
+      card.addEventListener('click', () => onCrewClick(crew.id));
+      this.crewGrid!.appendChild(card);
+    });
+
+    // Rest card (spans full width)
+    const restCard = document.createElement('div');
+    restCard.className = 'crew-card rest-action';
+    restCard.innerHTML = `
+      <div class="crew-card-icon" style="border-color: var(--color-violet); font-size: 24px;">
+        &bull;
+      </div>
+      <div>
+        <div class="crew-card-name">REST & END SHIFT</div>
+        <div class="crew-card-role">Begin next work cycle</div>
+      </div>
+    `;
+    restCard.addEventListener('click', onRestClick);
+    this.crewGrid.appendChild(restCard);
+
+    uiLayer.appendChild(this.crewGrid);
+  }
+
+  hideDowntimeUI(): void {
+    this.downtimeBanner?.remove();
+    this.downtimeBanner = null;
+    this.crewGrid?.remove();
+    this.crewGrid = null;
+  }
+
+  // --- Phase Announcements ---
+  showPhaseAnnouncement(title: string, subtitle: string): void {
+    const gameEl = document.getElementById('game');
+    if (!gameEl) return;
+
+    const announcement = document.createElement('div');
+    announcement.className = 'phase-announcement';
+    announcement.innerHTML = `
+      <h2>${title}</h2>
+      <p>${subtitle}</p>
+    `;
+    gameEl.appendChild(announcement);
+
+    // Auto-remove after animation
+    setTimeout(() => announcement.remove(), 2000);
   }
 }
 

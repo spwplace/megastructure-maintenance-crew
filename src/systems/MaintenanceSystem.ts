@@ -2,6 +2,7 @@ import type { SystemStatus, MaintenanceInteraction } from '@/types';
 import { eventBus } from '@/core/EventBus';
 import { stateManager } from '@/core/StateManager';
 import { dialogueSystem } from './DialogueSystem';
+import { sceneManager } from './SceneManager';
 
 export type MaintenanceType = 'mechanical' | 'biological' | 'electrical' | 'emergency';
 
@@ -14,6 +15,7 @@ export interface MaintenanceTask {
   actions: MaintenanceAction[];
   onComplete?: () => void;
   companionId?: string; // crew member helping
+  returnScene?: string; // scene to return to when finished (default: sector-7-corridor)
 }
 
 export interface MaintenanceAction {
@@ -202,7 +204,7 @@ export class MaintenanceSystem {
     }
 
     // Save to state
-    stateManager.getState().systemStatuses[this.currentTask.id] = { ...this.currentTask.status };
+    stateManager.setSystemStatus(this.currentTask.id, this.currentTask.status);
 
     eventBus.emit('maintenance:interact', {
       action: 'repair',
@@ -258,14 +260,15 @@ export class MaintenanceSystem {
     }
   }
 
-  finishTask(): void {
+  finishTask(navigate: boolean = true): void {
     if (!this.currentTask) return;
 
     const finalHealth = this.currentTask.status.health;
     const taskId = this.currentTask.id;
+    const returnScene = this.currentTask.returnScene || 'sector-7-corridor';
 
     // Save final state
-    stateManager.getState().systemStatuses[taskId] = { ...this.currentTask.status };
+    stateManager.setSystemStatus(taskId, this.currentTask.status);
 
     // Cleanup
     this.panelElement?.remove();
@@ -279,6 +282,11 @@ export class MaintenanceSystem {
       taskId,
       finalHealth,
     });
+
+    // Navigate back to corridor (or specified return scene)
+    if (navigate) {
+      sceneManager.goToScene(returnScene);
+    }
   }
 
   getCurrentTask(): MaintenanceTask | null {
@@ -302,7 +310,7 @@ export const maintenanceSystem = new MaintenanceSystem();
 
 export function createAtmosphericTask(): MaintenanceTask {
   // Check if we have saved state
-  const savedStatus = stateManager.getState().systemStatuses['atmo-7j'];
+  const savedStatus = stateManager.getSystemStatus('atmo-7j');
 
   return {
     id: 'atmo-7j',
@@ -368,7 +376,7 @@ export function createAtmosphericTask(): MaintenanceTask {
 }
 
 export function createFluidSystemTask(): MaintenanceTask {
-  const savedStatus = stateManager.getState().systemStatuses['fluid-secondary'];
+  const savedStatus = stateManager.getSystemStatus('fluid-secondary');
 
   return {
     id: 'fluid-secondary',
@@ -422,7 +430,7 @@ export function createFluidSystemTask(): MaintenanceTask {
         icon: '⚖️',
         healthGain: 12,
         removes: ['pressure'],
-        available: () => stateManager.getState().systemStatuses['fluid-secondary']?.health > 70,
+        available: () => (stateManager.getSystemStatus('fluid-secondary')?.health ?? 0) > 70,
       },
     ],
     onComplete: () => {
@@ -432,7 +440,7 @@ export function createFluidSystemTask(): MaintenanceTask {
 }
 
 export function createElectricalTask(): MaintenanceTask {
-  const savedStatus = stateManager.getState().systemStatuses['elec-blockc'];
+  const savedStatus = stateManager.getSystemStatus('elec-blockc');
 
   return {
     id: 'elec-blockc',
@@ -552,7 +560,7 @@ export function createEmergencyTask(): MaintenanceTask {
 }
 
 export function createHopperYardTask(): MaintenanceTask {
-  const savedStatus = stateManager.getState().systemStatuses['hopper-yard'];
+  const savedStatus = stateManager.getSystemStatus('hopper-yard');
 
   return {
     id: 'hopper-yard',
@@ -607,7 +615,7 @@ export function createHopperYardTask(): MaintenanceTask {
         icon: '⬆️',
         healthGain: 12,
         removes: ['transfer'],
-        available: () => stateManager.getState().systemStatuses['hopper-yard']?.health > 60,
+        available: () => (stateManager.getSystemStatus('hopper-yard')?.health ?? 0) > 60,
       },
     ],
     onComplete: () => {
@@ -617,7 +625,7 @@ export function createHopperYardTask(): MaintenanceTask {
 }
 
 export function createGrowDeckTask(): MaintenanceTask {
-  const savedStatus = stateManager.getState().systemStatuses['grow-deck-alpha'];
+  const savedStatus = stateManager.getSystemStatus('grow-deck-alpha');
 
   return {
     id: 'grow-deck-alpha',

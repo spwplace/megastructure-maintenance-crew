@@ -5,6 +5,7 @@ import { maintenanceSystem, createAtmosphericTask, createFluidSystemTask, create
 import { sceneManager } from '@/systems/SceneManager';
 import { dialogueSystem } from '@/systems/DialogueSystem';
 import { uiManager } from '@/ui/UIManager';
+import { characters } from '@/data/characters';
 
 // ============================================
 // CREW QUARTERS - Home base / Downtime location
@@ -112,9 +113,27 @@ export const crewQuartersScene: Scene = {
         sceneManager.goToScene('crew-quarters', false);
       });
     }
+
+    // Show improved downtime UI during rest period
+    if (shiftSystem.getPhase() === 'downtime') {
+      const crewList = [
+        { id: 'keth', name: characters.keth.name, role: characters.keth.role, color: characters.keth.color },
+        { id: 'solenne', name: characters.solenne.name, role: characters.solenne.role, color: characters.solenne.color },
+        { id: 'vell', name: characters.vell.name, role: characters.vell.role, color: characters.vell.color },
+        { id: 'dauro', name: characters.dauro.name, role: characters.dauro.role, color: characters.dauro.color },
+        { id: 'orrin', name: characters.orrin.name, role: characters.orrin.role, color: characters.orrin.color },
+      ];
+
+      uiManager.showDowntimeUI(
+        crewList,
+        (crewId) => sceneManager.goToScene(`talk-${crewId}`),
+        () => sceneManager.goToScene('rest-bunk')
+      );
+    }
   },
   onExit: () => {
     uiManager.hideRumorsButton();
+    uiManager.hideDowntimeUI();
   },
 };
 
@@ -231,7 +250,7 @@ export const atmosphericScene: Scene = {
   },
   onExit: () => {
     if (maintenanceSystem.isActive()) {
-      maintenanceSystem.finishTask();
+      maintenanceSystem.finishTask(false); // Don't navigate - scene transition handles it
       shiftSystem.completeTask('atmo-7j');
     }
   },
@@ -263,7 +282,7 @@ export const fluidSystemsScene: Scene = {
   },
   onExit: () => {
     if (maintenanceSystem.isActive()) {
-      maintenanceSystem.finishTask();
+      maintenanceSystem.finishTask(false);
       shiftSystem.completeTask('fluid-secondary');
     }
   },
@@ -296,7 +315,7 @@ export const electricalHubScene: Scene = {
   },
   onExit: () => {
     if (maintenanceSystem.isActive()) {
-      maintenanceSystem.finishTask();
+      maintenanceSystem.finishTask(false);
       shiftSystem.completeTask('elec-blockc');
     }
   },
@@ -334,7 +353,7 @@ export const hopperYardScene: Scene = {
   },
   onExit: () => {
     if (maintenanceSystem.isActive()) {
-      maintenanceSystem.finishTask();
+      maintenanceSystem.finishTask(false);
       shiftSystem.completeTask('hopper-yard');
     }
   },
@@ -401,7 +420,7 @@ export const growDeckScene: Scene = {
   },
   onExit: () => {
     if (maintenanceSystem.isActive()) {
-      maintenanceSystem.finishTask();
+      maintenanceSystem.finishTask(false);
       shiftSystem.completeTask('grow-deck-alpha');
     }
   },
@@ -1360,7 +1379,7 @@ export const theWoundScene: Scene = {
   },
   onExit: () => {
     if (maintenanceSystem.isActive()) {
-      maintenanceSystem.finishTask();
+      maintenanceSystem.finishTask(false);
       shiftSystem.completeTask('breach-emergency');
       shiftSystem.endEmergency('work');
     }

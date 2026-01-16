@@ -2,6 +2,8 @@ import type { DialogueNode, DialogueScript, DialogueChoice, CharacterId } from '
 import { uiManager } from '@/ui/UIManager';
 import { eventBus } from '@/core/EventBus';
 import { characters } from '@/data/characters';
+import { settingsManager } from '@/core/SettingsManager';
+import { createPlaceholderPortrait } from '@/ui/PlaceholderArt';
 
 /**
  * Handles dialogue playback with typewriter effect and choices
@@ -14,7 +16,6 @@ export class DialogueSystem {
   private onComplete: (() => void) | null = null;
 
   // Typewriter settings
-  private charDelay: number = 30; // ms per character
   private skipRequested: boolean = false;
 
   async startDialogue(script: DialogueScript, onComplete?: () => void): Promise<void> {
@@ -37,9 +38,13 @@ export class DialogueSystem {
     node.onShow?.();
 
     const speakerName = this.getSpeakerName(node.speaker);
+    const speakerColor = this.getSpeakerColor(node.speaker);
+
+    // Show character portrait if there's a speaker
+    this.showCharacterPortrait(node.speaker);
 
     // Show dialogue container with speaker
-    uiManager.showDialogue(speakerName, '');
+    uiManager.showDialogue(speakerName, '', speakerColor);
 
     // Typewriter effect
     await this.typeText(node.text);
@@ -66,6 +71,34 @@ export class DialogueSystem {
     return characters[speakerId]?.name ?? speakerId;
   }
 
+  private getSpeakerColor(speakerId?: CharacterId): string | null {
+    if (!speakerId || speakerId === 'player') return null;
+    return characters[speakerId]?.color ?? null;
+  }
+
+  private showCharacterPortrait(speakerId?: CharacterId): void {
+    const characterLayer = document.getElementById('character-layer');
+    if (!characterLayer) return;
+
+    // Clear existing portraits
+    characterLayer.innerHTML = '';
+
+    // Don't show portrait for narrator or player
+    if (!speakerId || speakerId === 'player') return;
+
+    // Create and show placeholder portrait
+    const portrait = createPlaceholderPortrait(speakerId, true);
+    portrait.classList.add('fade-in');
+    characterLayer.appendChild(portrait);
+  }
+
+  private hideCharacterPortrait(): void {
+    const characterLayer = document.getElementById('character-layer');
+    if (characterLayer) {
+      characterLayer.innerHTML = '';
+    }
+  }
+
   private async typeText(text: string): Promise<void> {
     this.isTyping = true;
     this.skipRequested = false;
@@ -74,6 +107,7 @@ export class DialogueSystem {
     if (!textEl) return;
 
     textEl.textContent = '';
+    const charDelay = settingsManager.getTextSpeedMs();
 
     for (let i = 0; i < text.length; i++) {
       if (this.skipRequested) {
@@ -84,7 +118,7 @@ export class DialogueSystem {
       textEl.textContent += text[i];
 
       await new Promise<void>((resolve) => {
-        this.typewriterTimeout = window.setTimeout(resolve, this.charDelay);
+        this.typewriterTimeout = window.setTimeout(resolve, charDelay);
       });
     }
 
@@ -160,6 +194,7 @@ export class DialogueSystem {
     this.currentScript = null;
     this.currentNode = null;
     uiManager.hideDialogue();
+    this.hideCharacterPortrait();
 
     eventBus.emit('dialogue:end', {});
     this.onComplete?.();

@@ -153,4 +153,15 @@ export type GameEventType =
   | 'shift:advance'
   | 'shift:phase'
   | 'emergency:start'
-  | 'emergency:end';
+  | 'emergency:end'
+  | 'save:complete'
+  | 'settings:change'
+  | 'attack:scheduled';
+
+// --- Settings Types ---
+export type TextSpeed = 'fast' | 'normal' | 'slow';
+
+export interface GameSettings {
+  textSpeed: TextSpeed;
+  autoSave: boolean;
+}

@@ -85,6 +85,16 @@ export class StateManager {
     return this.state.rumors;
   }
 
+  // --- System Status ---
+  setSystemStatus(systemId: string, status: import('@/types').SystemStatus): void {
+    this.state.systemStatuses[systemId] = { ...status };
+    eventBus.emit('state:change', { systemStatus: { systemId, health: status.health } });
+  }
+
+  getSystemStatus(systemId: string): import('@/types').SystemStatus | undefined {
+    return this.state.systemStatuses[systemId];
+  }
+
   // --- Shift Management ---
   advanceShift(): void {
     this.state.shift += 1;
@@ -117,6 +127,7 @@ export class StateManager {
       };
 
       localStorage.setItem(SAVE_KEY, JSON.stringify(serializable));
+      eventBus.emit('save:complete', { timestamp: saveData.timestamp });
       return true;
     } catch (error) {
       console.error('Failed to save game:', error);

@@ -5,9 +5,13 @@ import { uiManager } from '@/ui/UIManager';
 import { eventBus } from '@/core/EventBus';
 import { shiftSystem } from '@/systems/ShiftSystem';
 import { maintenanceSystem } from '@/systems/MaintenanceSystem';
+import { settingsManager } from '@/core/SettingsManager';
+import { attackScheduler } from '@/systems/AttackScheduler';
+import { audioManager } from '@/core/AudioManager';
 import { introScenes, introDialogue } from '@/data/scenes/intro';
 import { locationScenes } from '@/data/scenes/locations';
 import { createPlaceholderBackground, type LocationType } from '@/ui/PlaceholderArt';
+import type { TextSpeed } from '@/types';
 
 /**
  * Main game controller
@@ -15,6 +19,7 @@ import { createPlaceholderBackground, type LocationType } from '@/ui/Placeholder
 export class Game {
   private initialized: boolean = false;
   private emergencyChance: number = 0.15; // 15% chance per maintenance completion
+  private inGame: boolean = false; // Track if we're in an active game session
 
   async init(): Promise<void> {
     if (this.initialized) return;
@@ -66,7 +71,19 @@ export class Game {
 
     // Handle dialogue completion
     eventBus.on('dialogue:end', () => {
-      stateManager.save();
+      if (settingsManager.getAutoSave()) {
+        stateManager.save();
+      }
+    });
+
+    // Update continue button when save completes
+    eventBus.on('save:complete', () => {
+      this.updateContinueButton(true);
+    });
+
+    // Handle scheduled attacks from AttackScheduler
+    eventBus.on('attack:scheduled', () => {
+      this.triggerEmergency();
     });
 
     // Handle maintenance completion - check for emergency
@@ -96,11 +113,32 @@ export class Game {
     document.addEventListener('keydown', (e) => {
       if (e.repeat) return; // Ignore held keys
 
+      // Space/Enter to advance dialogue
       if (e.key === ' ' || e.key === 'Enter') {
         if (dialogueSystem.isActive()) {
           dialogueSystem.skipTypewriter();
         }
       }
+
+      // Escape to open/close settings
+      if (e.key === 'Escape') {
+        const settingsPanel = document.getElementById('settings-panel');
+        if (settingsPanel && !settingsPanel.classList.contains('hidden')) {
+          this.closeSettings();
+        } else if (this.inGame) {
+          this.openSettings();
+        }
+      }
+
+      // Number keys to select dialogue choices (1-4)
+      if (e.key >= '1' && e.key <= '4') {
+        const choiceButtons = document.querySelectorAll('#dialogue-choices .dialogue-choice');
+        const index = parseInt(e.key) - 1;
+        if (choiceButtons[index]) {
+          (choiceButtons[index] as HTMLButtonElement).click();
+        }
+      }
+
       // Debug: Trigger emergency with Ctrl+E
       if (e.key === 'e' && e.ctrlKey) {
         this.triggerEmergency();
@@ -153,6 +191,34 @@ export class Game {
     startButton?.addEventListener('click', () => this.startNewGame());
     continueButton?.addEventListener('click', () => this.continueGame());
     settingsButton?.addEventListener('click', () => this.openSettings());
+
+    // Bind settings panel controls
+    this.bindSettingsControls();
+  }
+
+  private bindSettingsControls(): void {
+    const textSpeedSelect = document.getElementById('text-speed') as HTMLSelectElement;
+    const autoSaveCheckbox = document.getElementById('auto-save') as HTMLInputElement;
+    const closeButton = document.querySelector('[data-action="settings-close"]');
+    const returnMenuButton = document.querySelector('[data-action="return-menu"]');
+
+    // Initialize controls with current settings
+    if (textSpeedSelect) {
+      textSpeedSelect.value = settingsManager.getTextSpeed();
+      textSpeedSelect.addEventListener('change', () => {
+        settingsManager.setTextSpeed(textSpeedSelect.value as TextSpeed);
+      });
+    }
+
+    if (autoSaveCheckbox) {
+      autoSaveCheckbox.checked = settingsManager.getAutoSave();
+      autoSaveCheckbox.addEventListener('change', () => {
+        settingsManager.setAutoSave(autoSaveCheckbox.checked);
+      });
+    }
+
+    closeButton?.addEventListener('click', () => this.closeSettings());
+    returnMenuButton?.addEventListener('click', () => this.returnToMenu());
   }
 
   private updateContinueButton(enabled: boolean): void {
@@ -167,9 +233,15 @@ export class Game {
   async startNewGame(): Promise<void> {
     console.log('Starting new game...');
 
+    // Initialize audio (requires user interaction first)
+    await audioManager.init();
+    await audioManager.resume();
+
     // Reset state
     stateManager.reset();
     stateManager.clearSave();
+    attackScheduler.reset();
+    this.inGame = true;
 
     // Start intro scene
     await sceneManager.goToScene('intro');
@@ -185,8 +257,13 @@ export class Game {
   async continueGame(): Promise<void> {
     console.log('Continuing game...');
 
+    // Initialize audio (requires user interaction first)
+    await audioManager.init();
+    await audioManager.resume();
+
     const loaded = stateManager.load();
     if (loaded) {
+      this.inGame = true;
       const currentScene = stateManager.getCurrentScene();
       // Restore shift state
       shiftSystem.startShift(stateManager.getShift());
@@ -197,8 +274,51 @@ export class Game {
   }
 
   openSettings(): void {
-    console.log('Settings not yet implemented');
-    // TODO: Implement settings menu
+    const mainMenu = document.getElementById('main-menu');
+    const settingsPanel = document.getElementById('settings-panel');
+
+    // Sync current settings to UI before showing
+    const textSpeedSelect = document.getElementById('text-speed') as HTMLSelectElement;
+    const autoSaveCheckbox = document.getElementById('auto-save') as HTMLInputElement;
+    if (textSpeedSelect) textSpeedSelect.value = settingsManager.getTextSpeed();
+    if (autoSaveCheckbox) autoSaveCheckbox.checked = settingsManager.getAutoSave();
+
+    // Show/hide "Return to Menu" based on whether we're in-game
+    const returnMenuButton = document.querySelector('[data-action="return-menu"]') as HTMLElement;
+    if (returnMenuButton) {
+      returnMenuButton.style.display = this.inGame ? 'block' : 'none';
+    }
+
+    mainMenu?.classList.add('hidden');
+    settingsPanel?.classList.remove('hidden');
+  }
+
+  private closeSettings(): void {
+    const mainMenu = document.getElementById('main-menu');
+    const settingsPanel = document.getElementById('settings-panel');
+
+    settingsPanel?.classList.add('hidden');
+
+    // Only show main menu if we're not in-game
+    if (!this.inGame) {
+      mainMenu?.classList.remove('hidden');
+    }
+  }
+
+  private returnToMenu(): void {
+    // Stop game systems
+    attackScheduler.reset();
+    this.inGame = false;
+
+    // Reset to menu
+    const settingsPanel = document.getElementById('settings-panel');
+    const mainMenu = document.getElementById('main-menu');
+
+    settingsPanel?.classList.add('hidden');
+    mainMenu?.classList.remove('hidden');
+
+    // Go back to menu scene
+    sceneManager.goToScene('menu', false);
   }
 
   private checkForEmergency(): void {
@@ -214,47 +334,186 @@ export class Game {
   private triggerEmergency(): void {
     shiftSystem.triggerEmergency();
 
-    // Emergency dialogue
-    const emergencyDialogue: import('@/types').DialogueScript = {
-      id: 'emergency-alert',
-      startNode: 'start',
-      nodes: {
-        start: {
-          text: 'The structure shudders. Alarms begin to wail. The hum of the reactors changes pitch—something has gone wrong.',
-          next: 'rumble',
-        },
-        rumble: {
-          text: 'A deep rumbling echoes through the corridors. The enemy is attacking again.',
-          next: 'orrin',
-        },
-        orrin: {
-          speaker: 'orrin' as const,
-          text: "[over comms] Breach in Section 14. Hull integrity failing. I need backup—now.",
-          choices: [
-            { text: 'On my way.', next: 'respond' },
-            { text: "I'll finish here first.", next: 'delay' },
-          ],
-        },
-        respond: {
-          speaker: 'keth' as const,
-          text: '[over comms] Go. Both of you. Everyone else, brace and hold position.',
-          next: 'end',
-        },
-        delay: {
-          speaker: 'orrin' as const,
-          text: "There is no 'here first.' Atmosphere is venting. Move.",
-          next: 'end',
-        },
-        end: {
-          text: 'The structure groans around you. Time to move.',
-        },
-      },
-    };
+    // Play alert sound
+    audioManager.playUISound('alert');
+
+    // Select a random emergency type
+    const emergencyDialogue = this.getRandomEmergencyDialogue();
 
     dialogueSystem.startDialogue(emergencyDialogue, () => {
       // After dialogue, go to emergency maintenance
       sceneManager.goToScene('the-wound');
     });
+  }
+
+  private getRandomEmergencyDialogue(): import('@/types').DialogueScript {
+    type DialogueScript = import('@/types').DialogueScript;
+    const emergencyTypes: DialogueScript[] = [
+      // Type 1: Hull breach (classic)
+      {
+        id: 'emergency-hull-breach',
+        startNode: 'start',
+        nodes: {
+          start: {
+            text: 'The structure shudders. Alarms begin to wail. The hum of the reactors changes pitch—something has gone wrong.',
+            next: 'rumble',
+          },
+          rumble: {
+            text: 'A deep rumbling echoes through the corridors. The enemy is attacking again.',
+            next: 'orrin',
+          },
+          orrin: {
+            speaker: 'orrin' as const,
+            text: "[over comms] Breach in Section 14. Hull integrity failing. I need backup—now.",
+            choices: [
+              { text: 'On my way.', next: 'respond' },
+              { text: "I'll finish here first.", next: 'delay' },
+            ],
+          },
+          respond: {
+            speaker: 'keth' as const,
+            text: '[over comms] Go. Both of you. Everyone else, brace and hold position.',
+            next: 'end',
+          },
+          delay: {
+            speaker: 'orrin' as const,
+            text: "There is no 'here first.' Atmosphere is venting. Move.",
+            next: 'end',
+          },
+          end: {
+            text: 'The structure groans around you. Time to move.',
+          },
+        },
+      },
+      // Type 2: Impact tremor
+      {
+        id: 'emergency-impact',
+        startNode: 'start',
+        nodes: {
+          start: {
+            text: 'Without warning, the floor lurches beneath you. Something has struck the structure—hard.',
+            next: 'lights',
+          },
+          lights: {
+            text: 'The lights flicker. Emergency strobes activate, painting everything in amber pulses.',
+            next: 'keth',
+          },
+          keth: {
+            speaker: 'keth' as const,
+            text: "[over comms] All crew, report. We've taken a direct hit.",
+            next: 'orrin',
+          },
+          orrin: {
+            speaker: 'orrin' as const,
+            text: "[over comms] Already moving. Section 14 is compromised. Sending coordinates.",
+            choices: [
+              { text: 'Heading there now.', next: 'respond' },
+              { text: "What's our status?", next: 'status' },
+            ],
+          },
+          respond: {
+            speaker: 'orrin' as const,
+            text: "Good. Move fast—I can hear venting from here.",
+            next: 'end',
+          },
+          status: {
+            speaker: 'keth' as const,
+            text: "Status is 'move your feet.' Questions later, patch the hull now.",
+            next: 'end',
+          },
+          end: {
+            text: 'Another tremor ripples through the structure. No time to waste.',
+          },
+        },
+      },
+      // Type 3: Cascade failure
+      {
+        id: 'emergency-cascade',
+        startNode: 'start',
+        nodes: {
+          start: {
+            text: 'The lights die. For a moment, there is perfect darkness—then emergency power kicks in, red and dim.',
+            next: 'vell',
+          },
+          vell: {
+            speaker: 'vell' as const,
+            text: "[over comms] We've got cascading failures in the outer sections. Something triggered a chain reaction.",
+            next: 'dauro',
+          },
+          dauro: {
+            speaker: 'dauro' as const,
+            text: "[over comms] Pressure's dropping in the secondary loop. This is bad.",
+            next: 'orrin',
+          },
+          orrin: {
+            speaker: 'orrin' as const,
+            text: "[over comms] I need help in Section 14. Whatever hit us opened something that shouldn't be open.",
+            choices: [
+              { text: "I'm on it.", next: 'respond' },
+              { text: "This feels different from usual.", next: 'different' },
+            ],
+          },
+          respond: {
+            speaker: 'keth' as const,
+            text: "[over comms] Everyone else, stabilize what you can. We've weathered worse.",
+            next: 'end',
+          },
+          different: {
+            speaker: 'vell' as const,
+            text: "It is different. The attack pattern... never mind. Seal the breach first. Questions later.",
+            next: 'end',
+          },
+          end: {
+            text: 'In the red emergency lighting, the corridors look like veins. Time to move.',
+          },
+        },
+      },
+      // Type 4: Silent strike
+      {
+        id: 'emergency-silent',
+        startNode: 'start',
+        nodes: {
+          start: {
+            text: 'There is no warning this time. No tremor, no alarm. Just a sudden change in air pressure that makes your ears pop.',
+            next: 'realization',
+          },
+          realization: {
+            text: 'Then the alarms catch up—shrieking into life as if startled by their own delay.',
+            next: 'solenne',
+          },
+          solenne: {
+            speaker: 'solenne' as const,
+            text: "[over comms] The moss knew. It started curling before—it doesn't matter. Something's wrong in Section 14.",
+            next: 'orrin',
+          },
+          orrin: {
+            speaker: 'orrin' as const,
+            text: "[over comms] They got through without us feeling it. New tactic. Breach is small but growing. Move.",
+            choices: [
+              { text: 'How did they get past the sensors?', next: 'sensors' },
+              { text: "I'm coming.", next: 'respond' },
+            ],
+          },
+          sensors: {
+            speaker: 'vell' as const,
+            text: "Don't know. Don't care right now. Seal first, analyze later.",
+            next: 'end',
+          },
+          respond: {
+            speaker: 'orrin' as const,
+            text: 'Fast as you can. This one feels wrong.',
+            next: 'end',
+          },
+          end: {
+            text: 'The silence before the alarms lingers in your mind. Something has changed.',
+          },
+        },
+      },
+    ];
+
+    // Pick a random emergency type
+    const index = Math.floor(Math.random() * emergencyTypes.length);
+    return emergencyTypes[index];
   }
 
   private delay(ms: number): Promise<void> {

@@ -476,4 +476,167 @@ Heavy, utilitarian—this is what keeps death outside.
 
 ---
 
+## Technical Integration Guide
+
+This section covers how art assets will be integrated into the game.
+
+### File Naming Convention
+
+```
+/assets/
+├── portraits/
+│   ├── keth-default.png
+│   ├── keth-speaking.png
+│   ├── solenne-default.png
+│   ├── solenne-speaking.png
+│   ├── dauro-default.png
+│   ├── dauro-speaking.png
+│   ├── vell-default.png
+│   ├── vell-speaking.png
+│   ├── orrin-default.png
+│   └── orrin-speaking.png
+├── backgrounds/
+│   ├── crew-quarters.png
+│   ├── corridor.png
+│   ├── atmospheric-processing.png
+│   ├── fluid-systems.png
+│   ├── electrical-hub.png
+│   ├── grow-deck.png
+│   ├── hopper-yard.png
+│   ├── fungal-depths.png
+│   ├── fungal-deeper.png
+│   └── the-wound.png
+├── ui/
+│   ├── terminal-frame.png
+│   ├── dialogue-frame.png
+│   ├── button-normal.png
+│   ├── button-hover.png
+│   └── hotspot-marker.png
+└── cg/
+    ├── first-breach.png
+    ├── arrival-data.png
+    └── fungal-contact.png
+```
+
+### Current Placeholder Reference
+
+The game uses CSS-generated procedural backgrounds. Here's what each looks like conceptually:
+
+**Crew Quarters Placeholder:**
+- Base: Deep teal (#0d2832)
+- Grid pattern of subtle lines
+- Warm amber radial glows at 20% and 80% of screen
+- Label: "CREW QUARTERS - BLOCK C"
+
+**Corridor Placeholder:**
+- Base: Deep teal
+- Vertical stripe pattern (40px repeating)
+- Gradient darkening at top/bottom edges
+- Amber glow from floor
+- Label: "SECTOR 7 - MAIN CORRIDOR"
+
+**Atmospheric Processing Placeholder:**
+- Base: Very dark green-teal (#0d2225)
+- Horizontal and vertical line grid (green tint)
+- Multiple soft green radial glows
+- Floating particle animation (3 particles)
+- Label: "SECTOR 7-J - ATMOSPHERIC PROCESSING"
+
+**The Wound Placeholder:**
+- Base: Near-black with purple undertone (#0a0a12)
+- Diagonal stripe pattern (purple)
+- Large central glow (pale purple/white)
+- Dark gradient from bottom
+- Pulsing "breach glow" animation
+- Label: "THE WOUND - BREACH ZONE"
+
+### Character Portrait Integration
+
+Portraits appear during dialogue in the character layer. Current placeholder creates:
+- 200x280px framed area
+- Character color-coded border (Keth=amber, Solenne=green, etc.)
+- Gradient fill with character color
+- Circle icon with character initial
+- Name label below
+
+**Real portraits should:**
+- Have transparent/gradient-to-transparent backgrounds
+- Be vertically oriented (roughly 2:3)
+- Show character from chest up
+- Leave space at bottom for dialogue box overlap
+- Have subtle differences between default/speaking states
+
+### Background Integration
+
+Backgrounds fill the scene layer (full viewport). The game is mobile-first with 430px max width.
+
+**Real backgrounds should:**
+- Be at least 860px wide (2x for retina)
+- Have a 9:16 or similar vertical ratio
+- Not have critical details in bottom 30% (UI covers this)
+- Include atmospheric animated elements as separate layers if possible
+
+### UI Element Sizes
+
+Reference sizes at 1x (double for retina):
+
+| Element | Size | Notes |
+|---------|------|-------|
+| Portrait area | 200×280px | Character layer center |
+| Dialogue box | 100% × ~180px | Bottom of screen |
+| Hotspot marker | 50×50px | Clickable navigation points |
+| Terminal | ~90% × 40vh max | Top of screen |
+| Crew card (downtime) | ~120×100px | Grid of 3 columns |
+
+### Animation Needs (If Possible)
+
+These could be animated GIFs, sprite sheets, or separate layers:
+
+1. **Hotspot pulse** - Gentle breathing animation on navigation points
+2. **Terminal scanlines** - Subtle CRT effect
+3. **Breach glow** - Slow pulse for the wound area
+4. **Floating particles** - For atmospheric/bio areas
+5. **Drip effect** - For fluid systems area
+6. **Flicker light** - For electrical areas
+
+### Color Calibration
+
+The game uses these exact CSS color values. Art should complement:
+
+```css
+--color-void: #0a1214        /* Darkest background */
+--color-deep-teal: #0d2832   /* Primary dark */
+--color-teal: #1a4a5c        /* Structure/midtone */
+--color-purple: #2d1f3d      /* Dreamlike/deep */
+--color-violet: #4a3260      /* Electrical accent */
+--color-amber: #d4a24c       /* Warmth/crew/safety */
+--color-amber-dim: #8a6830   /* Muted amber */
+--color-grow-green: #3d7a4a  /* Bio deep */
+--color-grow-light: #5ca86a  /* Bio bright */
+--color-warning: #c4762c     /* Alert/emergency */
+--color-text: #c8d4d8        /* Primary text */
+--color-text-dim: #6a7a80    /* Secondary text */
+```
+
+---
+
+## Production Priority Checklist
+
+### Phase 1 - Core Game Playable
+- [ ] 5 crew portraits (default + speaking = 10 images)
+- [ ] 3 main backgrounds (quarters, corridor, atmospheric)
+- [ ] Basic UI frame elements
+
+### Phase 2 - Full Location Set
+- [ ] Remaining 7 backgrounds
+- [ ] Additional expression variants for key scenes
+- [ ] Item/object icons
+
+### Phase 3 - Polish & Special Moments
+- [ ] CG illustrations for story beats
+- [ ] Animated elements/effects
+- [ ] Additional expression variants
+
+---
+
 *"The structure is beautiful because it's dying. The crew is beautiful because they're still here."*

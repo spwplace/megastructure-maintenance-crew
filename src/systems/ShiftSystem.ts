@@ -3,6 +3,7 @@ import { eventBus } from '@/core/EventBus';
 import { stateManager } from '@/core/StateManager';
 import { sceneManager } from './SceneManager';
 import { dialogueSystem } from './DialogueSystem';
+import { uiManager } from '@/ui/UIManager';
 
 /**
  * Manages the shift cycle that structures gameplay
@@ -70,6 +71,9 @@ export class ShiftSystem {
     this.state.phase = 'downtime';
     eventBus.emit('shift:phase', { phase: 'downtime', shift: this.state.number });
     this.updateIndicator();
+
+    // Show phase announcement
+    uiManager.showPhaseAnnouncement('REST PERIOD', 'Work complete. Time to rest.');
   }
 
   /**
