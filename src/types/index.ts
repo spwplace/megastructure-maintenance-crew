@@ -66,7 +66,7 @@ export interface NavigationHotspot {
 // --- Maintenance System ---
 export interface MaintenanceData {
   systemId: string;
-  type: 'mechanical' | 'biological' | 'emergency';
+  type: 'mechanical' | 'biological' | 'electrical' | 'emergency';
   status: SystemStatus;
   interactions: MaintenanceInteraction[];
 }

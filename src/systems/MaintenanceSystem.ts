@@ -460,7 +460,7 @@ export function createFluidSystemTask(): MaintenanceTask {
         icon: '⚖️',
         healthGain: 12,
         removes: ['pressure'],
-        available: () => (stateManager.getSystemStatus('fluid-secondary')?.health ?? 0) > 70,
+        available: () => (maintenanceSystem.getCurrentTask()?.status.health ?? 0) > 70,
       },
     ],
     onComplete: () => {
@@ -645,7 +645,7 @@ export function createHopperYardTask(): MaintenanceTask {
         icon: '⬆️',
         healthGain: 12,
         removes: ['transfer'],
-        available: () => (stateManager.getSystemStatus('hopper-yard')?.health ?? 0) > 60,
+        available: () => (maintenanceSystem.getCurrentTask()?.status.health ?? 0) > 60,
       },
     ],
     onComplete: () => {

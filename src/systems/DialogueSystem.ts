@@ -46,8 +46,20 @@ export class DialogueSystem {
     // Show dialogue container with speaker
     uiManager.showDialogue(speakerName, '', speakerColor);
 
+    // Set up click-to-skip handler before typewriter starts
+    const dialogueContainer = document.getElementById('dialogue-container');
+    const skipHandler = () => {
+      if (this.isTyping) {
+        this.skipTypewriter();
+      }
+    };
+    dialogueContainer?.addEventListener('click', skipHandler);
+
     // Typewriter effect
     await this.typeText(node.text);
+
+    // Remove skip handler after typing completes
+    dialogueContainer?.removeEventListener('click', skipHandler);
 
     // Show choices or wait for tap to continue
     if (node.choices && node.choices.length > 0) {
