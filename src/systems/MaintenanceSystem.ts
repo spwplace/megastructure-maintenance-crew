@@ -51,6 +51,7 @@ export class MaintenanceSystem {
   private currentTask: MaintenanceTask | null = null;
   private equippedTool: Tool | null = null;
   private panelElement: HTMLElement | null = null;
+  private actionInProgress: boolean = false; // Prevents rapid-click exploits
 
   constructor() {
     this.equippedTool = TOOLS[0]; // Start with basic kit
@@ -178,6 +179,9 @@ export class MaintenanceSystem {
   private executeAction(actionId: string): void {
     if (!this.currentTask) return;
 
+    // Prevent rapid-clicking from executing multiple actions
+    if (this.actionInProgress) return;
+
     const action = this.currentTask.actions.find(a => a.id === actionId);
     if (!action) return;
 
@@ -187,6 +191,10 @@ export class MaintenanceSystem {
       this.showFeedback('Need the right tool for this job.');
       return;
     }
+
+    // Lock actions during execution
+    this.actionInProgress = true;
+    this.setActionButtonsDisabled(true);
 
     // Apply health gain
     this.currentTask.status.health = Math.min(100, this.currentTask.status.health + action.healthGain);
@@ -223,6 +231,28 @@ export class MaintenanceSystem {
 
     // Show success feedback
     this.showFeedback(`+${action.healthGain}% system health`);
+
+    // Unlock actions after a short delay to prevent rapid clicking
+    setTimeout(() => {
+      this.actionInProgress = false;
+      this.setActionButtonsDisabled(false);
+    }, 300);
+  }
+
+  /**
+   * Enable/disable action buttons to prevent rapid clicking
+   */
+  private setActionButtonsDisabled(disabled: boolean): void {
+    if (!this.panelElement) return;
+    this.panelElement.querySelectorAll('.maintenance-action').forEach(el => {
+      if (disabled) {
+        el.classList.add('disabled');
+        (el as HTMLElement).style.pointerEvents = 'none';
+      } else {
+        el.classList.remove('disabled');
+        (el as HTMLElement).style.pointerEvents = '';
+      }
+    });
   }
 
   private showFeedback(message: string): void {

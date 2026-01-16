@@ -1,4 +1,4 @@
-import type { GameState, CharacterId, SaveData } from '@/types';
+import type { GameState, CharacterId, SaveData, ShiftPhase } from '@/types';
 import { eventBus } from './EventBus';
 
 const SAVE_KEY = 'mmc-save';
@@ -19,6 +19,8 @@ function createInitialState(): GameState {
     flags: {},
     systemStatuses: {},
     shift: 1,
+    shiftPhase: 'briefing',
+    shiftTasksCompleted: [],
     rumors: [],
   };
 }
@@ -105,6 +107,24 @@ export class StateManager {
     return this.state.shift;
   }
 
+  setShiftPhase(phase: ShiftPhase): void {
+    this.state.shiftPhase = phase;
+    eventBus.emit('state:change', { shiftPhase: phase });
+  }
+
+  getShiftPhase(): ShiftPhase {
+    return this.state.shiftPhase;
+  }
+
+  setShiftTasksCompleted(tasks: string[]): void {
+    this.state.shiftTasksCompleted = [...tasks];
+    eventBus.emit('state:change', { shiftTasksCompleted: tasks });
+  }
+
+  getShiftTasksCompleted(): string[] {
+    return [...this.state.shiftTasksCompleted];
+  }
+
   // --- Persistence ---
   save(): boolean {
     try {
@@ -149,6 +169,9 @@ export class StateManager {
       this.state = {
         ...data.state,
         visitedScenes: new Set(data.state.visitedScenes),
+        // Provide defaults for fields that may not exist in older saves
+        shiftPhase: data.state.shiftPhase ?? 'briefing',
+        shiftTasksCompleted: data.state.shiftTasksCompleted ?? [],
       };
       return true;
     } catch (error) {

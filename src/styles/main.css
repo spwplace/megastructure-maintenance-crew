@@ -1122,6 +1122,7 @@ body {
   align-items: center;
   transform: translate(-50%, -50%);
   cursor: pointer;
+  pointer-events: auto;
   transition: all var(--transition-fast);
 }
 

@@ -42,8 +42,30 @@ export class ShiftSystem {
     this.state.tasksCompleted = [];
     this.state.emergencyActive = false;
 
+    // Persist to StateManager
+    this.syncToStateManager();
+
     eventBus.emit('shift:phase', { phase: 'briefing', shift: this.state.number });
     this.updateIndicator();
+  }
+
+  /**
+   * Restore shift state from StateManager (call after loading a save)
+   */
+  restoreState(): void {
+    this.state.number = stateManager.getShift();
+    this.state.phase = stateManager.getShiftPhase();
+    this.state.tasksCompleted = stateManager.getShiftTasksCompleted();
+    this.state.emergencyActive = false;
+    this.updateIndicator();
+  }
+
+  /**
+   * Sync current shift state to StateManager for persistence
+   */
+  private syncToStateManager(): void {
+    stateManager.setShiftPhase(this.state.phase);
+    stateManager.setShiftTasksCompleted(this.state.tasksCompleted);
   }
 
   /**
@@ -51,6 +73,7 @@ export class ShiftSystem {
    */
   beginWork(): void {
     this.state.phase = 'work';
+    this.syncToStateManager();
     eventBus.emit('shift:phase', { phase: 'work', shift: this.state.number });
     this.updateIndicator();
   }
@@ -61,27 +84,40 @@ export class ShiftSystem {
   completeTask(taskId: string): void {
     if (!this.state.tasksCompleted.includes(taskId)) {
       this.state.tasksCompleted.push(taskId);
+      this.syncToStateManager();
     }
   }
 
   /**
    * Transition to downtime after work is done
+   * @returns true if transition was successful, false if player hasn't completed enough tasks
    */
-  beginDowntime(): void {
+  beginDowntime(): boolean {
+    // Validate that player has completed required tasks
+    if (!this.canProceedToDowntime()) {
+      console.warn('Cannot proceed to downtime: insufficient tasks completed');
+      return false;
+    }
+
     this.state.phase = 'downtime';
+    this.syncToStateManager();
     eventBus.emit('shift:phase', { phase: 'downtime', shift: this.state.number });
     this.updateIndicator();
 
     // Show phase announcement
     uiManager.showPhaseAnnouncement('REST PERIOD', 'Work complete. Time to rest.');
+    return true;
   }
 
   /**
    * End current shift and start next
    */
   endShift(): void {
-    // Apply entropy before advancing shift
-    this.applyShiftEntropy();
+    // Save completed tasks before starting new shift (which clears them)
+    const completedTasks = [...this.state.tasksCompleted];
+
+    // Apply entropy using the saved tasks list
+    this.applyShiftEntropy(completedTasks);
 
     this.state.number += 1;
     stateManager.advanceShift();
@@ -91,14 +127,15 @@ export class ShiftSystem {
 
   /**
    * Apply degradation to systems between shifts
+   * @param completedTasks - List of task IDs completed this shift (passed explicitly to avoid timing issues)
    */
-  private applyShiftEntropy(): void {
+  private applyShiftEntropy(completedTasks: string[]): void {
     const state = stateManager.getState();
     const systems = state.systemStatuses;
 
     // Each system loses some health if not maintained this shift
     Object.keys(systems).forEach((systemId) => {
-      if (!this.state.tasksCompleted.includes(systemId)) {
+      if (!completedTasks.includes(systemId)) {
         const status = systems[systemId];
         if (status && status.health > 25) {
           // Degrade by 3-10% if not maintained
@@ -145,6 +182,7 @@ export class ShiftSystem {
     const previousPhase = this.state.phase;
     this.state.phase = 'emergency';
     this.state.emergencyActive = true;
+    this.syncToStateManager();
 
     eventBus.emit('emergency:start', {
       previousPhase,
@@ -162,6 +200,7 @@ export class ShiftSystem {
   endEmergency(returnToPhase: ShiftPhase = 'work'): void {
     this.state.emergencyActive = false;
     this.state.phase = returnToPhase;
+    this.syncToStateManager();
 
     eventBus.emit('emergency:end', { shift: this.state.number });
     eventBus.emit('shift:phase', { phase: returnToPhase, shift: this.state.number });

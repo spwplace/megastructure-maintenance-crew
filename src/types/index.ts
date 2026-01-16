@@ -93,6 +93,8 @@ export interface GameState {
   flags: Record<string, boolean>;
   systemStatuses: Record<string, SystemStatus>;
   shift: number;
+  shiftPhase: ShiftPhase;
+  shiftTasksCompleted: string[];
   rumors: string[];
 }
 

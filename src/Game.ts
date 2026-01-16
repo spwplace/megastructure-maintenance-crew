@@ -20,6 +20,7 @@ export class Game {
   private initialized: boolean = false;
   private emergencyChance: number = 0.15; // 15% chance per maintenance completion
   private inGame: boolean = false; // Track if we're in an active game session
+  private keydownHandler: ((e: KeyboardEvent) => void) | null = null;
 
   async init(): Promise<void> {
     if (this.initialized) return;
@@ -88,8 +89,10 @@ export class Game {
 
     // Handle maintenance completion - check for emergency
     eventBus.on('maintenance:interact', (event) => {
-      const payload = event.payload as { action: string };
-      if (payload.action === 'complete') {
+      const payload = event.payload as { action: string; taskId?: string };
+      if (payload.action === 'complete' && payload.taskId) {
+        // Record the completed task in the shift system
+        shiftSystem.completeTask(payload.taskId);
         this.checkForEmergency();
       }
     });
@@ -110,7 +113,12 @@ export class Game {
     });
 
     // Handle keyboard input - prevent key repeat from spamming
-    document.addEventListener('keydown', (e) => {
+    // Remove existing listener if present (prevents accumulation on reset)
+    if (this.keydownHandler) {
+      document.removeEventListener('keydown', this.keydownHandler);
+    }
+
+    this.keydownHandler = (e: KeyboardEvent) => {
       if (e.repeat) return; // Ignore held keys
 
       // Space/Enter to advance dialogue
@@ -143,7 +151,19 @@ export class Game {
       if (e.key === 'e' && e.ctrlKey) {
         this.triggerEmergency();
       }
-    });
+    };
+
+    document.addEventListener('keydown', this.keydownHandler);
+  }
+
+  /**
+   * Clean up event listeners to prevent memory leaks
+   */
+  private cleanupEventListeners(): void {
+    if (this.keydownHandler) {
+      document.removeEventListener('keydown', this.keydownHandler);
+      this.keydownHandler = null;
+    }
   }
 
   private applyPlaceholderBackground(sceneId: string): void {
@@ -265,8 +285,8 @@ export class Game {
     if (loaded) {
       this.inGame = true;
       const currentScene = stateManager.getCurrentScene();
-      // Restore shift state
-      shiftSystem.startShift(stateManager.getShift());
+      // Restore shift state from saved data (preserves phase and tasksCompleted)
+      shiftSystem.restoreState();
       await sceneManager.goToScene(currentScene);
     } else {
       await this.startNewGame();
@@ -310,6 +330,9 @@ export class Game {
     attackScheduler.reset();
     this.inGame = false;
 
+    // Clean up event listeners to prevent memory leaks
+    this.cleanupEventListeners();
+
     // Reset to menu
     const settingsPanel = document.getElementById('settings-panel');
     const mainMenu = document.getElementById('main-menu');
@@ -319,6 +342,9 @@ export class Game {
 
     // Go back to menu scene
     sceneManager.goToScene('menu', false);
+
+    // Re-setup event listeners for fresh state
+    this.setupEventListeners();
   }
 
   private checkForEmergency(): void {
@@ -332,6 +358,11 @@ export class Game {
   }
 
   private triggerEmergency(): void {
+    // Clear maintenance UI if player is in maintenance when emergency triggers
+    if (maintenanceSystem.isActive()) {
+      maintenanceSystem.finishTask(false); // false = don't navigate away
+    }
+
     shiftSystem.triggerEmergency();
 
     // Play alert sound

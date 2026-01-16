@@ -136,9 +136,19 @@ export class DialogueSystem {
   }
 
   private showChoices(choices: DialogueChoice[]): void {
-    const validChoices = choices.filter(
-      (choice) => !choice.condition || choice.condition()
-    );
+    const validChoices = choices.filter((choice) => {
+      // No condition means always valid
+      if (!choice.condition) return true;
+
+      // Wrap condition evaluation in try-catch to prevent crashes
+      try {
+        return choice.condition();
+      } catch (error) {
+        console.error(`Error evaluating dialogue choice condition for "${choice.text}":`, error);
+        // Treat erroring conditions as false (hide the choice)
+        return false;
+      }
+    });
 
     const choiceButtons = validChoices.map((choice) => ({
       text: choice.text,
