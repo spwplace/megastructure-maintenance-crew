@@ -166,12 +166,24 @@ export class StateManager {
         return false;
       }
 
+      // Provide defaults for all fields that may not exist in older saves
       this.state = {
-        ...data.state,
-        visitedScenes: new Set(data.state.visitedScenes),
-        // Provide defaults for fields that may not exist in older saves
+        currentScene: data.state.currentScene ?? 'menu',
+        visitedScenes: new Set(data.state.visitedScenes ?? []),
+        relationships: data.state.relationships ?? {
+          keth: 0,
+          solenne: 0,
+          dauro: 0,
+          vell: 0,
+          orrin: 0,
+          player: 0,
+        },
+        flags: data.state.flags ?? {},
+        systemStatuses: data.state.systemStatuses ?? {},
+        shift: data.state.shift ?? 1,
         shiftPhase: data.state.shiftPhase ?? 'briefing',
         shiftTasksCompleted: data.state.shiftTasksCompleted ?? [],
+        rumors: data.state.rumors ?? [],
       };
       return true;
     } catch (error) {

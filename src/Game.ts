@@ -124,7 +124,7 @@ export class Game {
       // Space/Enter to advance dialogue
       if (e.key === ' ' || e.key === 'Enter') {
         if (dialogueSystem.isActive()) {
-          dialogueSystem.skipTypewriter();
+          dialogueSystem.advance();
         }
       }
 

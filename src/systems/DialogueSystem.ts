@@ -17,6 +17,7 @@ export class DialogueSystem {
 
   // Typewriter settings
   private skipRequested: boolean = false;
+  private typewriterResolve: (() => void) | null = null;
 
   async startDialogue(script: DialogueScript, onComplete?: () => void): Promise<void> {
     this.currentScript = script;
@@ -116,7 +117,10 @@ export class DialogueSystem {
     this.skipRequested = false;
 
     const textEl = document.getElementById('dialogue-text');
-    if (!textEl) return;
+    if (!textEl) {
+      this.isTyping = false;
+      return;
+    }
 
     textEl.textContent = '';
     const charDelay = settingsManager.getTextSpeedMs();
@@ -130,8 +134,10 @@ export class DialogueSystem {
       textEl.textContent += text[i];
 
       await new Promise<void>((resolve) => {
+        this.typewriterResolve = resolve;
         this.typewriterTimeout = window.setTimeout(resolve, charDelay);
       });
+      this.typewriterResolve = null;
     }
 
     this.isTyping = false;
@@ -143,6 +149,12 @@ export class DialogueSystem {
       this.skipRequested = true;
       if (this.typewriterTimeout !== null) {
         clearTimeout(this.typewriterTimeout);
+        this.typewriterTimeout = null;
+      }
+      // Resolve the pending promise so await doesn't hang
+      if (this.typewriterResolve) {
+        this.typewriterResolve();
+        this.typewriterResolve = null;
       }
     }
   }
@@ -225,6 +237,21 @@ export class DialogueSystem {
 
   isActive(): boolean {
     return this.currentScript !== null;
+  }
+
+  /**
+   * Advance dialogue - skip typing if in progress, or trigger continue if waiting
+   * Used for keyboard input (Space/Enter)
+   */
+  advance(): void {
+    if (!this.isActive()) return;
+
+    if (this.isTyping) {
+      this.skipTypewriter();
+    } else if (this.continueHandler) {
+      // Simulate click to advance
+      this.continueHandler();
+    }
   }
 }
 
