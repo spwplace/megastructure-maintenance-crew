@@ -1,0 +1,159 @@
+import type { DialogueNode, DialogueScript, DialogueChoice, CharacterId } from '@/types';
+import { uiManager } from '@/ui/UIManager';
+import { eventBus } from '@/core/EventBus';
+import { characters } from '@/data/characters';
+
+/**
+ * Handles dialogue playback with typewriter effect and choices
+ */
+export class DialogueSystem {
+  private currentScript: DialogueScript | null = null;
+  private currentNode: DialogueNode | null = null;
+  private isTyping: boolean = false;
+  private typewriterTimeout: number | null = null;
+  private onComplete: (() => void) | null = null;
+
+  // Typewriter settings
+  private charDelay: number = 30; // ms per character
+  private skipRequested: boolean = false;
+
+  async startDialogue(script: DialogueScript, onComplete?: () => void): Promise<void> {
+    this.currentScript = script;
+    this.onComplete = onComplete ?? null;
+
+    eventBus.emit('dialogue:start', { scriptId: script.id });
+
+    const startNode = script.nodes[script.startNode];
+    if (startNode) {
+      await this.showNode(startNode);
+    } else {
+      console.error(`Start node "${script.startNode}" not found in script`);
+      this.endDialogue();
+    }
+  }
+
+  private async showNode(node: DialogueNode): Promise<void> {
+    this.currentNode = node;
+    node.onShow?.();
+
+    const speakerName = this.getSpeakerName(node.speaker);
+
+    // Show dialogue container with speaker
+    uiManager.showDialogue(speakerName, '');
+
+    // Typewriter effect
+    await this.typeText(node.text);
+
+    // Show choices or wait for tap to continue
+    if (node.choices && node.choices.length > 0) {
+      this.showChoices(node.choices);
+    } else if (node.next) {
+      this.waitForContinue(() => {
+        const nextNode = this.currentScript?.nodes[node.next!];
+        if (nextNode) {
+          this.showNode(nextNode);
+        } else {
+          this.endDialogue();
+        }
+      });
+    } else {
+      this.waitForContinue(() => this.endDialogue());
+    }
+  }
+
+  private getSpeakerName(speakerId?: CharacterId): string | null {
+    if (!speakerId || speakerId === 'player') return null;
+    return characters[speakerId]?.name ?? speakerId;
+  }
+
+  private async typeText(text: string): Promise<void> {
+    this.isTyping = true;
+    this.skipRequested = false;
+
+    const textEl = document.getElementById('dialogue-text');
+    if (!textEl) return;
+
+    textEl.textContent = '';
+
+    for (let i = 0; i < text.length; i++) {
+      if (this.skipRequested) {
+        textEl.textContent = text;
+        break;
+      }
+
+      textEl.textContent += text[i];
+
+      await new Promise<void>((resolve) => {
+        this.typewriterTimeout = window.setTimeout(resolve, this.charDelay);
+      });
+    }
+
+    this.isTyping = false;
+    this.typewriterTimeout = null;
+  }
+
+  skipTypewriter(): void {
+    if (this.isTyping) {
+      this.skipRequested = true;
+      if (this.typewriterTimeout !== null) {
+        clearTimeout(this.typewriterTimeout);
+      }
+    }
+  }
+
+  private showChoices(choices: DialogueChoice[]): void {
+    const validChoices = choices.filter(
+      (choice) => !choice.condition || choice.condition()
+    );
+
+    const choiceButtons = validChoices.map((choice) => ({
+      text: choice.text,
+      callback: () => {
+        eventBus.emit('dialogue:choice', { choice: choice.text });
+        choice.onSelect?.();
+        uiManager.clearDialogueChoices();
+
+        const nextNode = this.currentScript?.nodes[choice.next];
+        if (nextNode) {
+          this.showNode(nextNode);
+        } else {
+          this.endDialogue();
+        }
+      },
+    }));
+
+    uiManager.setDialogueChoices(choiceButtons);
+  }
+
+  private waitForContinue(callback: () => void): void {
+    const dialogueContainer = document.getElementById('dialogue-container');
+    if (!dialogueContainer) return;
+
+    const handleClick = () => {
+      if (this.isTyping) {
+        this.skipTypewriter();
+      } else {
+        dialogueContainer.removeEventListener('click', handleClick);
+        callback();
+      }
+    };
+
+    dialogueContainer.addEventListener('click', handleClick);
+  }
+
+  private endDialogue(): void {
+    this.currentScript = null;
+    this.currentNode = null;
+    uiManager.hideDialogue();
+
+    eventBus.emit('dialogue:end', {});
+    this.onComplete?.();
+    this.onComplete = null;
+  }
+
+  isActive(): boolean {
+    return this.currentScript !== null;
+  }
+}
+
+export const dialogueSystem = new DialogueSystem();

@@ -1,0 +1,16 @@
+{
+  "name": "megastructure-maintenance-crew",
+  "version": "0.1.0",
+  "description": "A fantasy job simulation in a dreamlike megastructure under siege",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "vite": "^5.0.12"
+  }
+}

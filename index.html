@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0a1214">
+
+  <title>Megastructure Maintenance Crew</title>
+  <meta name="description" content="A fantasy job simulation in a dreamlike megastructure under siege">
+
+  <link rel="stylesheet" href="/src/styles/main.css">
+</head>
+<body>
+  <div id="game">
+    <!-- Scene layer: backgrounds, environments -->
+    <div id="scene-layer" class="game-layer"></div>
+
+    <!-- Character layer: portraits, sprites -->
+    <div id="character-layer" class="game-layer"></div>
+
+    <!-- UI layer: dialogue, menus, HUD -->
+    <div id="ui-layer" class="game-layer">
+      <!-- Dialogue box -->
+      <div id="dialogue-container" class="hidden">
+        <div id="speaker-name"></div>
+        <div id="dialogue-text"></div>
+        <div id="dialogue-choices"></div>
+      </div>
+
+      <!-- Terminal/status display -->
+      <div id="terminal-container" class="hidden">
+        <div id="terminal-header"></div>
+        <div id="terminal-content"></div>
+      </div>
+
+      <!-- Navigation indicators -->
+      <div id="nav-indicators"></div>
+    </div>
+
+    <!-- Overlay layer: transitions, menus -->
+    <div id="overlay-layer" class="game-layer">
+      <!-- Main menu -->
+      <div id="main-menu" class="menu">
+        <h1 class="menu-title">Megastructure<br>Maintenance Crew</h1>
+        <div class="menu-subtitle">a fantasy job simulation</div>
+        <nav class="menu-options">
+          <button class="menu-button" data-action="start">Begin Shift</button>
+          <button class="menu-button" data-action="continue" disabled>Continue</button>
+          <button class="menu-button" data-action="settings">Settings</button>
+        </nav>
+      </div>
+
+      <!-- Loading screen -->
+      <div id="loading-screen" class="hidden">
+        <div class="loading-text">Initializing systems...</div>
+        <div class="loading-bar">
+          <div class="loading-fill"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
