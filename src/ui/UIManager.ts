@@ -445,6 +445,7 @@ export class UIManager {
 
   // --- Dreamscape Effects ---
   private dreamscapeClueElement: HTMLElement | null = null;
+  private dreamscapeClueTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   /**
    * Add a transition effect class to the game container
@@ -492,7 +493,7 @@ export class UIManager {
    * Displayed above the dialogue box with fade in/hold/fade out
    */
   showDreamscapeClue(clue: DreamlogicClue): void {
-    // Remove any existing clue
+    // Remove any existing clue and cancel pending timeouts
     this.hideDreamscapeClue();
 
     const uiLayer = this.elements.get('ui-layer');
@@ -506,11 +507,19 @@ export class UIManager {
     `;
     uiLayer.appendChild(this.dreamscapeClueElement);
 
+    // Capture reference for closure
+    const element = this.dreamscapeClueElement;
+
     // Auto-hide after animation (fade in 500ms, hold 2500ms, fade out 500ms)
-    setTimeout(() => {
-      if (this.dreamscapeClueElement) {
-        this.dreamscapeClueElement.classList.add('fade-out');
-        setTimeout(() => this.hideDreamscapeClue(), 500);
+    this.dreamscapeClueTimeoutId = setTimeout(() => {
+      // Only proceed if this is still the active clue
+      if (this.dreamscapeClueElement === element) {
+        element.classList.add('fade-out');
+        this.dreamscapeClueTimeoutId = setTimeout(() => {
+          if (this.dreamscapeClueElement === element) {
+            this.hideDreamscapeClue();
+          }
+        }, 500);
       }
     }, 3000);
   }
@@ -519,6 +528,10 @@ export class UIManager {
    * Hide the dreamscape clue
    */
   hideDreamscapeClue(): void {
+    if (this.dreamscapeClueTimeoutId) {
+      clearTimeout(this.dreamscapeClueTimeoutId);
+      this.dreamscapeClueTimeoutId = null;
+    }
     this.dreamscapeClueElement?.remove();
     this.dreamscapeClueElement = null;
   }
