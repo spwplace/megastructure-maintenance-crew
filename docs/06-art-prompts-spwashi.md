@@ -1,0 +1,302 @@
+# Art Prompts for Spwashi
+## Megastructure Maintenance Crew - Visual Asset Brief
+
+*These prompts are designed for spwashi's distinctive style: bioluminescent decay, impossible verticality, organic-mechanical fusion, and wondrous melancholy.*
+
+---
+
+## Portrait Priority Order
+
+### Highest Priority: Crew Portraits
+
+Each character needs at least two portrait states: **default** and **speaking**. The difference should be subtle—slight change in expression, mouth position, or lighting.
+
+---
+
+### KETH - Senior Technician
+**Role Reference:** The veteran. Thirty years of maintenance work etched into their features.
+
+**Default Portrait:**
+```
+Late 40s, weathered face with deep-set eyes that have seen too much.
+Expression: Calm, watchful, slightly tired but alert.
+Posture: Shoulders squared, chin slightly down—someone who's learned to carry weight.
+Clothing: Work coveralls, worn smooth at pressure points, sleeves rolled to elbows.
+Details: Hands visible if possible—calloused, competent, holding or resting on a tool.
+Color accent: Amber (#d4a24c) in lighting or a small personal item.
+Background: Subtle warmth, crew quarters amber glow.
+```
+
+**Speaking Portrait:**
+```
+Same as default but:
+- Mouth slightly open, mid-word
+- Eyes more focused, engaged
+- Perhaps a slight lean forward
+- Subtle increase in ambient light warmth
+```
+
+---
+
+### SOLENNE - Biological Systems Technician
+**Role Reference:** The caretaker of living systems. Talks to plants. They talk back.
+
+**Default Portrait:**
+```
+Early 30s, warm features, often slightly damp from grow-deck humidity.
+Expression: Gentle, curious, slightly distracted—listening to something others can't hear.
+Posture: Open, shoulders relaxed, head slightly tilted.
+Clothing: Coveralls with bio-culture stains (greenish), sleeves pushed up, tool belt with plant care implements.
+Details: Perhaps a small living thing—a cutting, a moss sample—held carefully.
+Color accent: Grow-light green (#5ca86a) in lighting, reflecting off skin.
+Background: Humid, green-tinted, suggestion of bio-systems.
+```
+
+**Speaking Portrait:**
+```
+Same as default but:
+- More animated expression, enthusiasm showing
+- Hands might be gesturing
+- Eyes brighter, more present
+```
+
+---
+
+### DAURO - Fluid Systems Technician
+**Role Reference:** The newest crew member. Still asking "why" when the answer is "because."
+
+**Default Portrait:**
+```
+Mid 20s, youthful energy despite fatigue.
+Expression: Curious, slightly frustrated, thinking hard.
+Posture: Restless energy—leaning forward, or in mid-gesture.
+Clothing: Coveralls newer than the others, less worn, notebook or data pad visible.
+Details: Perhaps a stylus behind ear, or notes visible, something suggesting they're documenting.
+Color accent: Light teal (#6eb8d4) in highlights.
+Background: Corridor or work area, cooler tones.
+```
+
+**Speaking Portrait:**
+```
+Same as default but:
+- More emphatic expression
+- Hands definitely gesturing
+- Eyes wide, animated
+```
+
+---
+
+### VELL - Electrical Systems Technician
+**Role Reference:** The sardonic one who hides melancholy behind jokes. Insomniac.
+
+**Default Portrait:**
+```
+Late 30s, sharp features softened by exhaustion.
+Expression: Wry half-smile that doesn't quite reach the eyes. Guarded.
+Posture: Leaning against something, casual but watchful.
+Clothing: Coveralls with electrical tape patches, small handmade trinket visible (they make electronics gifts).
+Details: Dark circles under eyes, fingers perhaps holding or fiddling with a small component.
+Color accent: Violet/purple (#9a7bc4) in ambient lighting.
+Background: Electrical systems, subtle flickering light.
+```
+
+**Speaking Portrait:**
+```
+Same as default but:
+- Expression shifts to more genuine—either humor or rare sincerity
+- Eyes more engaged
+- The guarded quality softens slightly
+```
+
+---
+
+### ORRIN - Damage Response
+**Role Reference:** First into the breach, last out. Blunt, fatalistic, surprisingly gentle in quiet moments.
+
+**Default Portrait:**
+```
+50s, heavily scarred, built solid from years of physical emergency work.
+Expression: Hard to read. Calm in a way that suggests having seen too much.
+Posture: Straight, ready—someone who could move instantly if needed.
+Clothing: Heavier work gear than others, emergency equipment visible, reinforced at stress points.
+Details: Multiple visible scars, old and healed. Hands scarred but steady.
+Color accent: Warning amber (#c4762c) in emergency lighting or equipment.
+Background: Darker, suggesting proximity to danger zones.
+```
+
+**Speaking Portrait:**
+```
+Same as default but:
+- Expression opens slightly—intensity focused outward
+- Perhaps a hint of the rare gentleness mentioned in their character notes
+```
+
+---
+
+## Environment Backgrounds
+
+### Priority 1: Core Locations
+
+**CREW QUARTERS - BLOCK C**
+```
+Small, efficient sleeping quarters. Multiple bunks visible in frame.
+Warm amber lighting from small personal lamps.
+Walls covered with accumulated marks—notes, drawings, repairs, stains.
+Personal items visible: photos (abstract, no faces needed), handmade objects, tools.
+Feeling: Crowded but lived-in. The only warm space in a cold structure.
+Color palette: Amber warmth against teal/dark surroundings.
+```
+
+**SECTOR 7 - MAIN CORRIDOR**
+```
+Tall corridor receding into distance. Impossible verticality—sense of immense scale.
+Repeating structural elements (pipes, supports, conduits) creating perspective.
+Multiple levels visible—catwalks, ladders, platforms.
+Lighting: Cool teal/blue with occasional amber working lights.
+Wear visible: Scuff marks on floors, generations of patches and repairs.
+Signage: Sector markers, warning indicators, graffiti from decades of workers.
+Feeling: Transit space. You're always passing through to somewhere else.
+```
+
+**SECTOR 7-J - ATMOSPHERIC PROCESSING**
+```
+Cathedral of pipes and condensation. Vertical moss sheets hanging between coolant lines.
+Green-tinted grow lights creating columns of illumination.
+Humidity visible—mist, condensation on surfaces.
+Biological and mechanical systems intertwined—moss growing on pipes, sensors embedded in organic material.
+Scale: Vast. Worker (player) should feel small.
+Feeling: Humid, alive, alien but nurturing.
+Color palette: Greens and teals with amber maintenance lights.
+```
+
+**THE WOUND - BREACH ZONE**
+```
+A sector that was attacked. Hull peeled back, hastily sealed.
+Cold, wrong lighting—stars or void visible through gaps in emergency patches.
+Structural damage visible—bent metal, exposed systems, emergency bracing.
+Contrast between the careful repair work and violent damage.
+Feeling: Exposed. Vulnerable. The outside pressing in.
+Color palette: Cool purples/blues, harsh emergency amber, glimpse of void black.
+```
+
+### Priority 2: Secondary Locations
+
+**FLUID SYSTEMS - SECONDARY LOOP**
+```
+Network of pipes at multiple scales—hairline capillaries to massive arterial conduits.
+Liquid visible moving through transparent sections.
+Valves, pumps, junction points with status indicators.
+Dripping, humid, constant motion.
+Color palette: Teals and blues with amber status lights.
+```
+
+**ELECTRICAL HUB - BLOCK C**
+```
+Dense wiring, panel banks, diagnostic screens with scan lines.
+Flickering lighting—some sections bright, others failing.
+CRT-style terminals with amber/green text.
+Feeling: The structure's nervous system, degraded but functioning.
+Color palette: Purples/violets with amber and green screen glow.
+```
+
+**FUNGAL DEPTHS - SECTOR 12**
+```
+Deep section where fungal growth has become load-bearing.
+Bioluminescent fungi providing the only light—soft pulses of green/blue.
+Organic architecture—walls that grew rather than were built.
+Tension between beautiful and unsettling.
+Old wiring paths visible within fungal structures—they learned from the ship.
+Feeling: Being observed. Something is aware here.
+Color palette: Deep greens and teals, bioluminescent accents.
+```
+
+**GROW-DECK ALPHA**
+```
+Agricultural space. Rows of vegetation under intense grow-lights.
+Amber lighting from above, green from the plants.
+Hydroponic systems, automated tenders (mechanical), workers visible small in frame.
+Feeling: The structure's garden. Life being cultivated against entropy.
+```
+
+---
+
+## UI Elements
+
+**TERMINAL DISPLAY**
+```
+CRT-style screen with amber text on dark background.
+Scan lines visible, slight curvature to screen edge.
+Chunky industrial housing—this is a work tool, not consumer electronics.
+Status indicators: small lights, switches, worn labels.
+```
+
+**MAINTENANCE INTERFACE**
+```
+Handheld device or mounted panel.
+Diagnostic readouts, health bars, warning indicators.
+Physical buttons and switches alongside digital displays.
+Well-worn, personalized with tape or marks.
+```
+
+---
+
+## Style Guidelines
+
+### Color Palette (Reference)
+- **Deep Teal:** #0d2832 - Shadows, depths
+- **Teal:** #1a4a5c - Structure, midtones
+- **Purple/Violet:** #2d1f3d / #4a3260 - Dreamlike, electrical
+- **Amber:** #d4a24c - Warmth, crew, safety
+- **Grow Green:** #3d7a4a / #5ca86a - Bio-systems, life
+- **Warning Amber:** #c4762c - Alerts, emergency
+
+### Aesthetic Principles
+
+1. **Accumulation** - Nothing is new. Everything shows layers of repair.
+2. **Organic-Mechanical Fusion** - The line blurs. Moss on pipes. Wires in fungus.
+3. **Impossible Scale** - Spaces feel too large to be inside a vehicle.
+4. **Lived-In Texture** - Wear patterns, handprints, the archaeology of habitation.
+5. **Bioluminescence** - Natural light from living systems.
+6. **Wondrous Melancholy** - Beautiful and dying. Holy and hopeless.
+
+### What to Avoid
+- Pure white (too clinical)
+- Bright red (too aggressive—use amber for warnings)
+- Neon/cyberpunk palettes (wrong genre)
+- Desaturated gray (too lifeless)
+- Clean, new surfaces (everything is old)
+
+---
+
+## Reference Touchstones
+
+- **Ghibli Industrial:** Laputa engine rooms, Howl's castle machinery, Nausicaä's decaying technology
+- **Beksiński:** Organic architecture, bone and flesh as structure
+- **Tarkovsky's Stalker:** The Zone's dreamlogic, water/rust/decay
+- **Spwashi's existing work:** Bioluminescent color palette, impossible scale with intimate detail
+
+---
+
+## Delivery Notes
+
+### File Formats
+- PNG with transparency for portraits
+- PNG or high-quality JPG for backgrounds
+- Minimum 1080px width for mobile display
+- 2x resolution preferred for retina/high-DPI
+
+### Portrait Specs
+- Vertical orientation, roughly 2:3 ratio
+- Character from mid-chest up
+- Transparent or semi-transparent background (gradient to transparency)
+- Space at bottom for name/dialogue UI overlay
+
+### Background Specs
+- Vertical orientation (mobile-first game)
+- Roughly 9:16 ratio
+- Full opacity
+- Should work with UI overlays at bottom 30% of screen
+
+---
+
+*"The structure is beautiful because it's dying. The crew is beautiful because they're still here."*

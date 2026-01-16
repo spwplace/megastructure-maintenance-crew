@@ -1,13 +1,28 @@
 import type { Scene, DialogueScript } from '@/types';
 import { stateManager } from '@/core/StateManager';
+import { shiftSystem } from '@/systems/ShiftSystem';
+import { dialogueSystem } from '@/systems/DialogueSystem';
+import { sceneManager } from '@/systems/SceneManager';
 
-// --- Dialogue Scripts ---
+// --- Intro Dialogue (First time playing) ---
 
 export const introDialogue: DialogueScript = {
-  id: 'intro-shift-start',
-  startNode: 'start',
+  id: 'intro-first-shift',
+  startNode: 'wake',
   nodes: {
-    start: {
+    wake: {
+      text: 'You wake to the hum of the structure. It is always there—a low vibration in the walls, the floor, the air itself. The sound of a vast machine breathing.',
+      next: 'quarters',
+    },
+    quarters: {
+      text: 'Your bunk is small, efficient, personal in the way that years of habitation make any space personal. The walls are covered with marks from previous occupants—notes, stains, repairs.',
+      next: 'alarm',
+    },
+    alarm: {
+      text: 'The shift alert sounds. Soft, rhythmic. Time to work.',
+      next: 'briefing-start',
+    },
+    'briefing-start': {
       speaker: 'keth',
       text: "Shift's starting. Atmospheric readings are off in Sector 7-J again.",
       next: 'keth-2',
@@ -49,6 +64,11 @@ export const introDialogue: DialogueScript = {
     assignment: {
       speaker: 'keth',
       text: 'Solenne, you go with them. Dauro, fluid pressure in the secondary loop. Vell, I need you on sensor calibration in Block C.',
+      next: 'orrin-mention',
+    },
+    'orrin-mention': {
+      speaker: 'keth',
+      text: "Orrin—stay close. Last night's attack left some structural stress. If something opens up, I want you there fast.",
       next: 'solenne-1',
     },
     'solenne-1': {
@@ -64,10 +84,16 @@ export const introDialogue: DialogueScript = {
     'solenne-2': {
       speaker: 'solenne',
       text: "It's not— fine. Let's go.",
+      next: 'dauro-aside',
+    },
+    'dauro-aside': {
+      speaker: 'dauro',
+      text: "[quietly, to you] Don't let Vell get to you. They care, they just... express it weirdly.",
       next: 'end',
+      onShow: () => stateManager.modifyRelationship('dauro', 1),
     },
     end: {
-      text: 'The crew disperses. Another shift begins.',
+      text: 'The crew disperses. Your first shift with this squad begins.',
       next: null,
     },
   },
@@ -83,73 +109,16 @@ export const menuScene: Scene = {
 export const introScene: Scene = {
   id: 'intro',
   type: 'dialogue',
-  background: '/assets/backgrounds/crew-quarters.png',
+  background: null,
   dialogue: introDialogue.nodes[introDialogue.startNode],
   onEnter: () => {
     console.log('Entering intro scene');
+    shiftSystem.startShift(1);
   },
 };
 
-export const sector7Entrance: Scene = {
-  id: 'sector-7-entrance',
-  type: 'navigation',
-  background: '/assets/backgrounds/corridor-teal.png',
-  navigation: {
-    locationId: 'sector-7-entrance',
-    hotspots: [
-      {
-        id: 'to-atmospheric',
-        x: 50,
-        y: 40,
-        targetScene: 'sector-7j-atmospheric',
-        label: 'Atmospheric Processing',
-      },
-      {
-        id: 'to-quarters',
-        x: 20,
-        y: 70,
-        targetScene: 'crew-quarters',
-        label: 'Back to Quarters',
-      },
-    ],
-  },
-};
-
-export const atmosphericProcessing: Scene = {
-  id: 'sector-7j-atmospheric',
-  type: 'maintenance',
-  background: '/assets/backgrounds/atmospheric-processing.png',
-  maintenance: {
-    systemId: 'atmo-7j',
-    type: 'biological',
-    status: {
-      name: 'Atmospheric Bio-Filter Array',
-      health: 67,
-      warnings: [
-        'Moss Sheet 3 degraded',
-        'Humidity variance +12%',
-        'CO2 processing below threshold',
-      ],
-      critical: false,
-    },
-    interactions: [
-      {
-        id: 'inspect-moss',
-        label: 'Inspect moss sheets',
-        action: () => console.log('Inspecting moss...'),
-      },
-      {
-        id: 'check-humidity',
-        label: 'Check humidity sensors',
-        action: () => console.log('Checking sensors...'),
-      },
-    ],
-  },
-};
-
+// Re-export for backwards compatibility
 export const introScenes: Scene[] = [
   menuScene,
   introScene,
-  sector7Entrance,
-  atmosphericProcessing,
 ];

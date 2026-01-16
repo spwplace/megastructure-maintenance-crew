@@ -97,16 +97,6 @@ export interface GameState {
 }
 
 // --- Events ---
-export type GameEventType =
-  | 'scene:enter'
-  | 'scene:exit'
-  | 'dialogue:start'
-  | 'dialogue:choice'
-  | 'dialogue:end'
-  | 'navigation:move'
-  | 'maintenance:interact'
-  | 'state:change';
-
 export interface GameEvent {
   type: GameEventType;
   payload?: unknown;
@@ -129,3 +119,38 @@ export interface SaveData {
   timestamp: number;
   state: GameState;
 }
+
+// --- Shift System ---
+export type ShiftPhase = 'briefing' | 'work' | 'downtime' | 'emergency';
+
+export interface ShiftState {
+  number: number;
+  phase: ShiftPhase;
+  tasksCompleted: string[];
+  emergencyActive: boolean;
+}
+
+// --- Location System ---
+export interface Location {
+  id: string;
+  name: string;
+  type: 'crew-quarters' | 'corridor' | 'work-site' | 'exterior' | 'restricted';
+  connections: string[];
+  description: string;
+}
+
+// --- Extended Event Types ---
+export type GameEventType =
+  | 'scene:enter'
+  | 'scene:exit'
+  | 'dialogue:start'
+  | 'dialogue:choice'
+  | 'dialogue:end'
+  | 'dialogue:trigger'
+  | 'navigation:move'
+  | 'maintenance:interact'
+  | 'state:change'
+  | 'shift:advance'
+  | 'shift:phase'
+  | 'emergency:start'
+  | 'emergency:end';

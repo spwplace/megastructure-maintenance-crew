@@ -3,13 +3,18 @@ import { dialogueSystem } from '@/systems/DialogueSystem';
 import { stateManager } from '@/core/StateManager';
 import { uiManager } from '@/ui/UIManager';
 import { eventBus } from '@/core/EventBus';
+import { shiftSystem } from '@/systems/ShiftSystem';
+import { maintenanceSystem } from '@/systems/MaintenanceSystem';
 import { introScenes, introDialogue } from '@/data/scenes/intro';
+import { locationScenes } from '@/data/scenes/locations';
+import { createPlaceholderBackground, type LocationType } from '@/ui/PlaceholderArt';
 
 /**
  * Main game controller
  */
 export class Game {
   private initialized: boolean = false;
+  private emergencyChance: number = 0.15; // 15% chance per maintenance completion
 
   async init(): Promise<void> {
     if (this.initialized) return;
@@ -20,8 +25,9 @@ export class Game {
     uiManager.showLoading('Initializing systems...');
     uiManager.setLoadingProgress(10);
 
-    // Register scenes
+    // Register all scenes
     sceneManager.registerScenes(introScenes);
+    sceneManager.registerScenes(locationScenes);
     uiManager.setLoadingProgress(40);
 
     // Set up event listeners
@@ -41,7 +47,7 @@ export class Game {
     await this.delay(300);
     uiManager.hideLoading();
 
-    // Go to menu or restore state
+    // Go to menu
     await sceneManager.goToScene('menu', false);
 
     this.initialized = true;
@@ -49,15 +55,41 @@ export class Game {
   }
 
   private setupEventListeners(): void {
-    // Log scene changes
+    // Log scene changes and handle placeholder backgrounds
     eventBus.on('scene:enter', (event) => {
-      console.log('Entered scene:', event.payload);
+      const payload = event.payload as { sceneId: string };
+      console.log('Entered scene:', payload.sceneId);
+
+      // Apply placeholder background based on scene
+      this.applyPlaceholderBackground(payload.sceneId);
     });
 
     // Handle dialogue completion
     eventBus.on('dialogue:end', () => {
-      // Auto-save after dialogue
       stateManager.save();
+    });
+
+    // Handle maintenance completion - check for emergency
+    eventBus.on('maintenance:interact', (event) => {
+      const payload = event.payload as { action: string };
+      if (payload.action === 'complete') {
+        this.checkForEmergency();
+      }
+    });
+
+    // Handle shift phase changes
+    eventBus.on('shift:phase', (event) => {
+      const payload = event.payload as { phase: string };
+      console.log('Shift phase:', payload.phase);
+    });
+
+    // Handle emergency events
+    eventBus.on('emergency:start', () => {
+      console.log('EMERGENCY STARTED');
+    });
+
+    eventBus.on('emergency:end', () => {
+      console.log('Emergency resolved');
     });
 
     // Handle keyboard input
@@ -67,7 +99,45 @@ export class Game {
           dialogueSystem.skipTypewriter();
         }
       }
+      // Debug: Trigger emergency with 'E' key
+      if (e.key === 'e' && e.ctrlKey) {
+        this.triggerEmergency();
+      }
     });
+  }
+
+  private applyPlaceholderBackground(sceneId: string): void {
+    const sceneLayer = document.getElementById('scene-layer');
+    if (!sceneLayer) return;
+
+    // Map scene IDs to location types
+    const sceneToLocation: Record<string, LocationType> = {
+      'menu': 'menu',
+      'intro': 'crew-quarters',
+      'crew-quarters': 'crew-quarters',
+      'sector-7-corridor': 'corridor',
+      'sector-7-entrance': 'corridor',
+      'sector-7j-atmospheric': 'atmospheric-processing',
+      'fluid-systems': 'fluid-systems',
+      'electrical-hub': 'electrical-hub',
+      'fungal-depths': 'fungal-depths',
+      'the-wound': 'the-wound',
+      'hopper-yard': 'hopper-yard',
+      'grow-deck': 'grow-deck',
+      'briefing': 'crew-quarters',
+      'rest-bunk': 'crew-quarters',
+      'talk-keth': 'crew-quarters',
+      'talk-solenne': 'crew-quarters',
+      'talk-vell': 'crew-quarters',
+      'talk-dauro': 'crew-quarters',
+    };
+
+    const locationType = sceneToLocation[sceneId] || 'corridor';
+
+    // Clear existing and add placeholder
+    sceneLayer.innerHTML = '';
+    const placeholder = createPlaceholderBackground(locationType);
+    sceneLayer.appendChild(placeholder);
   }
 
   private setupMenuButtons(): void {
@@ -96,13 +166,14 @@ export class Game {
     stateManager.reset();
     stateManager.clearSave();
 
-    // Start intro
+    // Start intro scene
     await sceneManager.goToScene('intro');
 
-    // After intro scene's dialogue, we need to start the actual dialogue
+    // Start the intro dialogue sequence
     dialogueSystem.startDialogue(introDialogue, () => {
-      // After dialogue ends, go to navigation
-      sceneManager.goToScene('sector-7-entrance');
+      // After dialogue ends, transition to work phase
+      shiftSystem.beginWork();
+      sceneManager.goToScene('sector-7-corridor');
     });
   }
 
@@ -112,9 +183,10 @@ export class Game {
     const loaded = stateManager.load();
     if (loaded) {
       const currentScene = stateManager.getCurrentScene();
+      // Restore shift state
+      shiftSystem.startShift(stateManager.getShift());
       await sceneManager.goToScene(currentScene);
     } else {
-      // Fall back to new game if load fails
       await this.startNewGame();
     }
   }
@@ -122,6 +194,62 @@ export class Game {
   openSettings(): void {
     console.log('Settings not yet implemented');
     // TODO: Implement settings menu
+  }
+
+  private checkForEmergency(): void {
+    // Only trigger during work phase
+    if (shiftSystem.getPhase() !== 'work') return;
+
+    // Random chance of emergency after completing maintenance
+    if (Math.random() < this.emergencyChance) {
+      this.triggerEmergency();
+    }
+  }
+
+  private triggerEmergency(): void {
+    shiftSystem.triggerEmergency();
+
+    // Emergency dialogue
+    const emergencyDialogue = {
+      id: 'emergency-alert',
+      startNode: 'start',
+      nodes: {
+        start: {
+          text: 'The structure shudders. Alarms begin to wail. The hum of the reactors changes pitch—something has gone wrong.',
+          next: 'rumble',
+        },
+        rumble: {
+          text: 'A deep rumbling echoes through the corridors. The enemy is attacking again.',
+          next: 'orrin',
+        },
+        orrin: {
+          speaker: 'orrin',
+          text: "[over comms] Breach in Section 14. Hull integrity failing. I need backup—now.",
+          choices: [
+            { text: 'On my way.', next: 'respond' },
+            { text: "I'll finish here first.", next: 'delay' },
+          ],
+        },
+        respond: {
+          speaker: 'keth',
+          text: '[over comms] Go. Both of you. Everyone else, brace and hold position.',
+          next: 'end',
+        },
+        delay: {
+          speaker: 'orrin',
+          text: "There is no 'here first.' Atmosphere is venting. Move.",
+          next: 'end',
+        },
+        end: {
+          text: 'The structure groans around you. Time to move.',
+        },
+      },
+    };
+
+    dialogueSystem.startDialogue(emergencyDialogue, () => {
+      // After dialogue, go to emergency maintenance
+      sceneManager.goToScene('the-wound');
+    });
   }
 
   private delay(ms: number): Promise<void> {
