@@ -10,7 +10,7 @@ export type LocationId = string;
 export interface Scene {
   id: SceneId;
   type: 'dialogue' | 'navigation' | 'maintenance' | 'menu';
-  background?: string;
+  background?: string | null; // null = use placeholder
   characters?: CharacterPlacement[];
   dialogue?: DialogueNode;
   navigation?: NavigationData;

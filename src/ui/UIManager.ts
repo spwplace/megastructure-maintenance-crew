@@ -169,17 +169,24 @@ export class UIManager {
     container.innerHTML = '';
 
     hotspots.forEach((hotspot) => {
-      const el = document.createElement('div');
-      el.className = 'nav-hotspot visible';
-      el.style.left = `${hotspot.x}%`;
-      el.style.top = `${hotspot.y}%`;
-      el.style.width = '60px';
-      el.style.height = '60px';
-      el.addEventListener('click', hotspot.callback);
+      const marker = document.createElement('div');
+      marker.className = 'hotspot-marker';
+      marker.style.left = `${hotspot.x}%`;
+      marker.style.top = `${hotspot.y}%`;
+
+      const icon = document.createElement('div');
+      icon.className = 'hotspot-icon';
+      marker.appendChild(icon);
+
       if (hotspot.label) {
-        el.title = hotspot.label;
+        const label = document.createElement('div');
+        label.className = 'hotspot-label';
+        label.textContent = hotspot.label;
+        marker.appendChild(label);
       }
-      container.appendChild(el);
+
+      marker.addEventListener('click', hotspot.callback);
+      container.appendChild(marker);
     });
   }
 
@@ -245,6 +252,83 @@ export class UIManager {
       element.style.transition = `all ${duration}ms ease-in-out`;
       setTimeout(resolve, duration);
     });
+  }
+
+  // --- Rumors Panel ---
+  private rumorsPanel: HTMLElement | null = null;
+  private rumorsButton: HTMLElement | null = null;
+
+  showRumorsButton(rumors: readonly string[]): void {
+    if (this.rumorsButton) return;
+
+    const uiLayer = this.elements.get('ui-layer');
+    if (!uiLayer) return;
+
+    this.rumorsButton = document.createElement('button');
+    this.rumorsButton.className = 'rumors-button';
+    this.rumorsButton.innerHTML = `RUMORS <span class="count">${rumors.length}</span>`;
+    this.rumorsButton.addEventListener('click', () => this.toggleRumorsPanel(rumors));
+    uiLayer.appendChild(this.rumorsButton);
+  }
+
+  hideRumorsButton(): void {
+    this.rumorsButton?.remove();
+    this.rumorsButton = null;
+    this.hideRumorsPanel();
+  }
+
+  private toggleRumorsPanel(rumors: readonly string[]): void {
+    if (this.rumorsPanel) {
+      this.hideRumorsPanel();
+    } else {
+      this.showRumorsPanel(rumors);
+    }
+  }
+
+  private showRumorsPanel(rumors: readonly string[]): void {
+    if (this.rumorsPanel) return;
+
+    const uiLayer = this.elements.get('ui-layer');
+    if (!uiLayer) return;
+
+    this.rumorsPanel = document.createElement('div');
+    this.rumorsPanel.id = 'rumors-panel';
+
+    const header = document.createElement('div');
+    header.className = 'rumors-header';
+    header.innerHTML = `
+      <span>Collected Rumors</span>
+      <button class="rumors-close">&times;</button>
+    `;
+    this.rumorsPanel.appendChild(header);
+
+    const list = document.createElement('div');
+    list.className = 'rumors-list';
+
+    if (rumors.length === 0) {
+      list.innerHTML = '<div class="rumors-empty">No rumors collected yet. Talk to your crew.</div>';
+    } else {
+      rumors.forEach((rumor) => {
+        const item = document.createElement('div');
+        item.className = 'rumor-item';
+        item.textContent = rumor;
+        list.appendChild(item);
+      });
+    }
+
+    this.rumorsPanel.appendChild(list);
+
+    // Close button handler
+    header.querySelector('.rumors-close')?.addEventListener('click', () => {
+      this.hideRumorsPanel();
+    });
+
+    uiLayer.appendChild(this.rumorsPanel);
+  }
+
+  private hideRumorsPanel(): void {
+    this.rumorsPanel?.remove();
+    this.rumorsPanel = null;
   }
 }
 

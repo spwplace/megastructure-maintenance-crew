@@ -1,9 +1,10 @@
 import type { Scene, DialogueScript } from '@/types';
 import { stateManager } from '@/core/StateManager';
 import { shiftSystem } from '@/systems/ShiftSystem';
-import { maintenanceSystem, createAtmosphericTask, createFluidSystemTask, createElectricalTask, createEmergencyTask } from '@/systems/MaintenanceSystem';
+import { maintenanceSystem, createAtmosphericTask, createFluidSystemTask, createElectricalTask, createEmergencyTask, createHopperYardTask, createGrowDeckTask } from '@/systems/MaintenanceSystem';
 import { sceneManager } from '@/systems/SceneManager';
 import { dialogueSystem } from '@/systems/DialogueSystem';
+import { uiManager } from '@/ui/UIManager';
 
 // ============================================
 // CREW QUARTERS - Home base / Downtime location
@@ -22,6 +23,7 @@ export const crewQuartersScene: Scene = {
         y: 30,
         targetScene: 'sector-7-corridor',
         label: 'Exit to Corridor',
+        condition: () => shiftSystem.getPhase() !== 'downtime',
       },
       {
         id: 'talk-keth',
@@ -75,6 +77,44 @@ export const crewQuartersScene: Scene = {
   },
   onEnter: () => {
     shiftSystem.showIndicator();
+
+    // Show rumors button during downtime if player has collected any
+    const rumors = stateManager.getRumors();
+    if (shiftSystem.getPhase() === 'downtime' && rumors.length > 0) {
+      uiManager.showRumorsButton(rumors);
+    } else {
+      uiManager.hideRumorsButton();
+    }
+
+    // When entering quarters after completing work, transition to downtime
+    if (shiftSystem.getPhase() === 'work' && shiftSystem.canProceedToDowntime()) {
+      // Start downtime transition dialogue
+      const downtimeTransition: import('@/types').DialogueScript = {
+        id: 'downtime-transition',
+        startNode: 'start',
+        nodes: {
+          start: {
+            text: "You return to the crew quarters. The others are already back, settling into the quiet rhythms of rest period.",
+            next: 'observation',
+          },
+          observation: {
+            text: "The hum of the structure feels different here—softer, almost peaceful. The amber lights cast long shadows across familiar bunks.",
+            next: 'end',
+          },
+          end: {
+            text: "For a few hours, the endless work can wait.",
+          },
+        },
+      };
+      dialogueSystem.startDialogue(downtimeTransition, () => {
+        shiftSystem.beginDowntime();
+        // Re-render the scene to show downtime options
+        sceneManager.goToScene('crew-quarters', false);
+      });
+    }
+  },
+  onExit: () => {
+    uiManager.hideRumorsButton();
   },
 };
 
@@ -91,37 +131,51 @@ export const sector7CorridorScene: Scene = {
     hotspots: [
       {
         id: 'to-quarters',
-        x: 15,
+        x: 10,
         y: 50,
         targetScene: 'crew-quarters',
-        label: 'Crew Quarters',
+        label: shiftSystem.canProceedToDowntime() ? 'Return to Quarters (End Work)' : 'Crew Quarters',
       },
       {
         id: 'to-atmospheric',
-        x: 50,
-        y: 35,
+        x: 35,
+        y: 30,
         targetScene: 'sector-7j-atmospheric',
         label: 'Atmospheric Processing',
       },
       {
         id: 'to-fluid',
-        x: 75,
-        y: 45,
+        x: 65,
+        y: 30,
         targetScene: 'fluid-systems',
         label: 'Fluid Systems',
       },
       {
+        id: 'to-hopper',
+        x: 85,
+        y: 45,
+        targetScene: 'hopper-yard',
+        label: 'Hopper Yard',
+      },
+      {
+        id: 'to-growdeck',
+        x: 50,
+        y: 50,
+        targetScene: 'grow-deck',
+        label: 'Grow-Deck Alpha',
+      },
+      {
         id: 'to-electrical',
-        x: 60,
-        y: 70,
+        x: 25,
+        y: 65,
         targetScene: 'electrical-hub',
         label: 'Electrical Hub',
         condition: () => stateManager.getShift() > 1 || stateManager.getFlag('electrical-unlocked'),
       },
       {
         id: 'to-depths',
-        x: 30,
-        y: 80,
+        x: 75,
+        y: 70,
         targetScene: 'fungal-depths',
         label: 'Fungal Depths',
         condition: () => stateManager.getFlag('depths-unlocked'),
@@ -130,6 +184,24 @@ export const sector7CorridorScene: Scene = {
   },
   onEnter: () => {
     shiftSystem.showIndicator();
+    // Check if player can proceed to downtime
+    if (shiftSystem.canProceedToDowntime() && shiftSystem.getPhase() === 'work') {
+      // Show a hint that they can return to quarters to rest
+      const hint = document.createElement('div');
+      hint.className = 'alert-banner';
+      hint.style.animation = 'none';
+      hint.style.borderColor = 'var(--color-grow-light)';
+      hint.style.color = 'var(--color-grow-light)';
+      hint.innerHTML = `
+        <div style="font-size: 0.9rem;">Work complete for this shift.</div>
+        <div style="font-size: 0.75rem; margin-top: 4px;">Return to quarters to rest.</div>
+      `;
+      document.getElementById('game')?.appendChild(hint);
+      setTimeout(() => {
+        hint.classList.add('fade-out');
+        setTimeout(() => hint.remove(), 300);
+      }, 3000);
+    }
   },
 };
 
@@ -231,6 +303,151 @@ export const electricalHubScene: Scene = {
 };
 
 // ============================================
+// HOPPER YARD - Exterior work area
+// ============================================
+
+export const hopperYardScene: Scene = {
+  id: 'hopper-yard',
+  type: 'maintenance',
+  background: null,
+  maintenance: {
+    systemId: 'hopper-yard',
+    type: 'mechanical',
+    status: {
+      name: 'Fluid Transfer Hopper',
+      health: 58,
+      warnings: ['Transfer rate below optimal', 'Debris accumulation detected', 'Seal wear on hatch 3'],
+      critical: false,
+    },
+    interactions: [],
+  },
+  onEnter: () => {
+    shiftSystem.showIndicator();
+    const task = createHopperYardTask();
+    maintenanceSystem.startTask(task);
+
+    if (!stateManager.hasVisited('hopper-yard')) {
+      setTimeout(() => {
+        dialogueSystem.startDialogue(hopperYardIntroDialogue);
+      }, 500);
+    }
+  },
+  onExit: () => {
+    if (maintenanceSystem.isActive()) {
+      maintenanceSystem.finishTask();
+      shiftSystem.completeTask('hopper-yard');
+    }
+  },
+};
+
+const hopperYardIntroDialogue: DialogueScript = {
+  id: 'hopper-yard-intro',
+  startNode: 'start',
+  nodes: {
+    start: {
+      text: 'The hopper yard opens before you—a vast exterior space where the structure meets something like sky. Scaffolding and gravel piles stretch into hazy distance.',
+      next: 'scale',
+    },
+    scale: {
+      text: "Through gaps in the scaffolding, you can see the outer hull curving away impossibly. The structure is larger than any building should be. Larger than cities.",
+      next: 'observation',
+    },
+    observation: {
+      text: "The fluid hoppers loom here—massive containers that somehow supply systems kilometers away. There's no visible connection. The fluid just... arrives where it's needed.",
+      choices: [
+        { text: 'How does that work?', next: 'impossible' },
+        { text: 'Focus on the task at hand.', next: 'end' },
+      ],
+    },
+    impossible: {
+      text: "It doesn't. Not by any physics you know. The structure has its own logic, accumulated over generations of desperate repairs. Understanding isn't your job. Maintenance is.",
+      next: 'end',
+    },
+    end: {
+      text: 'The wind—or something like wind—carries the smell of metal and fluid. Time to work.',
+    },
+  },
+};
+
+// ============================================
+// GROW-DECK ALPHA - Agricultural area
+// ============================================
+
+export const growDeckScene: Scene = {
+  id: 'grow-deck',
+  type: 'maintenance',
+  background: null,
+  maintenance: {
+    systemId: 'grow-deck-alpha',
+    type: 'biological',
+    status: {
+      name: 'Grow-Deck Alpha Hydroponics',
+      health: 71,
+      warnings: ['Nutrient imbalance in Section 3', 'Light cycle drift detected', 'Root rot risk elevated'],
+      critical: false,
+    },
+    interactions: [],
+  },
+  onEnter: () => {
+    shiftSystem.showIndicator();
+    const task = createGrowDeckTask();
+    maintenanceSystem.startTask(task);
+
+    if (!stateManager.hasVisited('grow-deck')) {
+      setTimeout(() => {
+        dialogueSystem.startDialogue(growDeckIntroDialogue);
+      }, 500);
+    }
+  },
+  onExit: () => {
+    if (maintenanceSystem.isActive()) {
+      maintenanceSystem.finishTask();
+      shiftSystem.completeTask('grow-deck-alpha');
+    }
+  },
+};
+
+const growDeckIntroDialogue: DialogueScript = {
+  id: 'grow-deck-intro',
+  startNode: 'start',
+  nodes: {
+    start: {
+      text: 'Rows of vegetation stretch into green-lit distance. The air is thick with humidity and the smell of growing things. Life, cultivated against entropy.',
+      next: 'solenne',
+    },
+    solenne: {
+      speaker: 'solenne',
+      text: "Beautiful, isn't it? This deck has been producing for three generations. Some of these root systems are older than anyone alive.",
+      next: 'observation',
+    },
+    observation: {
+      speaker: 'solenne',
+      text: "The plants don't just feed us—they process our air, regulate our water, break down our waste. We're not maintaining a garden. We're maintaining a lung.",
+      choices: [
+        { text: "How do you keep them all alive?", next: 'care' },
+        { text: "What happens if they fail?", next: 'failure' },
+        { text: "Let's get to work.", next: 'end' },
+      ],
+    },
+    care: {
+      speaker: 'solenne',
+      text: "Constant attention. They tell you what they need—you just have to learn their language. The curl of a leaf. The color of a stem. Small signs of larger problems.",
+      next: 'end',
+      onShow: () => stateManager.modifyRelationship('solenne', 1),
+    },
+    failure: {
+      speaker: 'solenne',
+      text: "Then the mechanical systems have to compensate. And they're already stressed. Everything is connected. Everything depends on everything else.",
+      next: 'end',
+    },
+    end: {
+      speaker: 'solenne',
+      text: "Let's check the nutrient feeds. I have a bad feeling about Section 3.",
+    },
+  },
+};
+
+// ============================================
 // FUNGAL DEPTHS - Special area
 // ============================================
 
@@ -252,8 +469,16 @@ export const fungalDepthsScene: Scene = {
         id: 'network-1',
         x: 40,
         y: 40,
-        targetScene: 'fungal-network-dialogue',
+        targetScene: 'fungal-network',
         label: 'Examine Network',
+      },
+      {
+        id: 'deeper',
+        x: 70,
+        y: 55,
+        targetScene: 'fungal-deeper',
+        label: 'Go Deeper',
+        condition: () => stateManager.getFlag('touched-fungal') || stateManager.getShift() > 2,
       },
     ],
   },
@@ -262,6 +487,151 @@ export const fungalDepthsScene: Scene = {
     if (!stateManager.hasVisited('fungal-depths')) {
       dialogueSystem.startDialogue(fungalDepthsIntroDialogue);
     }
+  },
+};
+
+// ============================================
+// FUNGAL NETWORK - Interactive scene
+// ============================================
+
+export const fungalNetworkScene: Scene = {
+  id: 'fungal-network',
+  type: 'dialogue',
+  background: null,
+  dialogue: {
+    text: '',
+  },
+  onEnter: () => {
+    dialogueSystem.startDialogue(fungalNetworkDialogue, () => {
+      sceneManager.goToScene('fungal-depths');
+    });
+  },
+};
+
+const fungalNetworkDialogue: DialogueScript = {
+  id: 'fungal-network',
+  startNode: 'start',
+  nodes: {
+    start: {
+      text: 'The fungal network spreads across the wall before you—veins of bioluminescent growth pulsing with soft green light. It follows the old wiring paths, but has grown far beyond them.',
+      choices: [
+        { text: 'Touch the growth', next: 'touch' },
+        { text: 'Listen closely', next: 'listen' },
+        { text: 'Step back', next: 'back' },
+      ],
+    },
+    touch: {
+      text: 'The surface is cool, slightly tacky. As your fingers make contact, the glow intensifies. Something pulses through the network—a wave of light that spreads outward from your touch.',
+      next: 'response',
+      onShow: () => stateManager.setFlag('touched-fungal'),
+    },
+    response: {
+      text: 'For a moment, you feel something. Not quite sound, not quite sensation. A presence. Vast and patient and curious. Then the light fades to its normal rhythm.',
+      choices: [
+        { text: "What are you?", next: 'question' },
+        { text: 'Pull your hand away quickly.', next: 'retreat' },
+      ],
+    },
+    question: {
+      text: "There's no answer. Of course there isn't—it's fungus, not a person. But something lingers. The impression of being seen. Known. Filed away for later consideration.",
+      next: 'end',
+      onShow: () => {
+        stateManager.addRumor('The fungal networks respond to touch. Something in them is aware—or learning to be.');
+        stateManager.modifyRelationship('solenne', 1);
+      },
+    },
+    retreat: {
+      text: "Your hand comes away clean. The glow continues its slow pulse, indifferent to your fear. Whatever moment existed between you and the network has passed.",
+      next: 'end',
+    },
+    listen: {
+      text: 'You hold still, straining to hear. At first there is only silence. Then, gradually, a sound emerges—not from your ears, but somewhere deeper. A hum. A rhythm. Like breathing.',
+      next: 'listen-2',
+    },
+    'listen-2': {
+      text: "The network is carrying signals. Electrical impulses traveling along fungal threads. The old crew systems, rerouted through living tissue. The structure's nervous system, rebuilt by something that grew here in the dark.",
+      next: 'end',
+      onShow: () => stateManager.addRumor('The fungal networks carry signals now—like a nervous system grown in the dark.'),
+    },
+    back: {
+      text: 'You step away from the growth. Some things are better left unexamined. The glow continues its slow pulse, patient and eternal.',
+      next: 'end',
+    },
+    end: {
+      text: 'The depths hum quietly around you. Whatever is happening here has been happening for a long time. It will continue long after you are gone.',
+    },
+  },
+};
+
+// ============================================
+// FUNGAL DEEPER - Hidden area
+// ============================================
+
+export const fungalDeeperScene: Scene = {
+  id: 'fungal-deeper',
+  type: 'dialogue',
+  background: null,
+  dialogue: {
+    text: '',
+  },
+  onEnter: () => {
+    dialogueSystem.startDialogue(fungalDeeperDialogue, () => {
+      sceneManager.goToScene('fungal-depths');
+    });
+  },
+};
+
+const fungalDeeperDialogue: DialogueScript = {
+  id: 'fungal-deeper',
+  startNode: 'start',
+  nodes: {
+    start: {
+      text: 'The passage narrows, walls closing in until you have to turn sideways to proceed. The bioluminescence grows stronger here—the fungal growth covers everything.',
+      next: 'chamber',
+    },
+    chamber: {
+      text: 'You emerge into a chamber unlike any you have seen. The fungal growth here is different—structured, almost architectural. It has built something. A space. A... room.',
+      next: 'observation',
+    },
+    observation: {
+      text: 'In the center of the chamber, fungal tendrils have grown around something mechanical. Old. Pre-siege, maybe. A terminal of some kind, half-absorbed into the living tissue.',
+      choices: [
+        { text: 'Try to access the terminal.', next: 'terminal' },
+        { text: 'Examine the fungal structures.', next: 'structures' },
+        { text: "This doesn't feel safe. Leave.", next: 'leave' },
+      ],
+    },
+    terminal: {
+      text: 'You brush away fungal growth from the interface. The screen flickers—amber text on black. Corrupted data scrolls past. Coordinates. Dates. A word repeats: ARRIVAL.',
+      next: 'terminal-2',
+    },
+    'terminal-2': {
+      text: 'Then the screen dies. The fungal tendrils pulse once, twice, and grow still. Whatever data existed here, the network has been absorbing it for years. Learning from it.',
+      next: 'end',
+      onShow: () => {
+        stateManager.setFlag('found-deep-terminal');
+        stateManager.addRumor("There's a terminal in the fungal depths. The word 'ARRIVAL' appears in its corrupted data. The network has been absorbing it.");
+      },
+    },
+    structures: {
+      text: "The fungal growth isn't random. It's organized—ribs and buttresses supporting the chamber, conduits channeling nutrients and signals. The network hasn't just grown here. It has engineered this space.",
+      next: 'structures-2',
+    },
+    'structures-2': {
+      text: 'You realize with quiet horror that you are standing inside something. Not a room. A organ. Part of a larger system that is still growing, still building, still becoming something new.',
+      next: 'end',
+      onShow: () => {
+        stateManager.setFlag('understood-fungal-architecture');
+        stateManager.addRumor('The fungal network is building. Engineering spaces. Growing into something with purpose.');
+      },
+    },
+    leave: {
+      text: 'Trust your instincts. Some knowledge comes at too high a cost. You retreat through the narrow passage, the bioluminescent glow dimming behind you.',
+      next: 'end',
+    },
+    end: {
+      text: 'The depths release you. But you carry something back—a sense of scale, of time, of slow and patient growth. The structure is alive in ways no one fully understands.',
+    },
   },
 };
 
@@ -772,30 +1142,189 @@ function getBriefingDialogue(shift: number): DialogueScript {
         },
       },
     },
-  };
-
-  // Default briefing for shifts > 2
-  const defaultBriefing: DialogueScript = {
-    id: `briefing-${shift}`,
-    startNode: 'start',
-    nodes: {
-      start: {
-        speaker: 'keth',
-        text: `Shift ${shift}. The usual mix of failing systems and impossible demands. You know the drill.`,
-        next: 'status',
+    3: {
+      id: 'briefing-3',
+      startNode: 'start',
+      nodes: {
+        start: {
+          speaker: 'keth',
+          text: "Quiet night. Too quiet. Makes me nervous.",
+          next: 'observation',
+        },
+        observation: {
+          speaker: 'dauro',
+          text: "The fluid systems are behaving strangely. Pressure readings don't match the flow rates. Like the structure's... rerouting things on its own.",
+          next: 'vell',
+        },
+        vell: {
+          speaker: 'vell',
+          text: "I noticed the same with the electrical grid. Signals appearing in dead sections. Power flowing through conduits that shouldn't exist.",
+          next: 'keth-2',
+        },
+        'keth-2': {
+          speaker: 'keth',
+          text: "Just focus on what we can fix. The structure's been adapting since before any of us were born. It'll keep adapting after we're gone.",
+          next: 'end',
+        },
+        end: {
+          text: "The crew exchanges glances. Something has changed, but no one can say what.",
+        },
       },
-      status: {
-        speaker: 'keth',
-        text: "Check the sectors. Fix what you can. Report anything unusual. And stay sharp—the attacks have been more frequent lately.",
-        next: 'end',
+    },
+    4: {
+      id: 'briefing-4',
+      startNode: 'start',
+      nodes: {
+        start: {
+          speaker: 'keth',
+          text: "Reports from the outer sections. Fungal growth has spread further than we thought.",
+          next: 'solenne',
+        },
+        solenne: {
+          speaker: 'solenne',
+          text: "It's not just spreading—it's connecting. I've mapped the growth patterns. They follow the old wiring paths, but they're building something new.",
+          next: 'orrin',
+        },
+        orrin: {
+          speaker: 'orrin',
+          text: "As long as it's not breaching walls, it's not my problem. Focus on what's broken.",
+          next: 'keth-2',
+        },
+        'keth-2': {
+          speaker: 'keth',
+          text: "Orrin's right. Whatever the fungus is doing, we've got more pressing issues. Grow-deck's showing nutrient deficiency. Hopper yard needs maintenance.",
+          next: 'end',
+        },
+        end: {
+          text: "The briefing ends, but Solenne's words linger. The structure is changing.",
+        },
       },
-      end: {
-        text: 'The crew nods and disperses to their stations.',
+    },
+    5: {
+      id: 'briefing-5',
+      startNode: 'start',
+      nodes: {
+        start: {
+          speaker: 'vell',
+          text: "I found something. In the archives. I need to tell you all.",
+          next: 'keth',
+        },
+        keth: {
+          speaker: 'keth',
+          text: "This isn't the time for research, Vell. We've got—",
+          next: 'vell-2',
+        },
+        'vell-2': {
+          speaker: 'vell',
+          text: "Navigation data. Active navigation data. Something is still plotting a course. After all these generations under siege, the structure still knows where it's going.",
+          next: 'silence',
+        },
+        silence: {
+          text: "Silence falls over the crew quarters. Even Keth has nothing to say.",
+          next: 'dauro',
+        },
+        dauro: {
+          speaker: 'dauro',
+          text: "Going where?",
+          next: 'vell-3',
+        },
+        'vell-3': {
+          speaker: 'vell',
+          text: "I don't know. The data's encrypted with systems we don't have access to. But it's labeled 'ARRIVAL.'",
+          next: 'end',
+        },
+        end: {
+          speaker: 'keth',
+          text: "...We still have work to do. Whatever's happening, it doesn't change the shift.",
+        },
       },
     },
   };
 
-  return briefings[shift] || defaultBriefing;
+  // Varied default briefings for shifts > 5
+  const laterShiftBriefings: DialogueScript[] = [
+    {
+      id: `briefing-${shift}-a`,
+      startNode: 'start',
+      nodes: {
+        start: {
+          speaker: 'keth',
+          text: "Another attack during rest cycle. Section 14 took a glancing hit—nothing critical, but the stress is building.",
+          next: 'status',
+        },
+        status: {
+          speaker: 'orrin',
+          text: "I patched what I could while you slept. But the hull integrity in that sector... we're running out of good material for repairs.",
+          next: 'end',
+        },
+        end: {
+          speaker: 'keth',
+          text: "Then we make do with bad material. We always have. Move out.",
+        },
+      },
+    },
+    {
+      id: `briefing-${shift}-b`,
+      startNode: 'start',
+      nodes: {
+        start: {
+          speaker: 'solenne',
+          text: "The moss cultures predicted the last attack. Three hours before it happened, they started curling.",
+          next: 'reaction',
+        },
+        reaction: {
+          speaker: 'vell',
+          text: "Coincidence. Plants don't have precognition.",
+          next: 'solenne-2',
+        },
+        'solenne-2': {
+          speaker: 'solenne',
+          text: "No, but they sense vibrations we can't. Pressure changes. Electromagnetic fluctuations. They're listening to the structure—and the structure knows when attacks are coming.",
+          next: 'end',
+        },
+        end: {
+          speaker: 'keth',
+          text: "Interesting theory. Write it up when you're done with your actual work.",
+        },
+      },
+    },
+    {
+      id: `briefing-${shift}-c`,
+      startNode: 'start',
+      nodes: {
+        start: {
+          speaker: 'dauro',
+          text: "I've been thinking about my theory. The two-vessel theory. I think I found proof.",
+          next: 'proof',
+        },
+        proof: {
+          speaker: 'dauro',
+          text: "The fluid systems in the outer sections—they use a completely different pressure standard. Different pipe gauges. Different seals. It's not just repairs layered on repairs. It's two different engineering philosophies, merged.",
+          next: 'reaction',
+        },
+        reaction: {
+          speaker: 'keth',
+          text: "Even if that's true—and I'm not saying it is—what does it change? We're still here. The siege is still happening.",
+          next: 'end',
+        },
+        end: {
+          speaker: 'dauro',
+          text: "It changes everything. If the structure is two things that became one... maybe the enemy is what happens when they try to separate again.",
+        },
+      },
+    },
+  ];
+
+  // Return specific briefing or cycle through later ones
+  if (briefings[shift]) {
+    return briefings[shift];
+  }
+
+  // Cycle through the varied briefings for higher shifts
+  const index = (shift - 6) % laterShiftBriefings.length;
+  const briefing = laterShiftBriefings[index];
+  briefing.id = `briefing-${shift}`;
+  return briefing;
 }
 
 // ============================================
@@ -1016,7 +1545,11 @@ export const locationScenes: Scene[] = [
   atmosphericScene,
   fluidSystemsScene,
   electricalHubScene,
+  hopperYardScene,
+  growDeckScene,
   fungalDepthsScene,
+  fungalNetworkScene,
+  fungalDeeperScene,
   theWoundScene,
   talkKethScene,
   talkSolenneScene,

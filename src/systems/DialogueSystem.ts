@@ -125,23 +125,38 @@ export class DialogueSystem {
     uiManager.setDialogueChoices(choiceButtons);
   }
 
+  private continueHandler: (() => void) | null = null;
+
   private waitForContinue(callback: () => void): void {
     const dialogueContainer = document.getElementById('dialogue-container');
     if (!dialogueContainer) return;
 
-    const handleClick = () => {
+    // Remove any existing handler first
+    if (this.continueHandler) {
+      dialogueContainer.removeEventListener('click', this.continueHandler);
+    }
+
+    this.continueHandler = () => {
       if (this.isTyping) {
         this.skipTypewriter();
       } else {
-        dialogueContainer.removeEventListener('click', handleClick);
+        dialogueContainer.removeEventListener('click', this.continueHandler!);
+        this.continueHandler = null;
         callback();
       }
     };
 
-    dialogueContainer.addEventListener('click', handleClick);
+    dialogueContainer.addEventListener('click', this.continueHandler);
   }
 
   private endDialogue(): void {
+    // Clean up any pending click handler
+    if (this.continueHandler) {
+      const dialogueContainer = document.getElementById('dialogue-container');
+      dialogueContainer?.removeEventListener('click', this.continueHandler);
+      this.continueHandler = null;
+    }
+
     this.currentScript = null;
     this.currentNode = null;
     uiManager.hideDialogue();

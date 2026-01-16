@@ -1003,3 +1003,185 @@ body {
   color: var(--color-text);
   border-color: var(--color-amber);
 }
+
+/* ========================================
+   RUMORS / JOURNAL DISPLAY
+   ======================================== */
+
+#rumors-panel {
+  position: absolute;
+  top: 60px;
+  left: var(--game-padding);
+  right: var(--game-padding);
+  max-height: calc(100vh - 300px);
+  background: rgba(10, 18, 20, 0.97);
+  border: 1px solid var(--color-purple);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  z-index: 30;
+}
+
+.rumors-header {
+  padding: 12px 16px;
+  background: var(--color-purple);
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  color: var(--color-text-bright);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rumors-close {
+  background: none;
+  border: none;
+  color: var(--color-text);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.rumors-close:hover {
+  color: var(--color-amber);
+}
+
+.rumors-list {
+  padding: 12px;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.rumors-empty {
+  color: var(--color-text-dim);
+  font-style: italic;
+  text-align: center;
+  padding: 24px;
+}
+
+.rumor-item {
+  padding: 12px;
+  margin-bottom: 8px;
+  background: rgba(45, 31, 61, 0.3);
+  border-left: 3px solid var(--color-violet);
+  border-radius: 0 var(--border-radius) var(--border-radius) 0;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--color-text);
+}
+
+.rumor-item:last-child {
+  margin-bottom: 0;
+}
+
+.rumor-source {
+  margin-top: 8px;
+  font-size: 0.75rem;
+  color: var(--color-text-dim);
+  font-style: italic;
+}
+
+/* --- Journal/Rumors Button --- */
+.rumors-button {
+  position: absolute;
+  top: var(--game-padding);
+  left: var(--game-padding);
+  padding: 8px 12px;
+  font-family: var(--font-terminal);
+  font-size: 0.75rem;
+  color: var(--color-violet);
+  background: rgba(10, 18, 20, 0.8);
+  border: 1px solid var(--color-purple);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.rumors-button:hover {
+  color: var(--color-text-bright);
+  border-color: var(--color-violet);
+  box-shadow: 0 0 10px rgba(74, 50, 96, 0.5);
+}
+
+.rumors-button .count {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 6px;
+  background: var(--color-purple);
+  border-radius: 10px;
+  font-size: 0.7rem;
+}
+
+/* ========================================
+   IMPROVED HOTSPOT VISUALS
+   ======================================== */
+
+.hotspot-marker {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.hotspot-icon {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--color-amber-dim);
+  border-radius: 50%;
+  background: rgba(10, 18, 20, 0.7);
+  transition: all var(--transition-fast);
+}
+
+.hotspot-icon::after {
+  content: '';
+  width: 12px;
+  height: 12px;
+  background: var(--color-amber-dim);
+  border-radius: 50%;
+  animation: hotspot-pulse 2s ease-in-out infinite;
+}
+
+.hotspot-marker:hover .hotspot-icon {
+  border-color: var(--color-amber);
+  background: rgba(212, 162, 76, 0.2);
+  box-shadow: 0 0 20px rgba(212, 162, 76, 0.4);
+}
+
+.hotspot-marker:hover .hotspot-icon::after {
+  background: var(--color-amber);
+}
+
+.hotspot-label {
+  margin-top: 8px;
+  padding: 4px 12px;
+  background: rgba(10, 18, 20, 0.9);
+  border: 1px solid var(--color-teal);
+  border-radius: var(--border-radius);
+  font-size: 0.75rem;
+  color: var(--color-text);
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(-5px);
+  transition: all var(--transition-fast);
+}
+
+.hotspot-marker:hover .hotspot-label {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes hotspot-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+}

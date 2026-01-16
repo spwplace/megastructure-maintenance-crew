@@ -108,9 +108,12 @@ export const menuScene: Scene = {
 
 export const introScene: Scene = {
   id: 'intro',
-  type: 'dialogue',
+  type: 'navigation', // Use navigation type so SceneManager doesn't auto-start dialogue
   background: null,
-  dialogue: introDialogue.nodes[introDialogue.startNode],
+  navigation: {
+    locationId: 'intro',
+    hotspots: [], // No hotspots - dialogue handles progression
+  },
   onEnter: () => {
     console.log('Entering intro scene');
     shiftSystem.startShift(1);

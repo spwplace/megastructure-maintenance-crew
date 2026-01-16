@@ -218,6 +218,50 @@ Hydroponic systems, automated tenders (mechanical), workers visible small in fra
 Feeling: The structure's garden. Life being cultivated against entropy.
 ```
 
+**HOPPER YARD - EXTERIOR**
+```
+Vast exterior space where the structure meets something like sky.
+Scaffolding and gravel piles stretching into hazy distance.
+Massive fluid hoppers—industrial containers that somehow supply distant systems.
+Through gaps in scaffolding: the outer hull curving away impossibly.
+Wind (or something like wind) carrying debris, dust, strange particles.
+The only location where you can see how BIG the structure truly is.
+Feeling: Awe, vertigo, smallness. The structure as landscape, not building.
+Color palette: Grays, browns, rust—with amber work lights and the void beyond.
+```
+
+**DEEP FUNGAL CHAMBER**
+```
+A secret space discovered in the fungal depths.
+The network has built something here—structured, almost architectural.
+Bioluminescent fungi arranged in deliberate patterns—ribs, buttresses, conduits.
+In the center: an old terminal, half-absorbed by fungal tendrils.
+The feeling of standing inside something alive.
+Ancient technology being consumed and learned from.
+Color palette: Deep greens, with amber terminal glow and scattered bioluminescence.
+```
+
+### Priority 3: Atmospheric Spaces
+
+**CORRIDOR AT REST**
+```
+A quiet corridor section during downtime.
+Lower lighting—amber emergency strips only.
+The absence of work sounds. The hum of the structure itself.
+A sense of something watching, waiting.
+Optional: A distant figure (crew member) small in frame.
+Feeling: Peaceful but precarious. The calm between attacks.
+```
+
+**ATTACK AFTERMATH**
+```
+A recently damaged section—not the active wound, but the healing.
+Fresh repairs visible—emergency sealant, improvised bracing, burn marks.
+Workers visible in distance, assessing damage.
+The violence of the attack visible in torn metal, exposed systems.
+Feeling: Survival. The structure has been hurt but continues.
+```
+
 ---
 
 ## UI Elements
@@ -296,6 +340,139 @@ Well-worn, personalized with tape or marks.
 - Roughly 9:16 ratio
 - Full opacity
 - Should work with UI overlays at bottom 30% of screen
+
+---
+
+## Special Moments / CG Illustrations
+
+These are optional key story moments that could have special illustrations if time/budget allows.
+
+**FIRST BREACH - Tutorial Sequence**
+```
+The player's first time seeing the outside.
+Hull torn open, stars/void visible beyond.
+Orrin beside the player, working fast.
+The tension of the moment—atmosphere venting, emergency lights.
+Something glimpsed through the breach—was that a light? Moving?
+```
+
+**THE ARRIVAL DATA**
+```
+Vell showing the crew what they found.
+A terminal screen displaying corrupted navigation data.
+The word "ARRIVAL" visible, glowing amber.
+The crew gathered around, expressions of shock/wonder/fear.
+A moment of shared revelation.
+```
+
+**FUNGAL CONTACT**
+```
+The player touching the fungal network for the first time.
+The glow intensifying around their fingers.
+A sense of connection—something vast and patient becoming aware.
+Beautiful and unsettling—communion with something alien.
+```
+
+**SOLENNE'S VIGIL**
+```
+Solenne alone in the grow-deck at night.
+Surrounded by her plants, tending to them in low light.
+Peaceful but lonely—the caretaker who cares too much.
+Green bioluminescence from the plants illuminating her face.
+```
+
+**THE VIEW OUTSIDE**
+```
+A rare clear moment at the hopper yard.
+The structure curving away into infinity.
+Stars beyond—or what might be stars.
+The scale of the siege visible—distant lights that might be weapons.
+Beautiful and terrifying—the universe that wants to end them.
+```
+
+---
+
+## Character Expression Variations
+
+Beyond the basic default/speaking states, these additional expressions would add emotional depth to key scenes.
+
+### KETH
+- **Proud:** The rare moment of genuine approval. Eyes warmer. Almost a smile.
+- **Worried:** When things are worse than they're letting on. Eyes distant, jaw tight.
+- **Remembering:** When the past comes up. Older somehow. Looking at something not there.
+
+### SOLENNE
+- **Excited:** When the plants do something new. Full smile, leaning forward.
+- **Sad:** When something dies despite her care. Eyes down, shoulders slumped.
+- **Mystical:** When she talks about the fungal network. Eyes wide, half-smiling, slightly unnerving.
+
+### DAURO
+- **Triumphant:** When his theory gets proven. Young, bright, full of hope.
+- **Frustrated:** When no one will listen. Flushed, gesturing, passionate.
+- **Scared:** When the reality hits. The youthfulness replaced by fear.
+
+### VELL
+- **Genuine Laugh:** The rare moment when the mask slips. Actually happy.
+- **Exhausted:** When the insomnia wins. Barely holding together.
+- **Vulnerable:** When they talk about the old systems. Something raw underneath the sarcasm.
+
+### ORRIN
+- **Alert:** Emergency mode. All focus, all readiness.
+- **Gentle:** The quiet moments with injured crew. Tenderness from an unexpected source.
+- **Haunted:** When they talk about what they saw through the breach. The thousand-yard stare.
+
+---
+
+## Item / Object Prompts
+
+**MAINTENANCE KIT**
+```
+Battered metal case, hinged open.
+Well-organized tools—wrenches, probes, sealant applicators.
+Personal touches—stickers, scratched initials, lucky charm.
+The tools of someone who keeps things alive.
+```
+
+**BIO-CULTURE SAMPLE**
+```
+Small container with living moss or fungal sample.
+Bioluminescent glow from within.
+Solenne's careful labels in neat handwriting.
+Life in portable form.
+```
+
+**DAURO'S NOTEBOOK**
+```
+Worn paper notebook (paper is rare).
+Hand-drawn maps of the structure's impossible geometry.
+Notes in margins—theories, questions, corrections.
+The work of someone trying to understand.
+```
+
+**VELL'S TRINKETS**
+```
+Handmade electronic devices—small, delicate, given as gifts.
+Recycled components in new configurations.
+Subtle beauty—care taken in something unnecessary.
+```
+
+**EMERGENCY SEALANT**
+```
+Industrial container of hull sealant.
+Bright warning amber color.
+Heavy, utilitarian—this is what keeps death outside.
+```
+
+---
+
+## Mood Reference: Key Feelings to Capture
+
+1. **The Hum** - The structure is always alive around you. Vibration felt more than heard.
+2. **Layers of Time** - Every surface tells a story of past repairs, past crews, past lives.
+3. **Scale Without Distance** - Spaces feel impossibly large while still being intimate.
+4. **Light as Life** - Where there's light, there's hope. Darkness is where things fail.
+5. **The Weight of Continuation** - Everything is temporary. The goal is temporary that lasts.
+6. **Quiet Before Storm** - Downtime is precious. The attacks will come again.
 
 ---
 

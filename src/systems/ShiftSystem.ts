@@ -76,10 +76,62 @@ export class ShiftSystem {
    * End current shift and start next
    */
   endShift(): void {
+    // Apply entropy before advancing shift
+    this.applyShiftEntropy();
+
     this.state.number += 1;
     stateManager.advanceShift();
     eventBus.emit('shift:advance', { shift: this.state.number });
     this.startShift();
+  }
+
+  /**
+   * Apply degradation to systems between shifts
+   */
+  private applyShiftEntropy(): void {
+    const state = stateManager.getState();
+    const systems = state.systemStatuses;
+
+    // Each system loses some health if not maintained this shift
+    Object.keys(systems).forEach((systemId) => {
+      if (!this.state.tasksCompleted.includes(systemId)) {
+        const status = systems[systemId];
+        if (status && status.health > 25) {
+          // Degrade by 3-10% if not maintained
+          const degradation = Math.floor(Math.random() * 7) + 3;
+          status.health = Math.max(25, status.health - degradation);
+
+          // Add new warnings based on degradation
+          if (status.health < 40 && !status.warnings.some(w => w.includes('critical'))) {
+            status.warnings.push('Degradation reaching critical threshold');
+          }
+        }
+      }
+    });
+
+    // Random chance of new problems appearing
+    const newProblems = [
+      { system: 'atmo-7j', warning: 'New spore contamination detected' },
+      { system: 'atmo-7j', warning: 'Humidity regulator failing' },
+      { system: 'fluid-secondary', warning: 'Unexpected pressure spike logged' },
+      { system: 'fluid-secondary', warning: 'Sediment buildup in filter' },
+      { system: 'elec-blockc', warning: 'Sensor ghost readings increasing' },
+      { system: 'elec-blockc', warning: 'Power draw anomaly detected' },
+      { system: 'hopper-yard', warning: 'Corrosion spreading on intake' },
+      { system: 'hopper-yard', warning: 'Seal integrity compromised' },
+      { system: 'grow-deck-alpha', warning: 'Pest activity in Section 2' },
+      { system: 'grow-deck-alpha', warning: 'Nutrient pump stuttering' },
+    ];
+
+    // 35% chance of a new problem appearing
+    if (Math.random() < 0.35) {
+      const problem = newProblems[Math.floor(Math.random() * newProblems.length)];
+      const status = systems[problem.system];
+      if (status && !status.warnings.includes(problem.warning)) {
+        status.warnings.push(problem.warning);
+        status.health = Math.max(25, status.health - 5);
+      }
+    }
   }
 
   /**

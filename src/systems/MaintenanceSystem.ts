@@ -141,6 +141,10 @@ export class MaintenanceSystem {
         <div class="maintenance-action-icon">←</div>
         <div class="maintenance-action-label">Finish & Leave</div>
       </div>
+
+      <div style="margin-top: 12px; padding-top: 8px; border-top: 1px solid var(--color-deep-teal); font-size: 0.75rem; color: var(--color-text-dim);">
+        ${this.currentTask.companionId ? `Working with: ${this.currentTask.companionId.toUpperCase()}` : 'Working alone'}
+      </div>
     `;
   }
 
@@ -242,9 +246,16 @@ export class MaintenanceSystem {
   }
 
   private triggerCompanionDialogue(dialogueKey: string): void {
-    // This would trigger contextual dialogue from the companion
-    // For now, we'll emit an event
-    eventBus.emit('dialogue:trigger', { key: dialogueKey });
+    const companionId = this.currentTask?.companionId;
+    if (!companionId) return;
+
+    const dialogue = getCompanionDialogue(dialogueKey, companionId);
+    if (dialogue) {
+      // Small delay so the maintenance feedback shows first
+      setTimeout(() => {
+        dialogueSystem.startDialogue(dialogue);
+      }, 800);
+    }
   }
 
   finishTask(): void {
@@ -538,4 +549,270 @@ export function createEmergencyTask(): MaintenanceTask {
       stateManager.addRumor("The attack patterns are changing. That breach wasn't random.");
     },
   };
+}
+
+export function createHopperYardTask(): MaintenanceTask {
+  const savedStatus = stateManager.getState().systemStatuses['hopper-yard'];
+
+  return {
+    id: 'hopper-yard',
+    name: 'Fluid Transfer Maintenance',
+    type: 'mechanical',
+    description: 'The fluid transfer hoppers supply systems throughout the structure.',
+    companionId: 'dauro',
+    status: savedStatus || {
+      name: 'Fluid Transfer Hopper',
+      health: 58,
+      warnings: [
+        'Transfer rate below optimal',
+        'Debris accumulation detected',
+        'Seal wear on hatch 3',
+      ],
+      critical: false,
+    },
+    actions: [
+      {
+        id: 'check-flow',
+        label: 'Check Flow Rate',
+        description: 'Measure the fluid transfer rate',
+        icon: '📊',
+        healthGain: 5,
+        triggersDialogue: 'hopper-flow',
+        available: () => true,
+      },
+      {
+        id: 'clear-debris',
+        label: 'Clear Debris',
+        description: 'Remove accumulated debris from intake',
+        icon: '🧹',
+        requiresTool: 'basic-kit',
+        healthGain: 15,
+        removes: ['debris'],
+        available: () => true,
+      },
+      {
+        id: 'replace-seal',
+        label: 'Replace Hatch Seal',
+        description: 'Swap out the worn seal on hatch 3',
+        icon: '🔧',
+        requiresTool: 'sealant',
+        healthGain: 18,
+        removes: ['seal'],
+        available: () => true,
+      },
+      {
+        id: 'boost-transfer',
+        label: 'Boost Transfer Pressure',
+        description: 'Increase pressure to improve flow',
+        icon: '⬆️',
+        healthGain: 12,
+        removes: ['transfer'],
+        available: () => stateManager.getState().systemStatuses['hopper-yard']?.health > 60,
+      },
+    ],
+    onComplete: () => {
+      stateManager.setFlag('hopper-yard-maintained', true);
+    },
+  };
+}
+
+export function createGrowDeckTask(): MaintenanceTask {
+  const savedStatus = stateManager.getState().systemStatuses['grow-deck-alpha'];
+
+  return {
+    id: 'grow-deck-alpha',
+    name: 'Hydroponics Maintenance',
+    type: 'biological',
+    description: 'The grow-deck produces food and processes atmosphere for the structure.',
+    companionId: 'solenne',
+    status: savedStatus || {
+      name: 'Grow-Deck Alpha Hydroponics',
+      health: 71,
+      warnings: [
+        'Nutrient imbalance in Section 3',
+        'Light cycle drift detected',
+        'Root rot risk elevated',
+      ],
+      critical: false,
+    },
+    actions: [
+      {
+        id: 'check-plants',
+        label: 'Inspect Plant Health',
+        description: 'Check the overall health of the crops',
+        icon: '🌱',
+        healthGain: 5,
+        triggersDialogue: 'plant-inspection',
+        available: () => true,
+      },
+      {
+        id: 'adjust-nutrients',
+        label: 'Rebalance Nutrients',
+        description: 'Correct the nutrient mix in Section 3',
+        icon: '💧',
+        requiresTool: 'bio-kit',
+        healthGain: 15,
+        removes: ['nutrient'],
+        available: () => true,
+      },
+      {
+        id: 'fix-lights',
+        label: 'Sync Light Cycle',
+        description: 'Recalibrate the grow-light timing',
+        icon: '💡',
+        healthGain: 12,
+        removes: ['light'],
+        available: () => true,
+      },
+      {
+        id: 'treat-roots',
+        label: 'Treat Root System',
+        description: 'Apply anti-fungal to at-risk root systems',
+        icon: '🌿',
+        requiresTool: 'bio-kit',
+        healthGain: 18,
+        removes: ['rot'],
+        triggersDialogue: 'root-treatment',
+        available: () => true,
+      },
+    ],
+    onComplete: () => {
+      stateManager.setFlag('grow-deck-maintained', true);
+    },
+  };
+}
+
+// ============================================
+// Companion Dialogue System
+// ============================================
+
+import type { DialogueScript } from '@/types';
+
+type CompanionDialogueMap = Record<string, Record<string, DialogueScript>>;
+
+const companionDialogues: CompanionDialogueMap = {
+  // Solenne dialogues (biological systems)
+  solenne: {
+    'moss-inspection': {
+      id: 'solenne-moss-inspection',
+      startNode: 'start',
+      nodes: {
+        start: {
+          speaker: 'solenne',
+          text: "See how the edges are curling? That's stress response. They're reaching for something—more light, more moisture, something we're not providing.",
+          next: 'observation',
+        },
+        observation: {
+          speaker: 'solenne',
+          text: "Three generations of moss cultures, all descended from the original samples. They've adapted to the structure. In some ways, they understand it better than we do.",
+        },
+      },
+    },
+    'moss-replacement': {
+      id: 'solenne-moss-replacement',
+      startNode: 'start',
+      nodes: {
+        start: {
+          speaker: 'solenne',
+          text: "Easy now. The new sheet needs time to bond. Talk to it—I know that sounds ridiculous, but the vibrations help. The old workers swore by it.",
+          next: 'memory',
+        },
+        memory: {
+          speaker: 'solenne',
+          text: "My mentor used to sing to them. Old songs, from before. Said the moss remembered things we'd forgotten.",
+        },
+      },
+    },
+    'plant-inspection': {
+      id: 'solenne-plant-inspection',
+      startNode: 'start',
+      nodes: {
+        start: {
+          speaker: 'solenne',
+          text: "This one's a fighter. See the new growth? Even in bad conditions, it's trying. That's what I love about them—they never give up.",
+          next: 'reflection',
+        },
+        reflection: {
+          speaker: 'solenne',
+          text: "Sometimes I think the plants are braver than we are. They just keep growing, no matter what.",
+        },
+      },
+    },
+    'root-treatment': {
+      id: 'solenne-root-treatment',
+      startNode: 'start',
+      nodes: {
+        start: {
+          speaker: 'solenne',
+          text: "Careful with the roots—they're more sensitive than they look. This system is fifty years old. The roots remember every drought, every flood, every time someone got the mix wrong.",
+          next: 'concern',
+        },
+        concern: {
+          speaker: 'solenne',
+          text: "I worry about what happens when we can't save them anymore. When the damage is too deep, the cultures too stressed. What then?",
+        },
+      },
+    },
+  },
+
+  // Dauro dialogues (fluid systems)
+  dauro: {
+    'hopper-flow': {
+      id: 'dauro-hopper-flow',
+      startNode: 'start',
+      nodes: {
+        start: {
+          speaker: 'dauro',
+          text: "Okay, I'm seeing... that can't be right. The pressure upstream is lower than downstream. That's physically impossible.",
+          next: 'confusion',
+        },
+        confusion: {
+          speaker: 'dauro',
+          text: "Wait, let me recalibrate. No, same reading. How does the structure even... you know what, never mind. I'll just note it as 'nominal' like everyone else.",
+        },
+      },
+    },
+  },
+
+  // Vell dialogues (electrical systems)
+  vell: {
+    'sensor-diagnosis': {
+      id: 'vell-sensor-diagnosis',
+      startNode: 'start',
+      nodes: {
+        start: {
+          speaker: 'vell',
+          text: "Interesting. The sensors aren't dead—they're receiving data. They just can't make sense of it anymore. Like they're... confused.",
+          next: 'observation',
+        },
+        observation: {
+          speaker: 'vell',
+          text: "I've seen this before. The structure's changing faster than the old systems can track. We're not repairing anymore—we're translating. Helping the old talk to the new.",
+        },
+      },
+    },
+  },
+
+  // Orrin dialogues (emergency)
+  orrin: {
+    'emergency-seal': {
+      id: 'orrin-emergency-seal',
+      startNode: 'start',
+      nodes: {
+        start: {
+          speaker: 'orrin',
+          text: "Good seal. Fast work. Now brace it—sealant holds pressure but not stress. Another hit and it opens right back up.",
+          next: 'warning',
+        },
+        warning: {
+          speaker: 'orrin',
+          text: "Stay focused. The structure's groaning—that means it's still settling. We're not safe yet. We're just less doomed.",
+        },
+      },
+    },
+  },
+};
+
+function getCompanionDialogue(dialogueKey: string, companionId: string): DialogueScript | null {
+  return companionDialogues[companionId]?.[dialogueKey] || null;
 }

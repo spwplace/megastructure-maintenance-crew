@@ -92,14 +92,16 @@ export class Game {
       console.log('Emergency resolved');
     });
 
-    // Handle keyboard input
+    // Handle keyboard input - prevent key repeat from spamming
     document.addEventListener('keydown', (e) => {
+      if (e.repeat) return; // Ignore held keys
+
       if (e.key === ' ' || e.key === 'Enter') {
         if (dialogueSystem.isActive()) {
           dialogueSystem.skipTypewriter();
         }
       }
-      // Debug: Trigger emergency with 'E' key
+      // Debug: Trigger emergency with Ctrl+E
       if (e.key === 'e' && e.ctrlKey) {
         this.triggerEmergency();
       }
@@ -121,6 +123,8 @@ export class Game {
       'fluid-systems': 'fluid-systems',
       'electrical-hub': 'electrical-hub',
       'fungal-depths': 'fungal-depths',
+      'fungal-network': 'fungal-depths',
+      'fungal-deeper': 'fungal-depths',
       'the-wound': 'the-wound',
       'hopper-yard': 'hopper-yard',
       'grow-deck': 'grow-deck',
@@ -130,6 +134,7 @@ export class Game {
       'talk-solenne': 'crew-quarters',
       'talk-vell': 'crew-quarters',
       'talk-dauro': 'crew-quarters',
+      'talk-orrin': 'crew-quarters',
     };
 
     const locationType = sceneToLocation[sceneId] || 'corridor';
@@ -210,7 +215,7 @@ export class Game {
     shiftSystem.triggerEmergency();
 
     // Emergency dialogue
-    const emergencyDialogue = {
+    const emergencyDialogue: import('@/types').DialogueScript = {
       id: 'emergency-alert',
       startNode: 'start',
       nodes: {
@@ -223,7 +228,7 @@ export class Game {
           next: 'orrin',
         },
         orrin: {
-          speaker: 'orrin',
+          speaker: 'orrin' as const,
           text: "[over comms] Breach in Section 14. Hull integrity failing. I need backup—now.",
           choices: [
             { text: 'On my way.', next: 'respond' },
@@ -231,12 +236,12 @@ export class Game {
           ],
         },
         respond: {
-          speaker: 'keth',
+          speaker: 'keth' as const,
           text: '[over comms] Go. Both of you. Everyone else, brace and hold position.',
           next: 'end',
         },
         delay: {
-          speaker: 'orrin',
+          speaker: 'orrin' as const,
           text: "There is no 'here first.' Atmosphere is venting. Move.",
           next: 'end',
         },
