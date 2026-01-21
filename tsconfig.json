@@ -16,6 +16,6 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "link2link/**/*"],
   "exclude": ["node_modules", "dist"]
 }
