@@ -110,46 +110,46 @@ function createZeldaDialogues(): DialogueNode[] {
     {
       id: 'zelda-d1-start',
       speaker: 'zelda',
-      text: "Ah, Link! I wasn't expecting visitors in the library today. I've been researching ancient Sheikah texts...",
+      text: "Link! You startled me... I was just in my private chambers, reading. These ancient texts speak of... forbidden rituals.",
       emotion: 'surprised',
       next: 'zelda-d1-2'
     },
     {
       id: 'zelda-d1-2',
       speaker: 'zelda',
-      text: "These manuscripts speak of technologies lost to time. Fascinating, isn't it? The wisdom of our ancestors...",
-      emotion: 'happy',
+      text: "*adjusts her dress* You know, as your princess, I could command you to stay... but I'd rather you choose to.",
+      emotion: 'blush',
       choices: [
-        { text: "I'd love to hear more about your research.", next: 'zelda-d1-research', affectionChange: 10 },
-        { text: "Don't you ever take breaks, Princess?", next: 'zelda-d1-break', affectionChange: 5 },
-        { text: "Sounds boring. I prefer action.", next: 'zelda-d1-boring', affectionChange: -5 }
+        { text: "I'd stay even without a command, Your Highness.", next: 'zelda-d1-flirt', affectionChange: 15 },
+        { text: "What kind of forbidden rituals?", next: 'zelda-d1-curious', affectionChange: 10 },
+        { text: "I should probably go...", next: 'zelda-d1-leave', affectionChange: -5 }
       ]
     },
     {
-      id: 'zelda-d1-research',
+      id: 'zelda-d1-flirt',
       speaker: 'zelda',
-      text: "You... want to learn? Oh, Link! Most people's eyes glaze over when I discuss ancient technology.",
+      text: "*cheeks flushing* Such bold words from my knight... My heart is racing. Is this what the texts meant by 'divine connection'?",
       emotion: 'blush',
       next: 'zelda-d1-end'
     },
     {
-      id: 'zelda-d1-break',
+      id: 'zelda-d1-curious',
       speaker: 'zelda',
-      text: "Breaks? I suppose you have a point. Perhaps we could take a walk in the castle gardens sometime?",
-      emotion: 'happy',
+      text: "Ancient bonding ceremonies... between heroes and princesses. The texts say souls can intertwine through... intimate prayer.",
+      emotion: 'blush',
       next: 'zelda-d1-end'
     },
     {
-      id: 'zelda-d1-boring',
+      id: 'zelda-d1-leave',
       speaker: 'zelda',
-      text: "I... see. Well, not everyone appreciates scholarly pursuits, I suppose.",
+      text: "*catches your hand* Wait... perhaps just a moment longer? It gets lonely in this tower.",
       emotion: 'sad',
       next: 'zelda-d1-end'
     },
     {
       id: 'zelda-d1-end',
       speaker: 'zelda',
-      text: "Thank you for stopping by, Link. Perhaps we can speak again soon.",
+      text: "Come back soon, Link. These castle walls feel less cold when you're here... *touches your cheek briefly*",
       emotion: 'happy',
       action: { type: 'location', value: 'castle-town' }
     },
@@ -158,45 +158,46 @@ function createZeldaDialogues(): DialogueNode[] {
     {
       id: 'zelda-d2-start',
       speaker: 'zelda',
-      text: "Link! I was hoping you'd return. I discovered something remarkable in my research.",
-      emotion: 'happy',
+      text: "*opens door in a silk nightgown* Link! I... I wasn't expecting you so late. But please, come in...",
+      emotion: 'surprised',
       next: 'zelda-d2-2'
     },
     {
       id: 'zelda-d2-2',
       speaker: 'zelda',
-      text: "A reference to the 'Song of Healing' - said to mend not just wounds, but troubled hearts. Isn't that poetic?",
+      text: "I was just preparing for bed. *sits on the edge of mattress* But suddenly I'm not tired at all...",
+      emotion: 'blush',
       choices: [
-        { text: "Your heart seems troubled. Want to talk about it?", next: 'zelda-d2-deep', affectionChange: 15 },
-        { text: "That's beautiful. Music holds great power.", next: 'zelda-d2-music', affectionChange: 10 },
-        { text: "Sounds like fairy tale nonsense.", next: 'zelda-d2-dismiss', affectionChange: -10 }
+        { text: "*sits beside her* Neither am I.", next: 'zelda-d2-close', affectionChange: 20 },
+        { text: "You look beautiful in the candlelight.", next: 'zelda-d2-compliment', affectionChange: 15 },
+        { text: "I should let you rest.", next: 'zelda-d2-leave', affectionChange: -10 }
       ]
     },
     {
-      id: 'zelda-d2-deep',
+      id: 'zelda-d2-close',
       speaker: 'zelda',
-      text: "I... you can tell? Sometimes the weight of the kingdom... of destiny... it's overwhelming. Thank you for seeing me, not just the princess.",
+      text: "*breath catches* Link... when you're this close, I forget I'm supposed to be proper. I forget everything except wanting to be closer...",
       emotion: 'blush',
       next: 'zelda-d2-end'
     },
     {
-      id: 'zelda-d2-music',
+      id: 'zelda-d2-compliment',
       speaker: 'zelda',
-      text: "Indeed it does. I've often found solace in playing the harp during difficult times. Perhaps I could play for you someday?",
-      emotion: 'happy',
+      text: "*pulls you closer by your tunic* And you look like every fantasy I've had since you first walked into my throne room...",
+      emotion: 'blush',
       next: 'zelda-d2-end'
     },
     {
-      id: 'zelda-d2-dismiss',
+      id: 'zelda-d2-leave',
       speaker: 'zelda',
-      text: "Fairy tales have a way of preserving truths that history books forget, Link. But I understand skepticism.",
+      text: "*grabs your wrist* Don't. Stay. That's a royal command... and a desperate plea.",
       emotion: 'sad',
       next: 'zelda-d2-end'
     },
     {
       id: 'zelda-d2-end',
       speaker: 'zelda',
-      text: "I should return to my studies. But Link... I'm glad you came today.",
+      text: "*presses forehead to yours* Promise me you'll come back tomorrow night. I'll leave my door unlocked...",
       emotion: 'happy',
       action: { type: 'location', value: 'castle-town' }
     },
@@ -205,31 +206,31 @@ function createZeldaDialogues(): DialogueNode[] {
     {
       id: 'zelda-high-start',
       speaker: 'zelda',
-      text: "Link... there's something I must confess. These past days, your visits have become the highlight of my research sessions.",
+      text: "*pulls you into her chambers and locks the door* No more pretense, Link. No more princess and knight. Just us.",
       emotion: 'blush',
       next: 'zelda-high-2'
     },
     {
       id: 'zelda-high-2',
       speaker: 'zelda',
-      text: "I've read countless texts about heroes and destiny, but none prepared me for... these feelings.",
-      emotion: 'blush',
+      text: "*runs fingers through your hair* I've dreamed of this. Of us. Woken up aching for something I couldn't name... until now.",
+      emotion: 'happy',
       choices: [
-        { text: "I feel the same way, Zelda.", next: 'zelda-confession', affectionChange: 20 },
-        { text: "We should focus on saving Hyrule first.", next: 'zelda-reject', affectionChange: -15 }
+        { text: "*pulls her close* Then let's stop dreaming.", next: 'zelda-confession', affectionChange: 25 },
+        { text: "Zelda, we shouldn't...", next: 'zelda-reject', affectionChange: -20 }
       ]
     },
     {
       id: 'zelda-confession',
       speaker: 'zelda',
-      text: "Then perhaps... our story is one the ancient texts never predicted. One we'll write together.",
+      text: "*melts into your arms* Yes... Finally, yes. Tonight, you're not my knight. Tonight, you're mine. All mine...",
       emotion: 'happy',
       action: { type: 'ending', value: 'zelda' }
     },
     {
       id: 'zelda-reject',
       speaker: 'zelda',
-      text: "You're right, of course. Duty before all else. I... I understand.",
+      text: "*steps back, eyes glistening* I see. Duty over desire. At least I know where your heart truly lies...",
       emotion: 'sad',
       action: { type: 'location', value: 'castle-town' }
     }
@@ -241,45 +242,47 @@ function createMidnaDialogues(): DialogueNode[] {
     {
       id: 'midna-d1-start',
       speaker: 'midna',
-      text: "Well, well... look who wandered into the Twilight Realm. Getting lost is a hobby of yours, isn't it, hero?",
+      text: "Well, well... my favorite wolf wandered into my bedroom. *stretches languidly* Miss me that much?",
       emotion: 'happy',
       next: 'midna-d1-2'
     },
     {
       id: 'midna-d1-2',
       speaker: 'midna',
-      text: "Ehehehe! Don't make that face. I'm only teasing. So, what brings you to MY domain?",
+      text: "*floats closer, trailing a finger down your chest* You know, I used to ride on your back for hours. I've thought about riding you in... other ways.",
+      emotion: 'blush',
       choices: [
-        { text: "I came to see you, Midna.", next: 'midna-d1-flirt', affectionChange: 10 },
-        { text: "Just exploring. This place is interesting.", next: 'midna-d1-explore', affectionChange: 5 },
-        { text: "Got lost, actually.", next: 'midna-d1-lost', affectionChange: 0 }
+        { text: "I've had similar thoughts.", next: 'midna-d1-flirt', affectionChange: 15 },
+        { text: "You're very forward, Princess.", next: 'midna-d1-tease', affectionChange: 10 },
+        { text: "*steps back* Midna...", next: 'midna-d1-shy', affectionChange: 0 }
       ]
     },
     {
       id: 'midna-d1-flirt',
       speaker: 'midna',
-      text: "Hmph! Don't think flattery will work on me, hero. ...But I suppose I'll allow you to stay. For now.",
+      text: "Ehehehe! Oh I LIKE this boldness. *wraps arms around your neck* The twilight hides nothing from me... including that look in your eyes.",
       emotion: 'blush',
       next: 'midna-d1-end'
     },
     {
-      id: 'midna-d1-explore',
+      id: 'midna-d1-tease',
       speaker: 'midna',
-      text: "Interesting? Most light-dwellers find the Twilight unsettling. You're... different.",
+      text: "Forward? I spent months pressed against your warm fur, feeling your heartbeat. We're past 'forward,' hero.",
       emotion: 'happy',
       next: 'midna-d1-end'
     },
     {
-      id: 'midna-d1-lost',
+      id: 'midna-d1-shy',
       speaker: 'midna',
-      text: "Ha! Typical. What would you do without me? Come on, I'll show you around.",
-      emotion: 'happy',
+      text: "*pouts* Don't tell me you're shy NOW. Not after all the times I've seen you naked in that wolf form. Fur counts, you know.",
+      emotion: 'blush',
       next: 'midna-d1-end'
     },
     {
       id: 'midna-d1-end',
       speaker: 'midna',
-      text: "Don't be a stranger, Link. The Twilight Realm could use more... visitors like you.",
+      text: "*whispers in your ear* Come back soon, wolf-boy. The Twilight Realm gets... very cold at night. I could use something warm.",
+      emotion: 'happy',
       action: { type: 'location', value: 'castle-town' }
     },
 
@@ -287,46 +290,46 @@ function createMidnaDialogues(): DialogueNode[] {
     {
       id: 'midna-d2-start',
       speaker: 'midna',
-      text: "Back again? Careful, hero, or I might think you actually LIKE being here.",
+      text: "*appears in her true form, tall and breathtaking* Surprised? This is what I really look like. Do you like what you see?",
       emotion: 'happy',
       next: 'midna-d2-2'
     },
     {
       id: 'midna-d2-2',
       speaker: 'midna',
-      text: "...It gets lonely here, you know. Not that I'd ever admit that to anyone else.",
-      emotion: 'sad',
+      text: "*turns slowly* I wanted you to see ALL of me. The curves I hid in that imp form... *traces her hips* Were worth hiding for this moment.",
+      emotion: 'blush',
       choices: [
-        { text: "You don't have to be alone, Midna.", next: 'midna-d2-comfort', affectionChange: 15 },
-        { text: "I'll visit whenever you want.", next: 'midna-d2-promise', affectionChange: 10 },
-        { text: "That sounds like a personal problem.", next: 'midna-d2-cold', affectionChange: -10 }
+        { text: "*can't look away* You're stunning, Midna.", next: 'midna-d2-worship', affectionChange: 20 },
+        { text: "Come here. Now.", next: 'midna-d2-command', affectionChange: 20 },
+        { text: "I preferred the imp form, actually.", next: 'midna-d2-wrong', affectionChange: -15 }
       ]
     },
     {
-      id: 'midna-d2-comfort',
+      id: 'midna-d2-worship',
       speaker: 'midna',
-      text: "...Idiot. Don't say things like that unless you mean them. My heart can't... I mean, whatever!",
+      text: "*purrs and pulls you closer* Then worship me properly, hero. *presses against you* Show me what that Hylian passion feels like...",
       emotion: 'blush',
       next: 'midna-d2-end'
     },
     {
-      id: 'midna-d2-promise',
+      id: 'midna-d2-command',
       speaker: 'midna',
-      text: "You better keep that promise, wolf-boy. Or I'll drag you here myself. Ehehehe!",
+      text: "Ooh, commanding the Twilight Princess? *obeys with a smirk* I think I like being told what to do... by you. Only you.",
       emotion: 'happy',
       next: 'midna-d2-end'
     },
     {
-      id: 'midna-d2-cold',
+      id: 'midna-d2-wrong',
       speaker: 'midna',
-      text: "Tch! Fine. Go back to your light world then. See if I care!",
+      text: "...Really? You absolute- ! *turns away* Get out! Come back when you learn to appreciate a goddess standing before you!",
       emotion: 'angry',
       next: 'midna-d2-end'
     },
     {
       id: 'midna-d2-end',
       speaker: 'midna',
-      text: "Get going before I change my mind about liking you. ...Wait, I didn't say that!",
+      text: "*breathless* Next time you visit... don't bother knocking. Just come straight to my bedroom. I'll be waiting.",
       emotion: 'blush',
       action: { type: 'location', value: 'castle-town' }
     },
@@ -335,31 +338,31 @@ function createMidnaDialogues(): DialogueNode[] {
     {
       id: 'midna-high-start',
       speaker: 'midna',
-      text: "Link... I need to tell you something. And if you laugh, I'll turn you into a wolf permanently.",
+      text: "*pulls you through a portal into her private chambers* No more games, Link. I need you. Really need you.",
       emotion: 'blush',
       next: 'midna-high-2'
     },
     {
       id: 'midna-high-2',
       speaker: 'midna',
-      text: "When I broke the Mirror of Twilight, I thought I was protecting you. But really... I was running away from how I felt.",
+      text: "*voice trembling* I broke that mirror because I was terrified. Of this. Of wanting someone so badly it burns. But I can't run anymore...",
       emotion: 'sad',
       choices: [
-        { text: "I never wanted us to be separated.", next: 'midna-confession', affectionChange: 20 },
-        { text: "We're from different worlds, Midna.", next: 'midna-reject', affectionChange: -15 }
+        { text: "*kisses her deeply* Then stop running.", next: 'midna-confession', affectionChange: 25 },
+        { text: "This can never work between our worlds.", next: 'midna-reject', affectionChange: -20 }
       ]
     },
     {
       id: 'midna-confession',
       speaker: 'midna',
-      text: "Then... let's write a new story. One where the hero and the twilight princess don't have to say goodbye.",
+      text: "*moans softly against your lips* Yes... Oh goddesses, yes. Take me, hero. In every way. I'm yours... completely yours.",
       emotion: 'happy',
       action: { type: 'ending', value: 'midna' }
     },
     {
       id: 'midna-reject',
       speaker: 'midna',
-      text: "Ha... I knew you'd say that. Go on then. Back to your world of light.",
+      text: "*tears streaming* Then go. Get out! And don't ever come back... because I can't bear to see you and not have you.",
       emotion: 'sad',
       action: { type: 'location', value: 'castle-town' }
     }
@@ -371,46 +374,46 @@ function createMiphaDialogues(): DialogueNode[] {
     {
       id: 'mipha-d1-start',
       speaker: 'mipha',
-      text: "Link! You came to visit... I was just practicing my healing arts. It's so wonderful to see you.",
-      emotion: 'happy',
+      text: "*emerges from the water, glistening* Link! I was bathing in the sacred pool... You're not supposed to see me like this...",
+      emotion: 'surprised',
       next: 'mipha-d1-2'
     },
     {
       id: 'mipha-d1-2',
       speaker: 'mipha',
-      text: "The waters here are especially restorative today. Would you... like to swim with me?",
+      text: "*doesn't cover herself* ...But I'm glad you did. I've imagined you seeing me... all of me... so many times.",
       emotion: 'blush',
       choices: [
-        { text: "I'd love nothing more, Mipha.", next: 'mipha-d1-swim', affectionChange: 10 },
-        { text: "Sure, I could use a break.", next: 'mipha-d1-casual', affectionChange: 5 },
-        { text: "I can't stay long today.", next: 'mipha-d1-busy', affectionChange: -5 }
+        { text: "*wades into the water with her*", next: 'mipha-d1-join', affectionChange: 15 },
+        { text: "You're the most beautiful thing I've ever seen.", next: 'mipha-d1-compliment', affectionChange: 10 },
+        { text: "I should turn around!", next: 'mipha-d1-shy', affectionChange: 0 }
       ]
     },
     {
-      id: 'mipha-d1-swim',
+      id: 'mipha-d1-join',
       speaker: 'mipha',
-      text: "Oh! That makes me so happy. I'll show you my favorite diving spots. Just like when we were children...",
+      text: "*gasps as you enter the water* Link... the way you look at me makes my scales tingle. Come closer... let me heal any wounds you have...",
+      emotion: 'blush',
+      next: 'mipha-d1-end'
+    },
+    {
+      id: 'mipha-d1-compliment',
+      speaker: 'mipha',
+      text: "*swims closer* Then look your fill, my love. Everything I am... is for you. It's always been for you.",
       emotion: 'happy',
       next: 'mipha-d1-end'
     },
     {
-      id: 'mipha-d1-casual',
+      id: 'mipha-d1-shy',
       speaker: 'mipha',
-      text: "Wonderful! The water will wash away your fatigue. I'll stay close in case you need anything.",
-      emotion: 'happy',
-      next: 'mipha-d1-end'
-    },
-    {
-      id: 'mipha-d1-busy',
-      speaker: 'mipha',
-      text: "I understand. You have important duties. I'll... be here whenever you can return.",
-      emotion: 'sad',
+      text: "*gently turns your face back* Don't. I want you to look. I've hidden my feelings too long... but never my body. Not from you.",
+      emotion: 'blush',
       next: 'mipha-d1-end'
     },
     {
       id: 'mipha-d1-end',
       speaker: 'mipha',
-      text: "Take care of yourself, Link. And know that I'm always here if you're ever hurt. Always.",
+      text: "*traces patterns on your chest with wet fingers* The waters here are warmer at night. Come back then... and I'll show you why Zoras make the best lovers.",
       emotion: 'happy',
       action: { type: 'location', value: 'castle-town' }
     },
@@ -419,46 +422,46 @@ function createMiphaDialogues(): DialogueNode[] {
     {
       id: 'mipha-d2-start',
       speaker: 'mipha',
-      text: "You've returned! I... I was hoping you would. I made something for you.",
+      text: "*waiting in a secluded grotto* I prepared this place for us. Private. Intimate. *the water glows softly* My healing powers can do more than fix wounds...",
       emotion: 'blush',
       next: 'mipha-d2-2'
     },
     {
       id: 'mipha-d2-2',
       speaker: 'mipha',
-      text: "It's Zora armor. I've been crafting it for... a long time. It's tradition that we make this for someone special.",
-      emotion: 'blush',
+      text: "*pulls you into the water* They can heighten sensation... pleasure... *hands glowing as she touches you* Feel that?",
+      emotion: 'happy',
       choices: [
-        { text: "Mipha... this must have taken so long. Thank you.", next: 'mipha-d2-grateful', affectionChange: 15 },
-        { text: "Special? What do you mean?", next: 'mipha-d2-curious', affectionChange: 10 },
-        { text: "I can't accept something so valuable.", next: 'mipha-d2-refuse', affectionChange: -5 }
+        { text: "*shudders* That's incredible...", next: 'mipha-d2-sensation', affectionChange: 20 },
+        { text: "Teach me everything about Zora intimacy.", next: 'mipha-d2-learn', affectionChange: 15 },
+        { text: "This is moving fast, Mipha...", next: 'mipha-d2-slow', affectionChange: -5 }
       ]
     },
     {
-      id: 'mipha-d2-grateful',
+      id: 'mipha-d2-sensation',
       speaker: 'mipha',
-      text: "Every stitch was made with thoughts of you. Your safety, your happiness... You mean everything to me, Link.",
+      text: "*presses against you in the water* And that's just my hands. Imagine... everywhere. Zoras bond deeply, Link. Completely. Would you bond with me?",
       emotion: 'blush',
       next: 'mipha-d2-end'
     },
     {
-      id: 'mipha-d2-curious',
+      id: 'mipha-d2-learn',
       speaker: 'mipha',
-      text: "Zora women make this armor for... the one they wish to marry. I know it's forward of me, but...",
-      emotion: 'blush',
+      text: "*whispers* We mate for life. When we choose someone, we give ourselves entirely. *nuzzles your neck* I chose you long ago.",
+      emotion: 'happy',
       next: 'mipha-d2-end'
     },
     {
-      id: 'mipha-d2-refuse',
+      id: 'mipha-d2-slow',
       speaker: 'mipha',
-      text: "Please... let me give you this. It would hurt more if you didn't take it.",
+      text: "*gentle but persistent* I've waited a hundred years, Link. Watched you sleep in that shrine, dreaming of this. I can't wait anymore...",
       emotion: 'sad',
       next: 'mipha-d2-end'
     },
     {
       id: 'mipha-d2-end',
       speaker: 'mipha',
-      text: "Come back soon, Link. I'll be here, watching the waters and thinking of you.",
+      text: "*kisses you softly, healing energy flowing between you* Come back soon. I'll be waiting in the moonlit pool... ready to show you what true devotion feels like.",
       emotion: 'happy',
       action: { type: 'location', value: 'castle-town' }
     },
@@ -467,31 +470,31 @@ function createMiphaDialogues(): DialogueNode[] {
     {
       id: 'mipha-high-start',
       speaker: 'mipha',
-      text: "Link... there's something I've wanted to tell you since we were children playing by the falls.",
+      text: "*in the deepest sacred pool* Link... I've prepared the ancient bonding ritual. *water swirls around you both* This will join us forever. Body and soul.",
       emotion: 'blush',
       next: 'mipha-high-2'
     },
     {
       id: 'mipha-high-2',
       speaker: 'mipha',
-      text: "I love you. I always have. And if Calamity never comes... I want to spend my life with you.",
+      text: "*naked under the moonlight, surrounded by glowing water* If you accept me... we'll feel each other's pleasure. Always. Are you ready to be mine eternally?",
       emotion: 'happy',
       choices: [
-        { text: "I love you too, Mipha.", next: 'mipha-confession', affectionChange: 20 },
-        { text: "I care for you, but... I can't.", next: 'mipha-reject', affectionChange: -15 }
+        { text: "*embraces her in the sacred water* Make me yours.", next: 'mipha-confession', affectionChange: 25 },
+        { text: "Forever is a long time, Mipha...", next: 'mipha-reject', affectionChange: -20 }
       ]
     },
     {
       id: 'mipha-confession',
       speaker: 'mipha',
-      text: "Then let's face the future together. Whatever comes, my healing light will always be with you.",
+      text: "*the water explodes with light as your souls intertwine* Yes! Oh, Link... I can feel you inside me... your heart, your pleasure... we're one now. Forever one!",
       emotion: 'happy',
       action: { type: 'ending', value: 'mipha' }
     },
     {
       id: 'mipha-reject',
       speaker: 'mipha',
-      text: "I understand... I'll treasure the time we've had. And I'll still always be here for you.",
+      text: "*the glow fades* I... I understand. A Zora's lifespan is long. Perhaps too long to bind a Hylian... *sinks beneath the water to hide her tears*",
       emotion: 'sad',
       action: { type: 'location', value: 'castle-town' }
     }
@@ -503,45 +506,46 @@ function createMalonDialogues(): DialogueNode[] {
     {
       id: 'malon-d1-start',
       speaker: 'malon',
-      text: "Well howdy there, fairy boy! Come to see the horses? Or maybe... you came to see me?",
+      text: "*wiping sweat from her brow, shirt clinging* Whew! Link! Caught me in the middle of hard work... *stretches, fabric riding up* This heat is somethin' else!",
       emotion: 'happy',
       next: 'malon-d1-2'
     },
     {
       id: 'malon-d1-2',
       speaker: 'malon',
-      text: "Hehe, I'm just teasin'! Though Epona sure did perk up when she saw you comin' down the road.",
+      text: "*notices your gaze and smirks* Like what you see, fairy boy? Ranch work keeps a girl fit... *flexes playfully* Wanna feel?",
+      emotion: 'blush',
       choices: [
-        { text: "Actually, I came to see you both.", next: 'malon-d1-both', affectionChange: 10 },
-        { text: "How's the ranch been treating you?", next: 'malon-d1-ranch', affectionChange: 5 },
-        { text: "Is Epona ready for a ride?", next: 'malon-d1-epona', affectionChange: 0 }
+        { text: "*reaches out to touch* I'd love to.", next: 'malon-d1-touch', affectionChange: 15 },
+        { text: "You're gorgeous, Malon.", next: 'malon-d1-compliment', affectionChange: 10 },
+        { text: "I should help with the work.", next: 'malon-d1-help', affectionChange: 5 }
       ]
     },
     {
-      id: 'malon-d1-both',
+      id: 'malon-d1-touch',
       speaker: 'malon',
-      text: "Aw shucks, Link! You're gonna make me blush right here in the barn! ...I'm glad you came.",
+      text: "*guides your hand* Mmm... strong hands. A girl could get used to these... *leans closer* The hayloft is empty right now, you know...",
       emotion: 'blush',
       next: 'malon-d1-end'
     },
     {
-      id: 'malon-d1-ranch',
+      id: 'malon-d1-compliment',
       speaker: 'malon',
-      text: "Same as always - hard work and early mornings! But I wouldn't trade it for anything. This land is home.",
+      text: "*fans herself* Well now you're makin' me hotter than the sun! *unbuttons top button* Better. Much better. Your turn to cool off?",
       emotion: 'happy',
       next: 'malon-d1-end'
     },
     {
-      id: 'malon-d1-epona',
+      id: 'malon-d1-help',
       speaker: 'malon',
-      text: "She's always ready when you're around! That horse loves you almost as much as... well, nevermind!",
+      text: "Such a gentleman! *grabs your hand* But first... *pulls you behind the barn* ...let's take a water break. Just the two of us.",
       emotion: 'blush',
       next: 'malon-d1-end'
     },
     {
       id: 'malon-d1-end',
       speaker: 'malon',
-      text: "Don't be a stranger now, fairy boy! And maybe next time, I'll sing you a song.",
+      text: "*whispers* Come back after sundown. Dad sleeps early, and my room's right above the stable. I'll leave the window open... *winks*",
       emotion: 'happy',
       action: { type: 'location', value: 'castle-town' }
     },
@@ -550,46 +554,46 @@ function createMalonDialogues(): DialogueNode[] {
     {
       id: 'malon-d2-start',
       speaker: 'malon',
-      text: "Link! I was just about to practice my singing. Want to hear? Mama used to sing this to me...",
+      text: "*catches you climbing through the window* You came! *in just a thin nightdress* Lock the door. We don't want any... interruptions.",
       emotion: 'happy',
       next: 'malon-d2-2'
     },
     {
       id: 'malon-d2-2',
       speaker: 'malon',
-      text: "*hums Epona's Song softly* ...Sorry, I get emotional. This song means everything to me.",
-      emotion: 'sad',
+      text: "*pulls you onto her bed* I've thought about this... about YOU... every night. *runs hands down your chest* Show me what heroes do after saving the world...",
+      emotion: 'blush',
       choices: [
-        { text: "Your voice is beautiful, Malon.", next: 'malon-d2-compliment', affectionChange: 15 },
-        { text: "Tell me about your mother.", next: 'malon-d2-mother', affectionChange: 10 },
-        { text: "That was nice. I should get going.", next: 'malon-d2-leave', affectionChange: -5 }
+        { text: "*pins her gently against the pillows*", next: 'malon-d2-passionate', affectionChange: 20 },
+        { text: "You're everything I want, Malon.", next: 'malon-d2-sweet', affectionChange: 15 },
+        { text: "Maybe we should talk first...", next: 'malon-d2-slow', affectionChange: -5 }
       ]
     },
     {
-      id: 'malon-d2-compliment',
+      id: 'malon-d2-passionate',
       speaker: 'malon',
-      text: "Link... you always know just what to say. My heart's racin' faster than a horse at full gallop!",
+      text: "*gasps* Yes, Link! I ain't some delicate princess - don't hold back with me. I want all of you, rough and real...",
       emotion: 'blush',
       next: 'malon-d2-end'
     },
     {
-      id: 'malon-d2-mother',
+      id: 'malon-d2-sweet',
       speaker: 'malon',
-      text: "She was wonderful... taught me everything about the ranch and about love. I miss her, but she lives on in this song.",
+      text: "*melts into your arms* And you're everythin' I've dreamed of since I was a little girl singin' to the horses. Make those dreams come true...",
       emotion: 'happy',
       next: 'malon-d2-end'
     },
     {
-      id: 'malon-d2-leave',
+      id: 'malon-d2-slow',
       speaker: 'malon',
-      text: "Oh... okay then. Safe travels, Link. The ranch'll be here when you're ready to visit again.",
-      emotion: 'sad',
+      text: "*puts finger on your lips* Shh. We've talked enough. *kisses you deeply* Tonight we communicate different...",
+      emotion: 'blush',
       next: 'malon-d2-end'
     },
     {
       id: 'malon-d2-end',
       speaker: 'malon',
-      text: "Take care now, fairy boy! The cuccos and I will be waitin' for ya!",
+      text: "*nestled against you, catching breath* Don't you dare leave before sunrise. And tomorrow night? Same time. I'm nowhere near done with you...",
       emotion: 'happy',
       action: { type: 'location', value: 'castle-town' }
     },
@@ -598,31 +602,31 @@ function createMalonDialogues(): DialogueNode[] {
     {
       id: 'malon-high-start',
       speaker: 'malon',
-      text: "Link... I've been thinkin'. About the future. About... us.",
+      text: "*leads you to a blanket under the stars* Link... I've given you my body. But tonight I want to give you somethin' more.",
       emotion: 'blush',
       next: 'malon-high-2'
     },
     {
       id: 'malon-high-2',
       speaker: 'malon',
-      text: "When I look at the sunrise over the ranch, I imagine sharin' that view with someone. And that someone's always been you.",
+      text: "*places your hand over her heart* This. Forever. I want to wake up with you every mornin', make love under every sunset. Be mine, Link. Officially.",
       emotion: 'happy',
       choices: [
-        { text: "I want to share every sunrise with you, Malon.", next: 'malon-confession', affectionChange: 20 },
-        { text: "The ranch life isn't for me.", next: 'malon-reject', affectionChange: -15 }
+        { text: "*kisses her under the stars* I'm yours. Always.", next: 'malon-confession', affectionChange: 25 },
+        { text: "I can't settle down yet, Malon.", next: 'malon-reject', affectionChange: -20 }
       ]
     },
     {
       id: 'malon-confession',
       speaker: 'malon',
-      text: "Then stay with me, Link. Here at the ranch, where the land is good and love is simple. That's all I've ever wanted.",
+      text: "*tears of joy* Then make love to me like it's our wedding night. Because in my heart... *pulls you down* ...it already is.",
       emotion: 'happy',
       action: { type: 'ending', value: 'malon' }
     },
     {
       id: 'malon-reject',
       speaker: 'malon',
-      text: "I reckon I knew that. A hero like you can't be tied down to one place. But I'll always be your friend.",
+      text: "*heart breaking* I knew a hero couldn't love a simple farm girl forever. At least I'll have these memories... Go. Before I beg.",
       emotion: 'sad',
       action: { type: 'location', value: 'castle-town' }
     }
@@ -634,45 +638,46 @@ function createRijuDialogues(): DialogueNode[] {
     {
       id: 'riju-d1-start',
       speaker: 'riju',
-      text: "Ah, the Hylian Champion! Welcome to Gerudo Town. Patricia and I were just about to go sand seal surfing.",
+      text: "*lounging on silk cushions in revealing Gerudo attire* Champion! Finally, a vai worthy of my attention enters Gerudo Town... Oh wait, you're a voe. Even better.",
       emotion: 'happy',
       next: 'riju-d1-2'
     },
     {
       id: 'riju-d1-2',
       speaker: 'riju',
-      text: "You know, being Chief means everyone treats me like I'm made of glass. It's nice to have someone who doesn't bow every two seconds.",
+      text: "*stands, hips swaying as she approaches* The Gerudo have a tradition... we choose the finest voe to continue our bloodline. And you, hero, are VERY fine...",
+      emotion: 'blush',
       choices: [
-        { text: "You seem plenty capable to me, Chief Riju.", next: 'riju-d1-capable', affectionChange: 10 },
-        { text: "Want to race? I bet I'm faster on a sand seal.", next: 'riju-d1-race', affectionChange: 10 },
-        { text: "Shouldn't you be doing Chief things?", next: 'riju-d1-duty', affectionChange: -5 }
+        { text: "And you're the most exotic beauty I've ever seen.", next: 'riju-d1-flirt', affectionChange: 15 },
+        { text: "Is the Chief allowed to flirt this openly?", next: 'riju-d1-tease', affectionChange: 10 },
+        { text: "I'm flattered, but isn't this forward?", next: 'riju-d1-shy', affectionChange: 0 }
       ]
     },
     {
-      id: 'riju-d1-capable',
+      id: 'riju-d1-flirt',
       speaker: 'riju',
-      text: "You... really think so? Most people just see a child playing at leadership. Thank you, Link.",
+      text: "*circles you slowly* Exotic? You haven't seen anything yet. *trails finger across your shoulder* Stay one night in Gerudo Town, and I'll show you pleasures that would make goddesses blush.",
       emotion: 'blush',
       next: 'riju-d1-end'
     },
     {
-      id: 'riju-d1-race',
+      id: 'riju-d1-tease',
       speaker: 'riju',
-      text: "Ha! You're ON, Champion! But don't cry when Patricia and I leave you eating our dust!",
+      text: "I'm the Chief. I'm EXPECTED to sample the finest the world offers. *winks* Consider it... diplomatic relations.",
       emotion: 'happy',
       next: 'riju-d1-end'
     },
     {
-      id: 'riju-d1-duty',
+      id: 'riju-d1-shy',
       speaker: 'riju',
-      text: "Even Chiefs need breaks, you know. Besides, the council can handle things for an hour.",
-      emotion: 'angry',
+      text: "*laughs* Forward? In Gerudo culture, this is demure. If I were truly forward, I'd already have you in my private bath. *pauses* ...Want to see my private bath?",
+      emotion: 'blush',
       next: 'riju-d1-end'
     },
     {
       id: 'riju-d1-end',
       speaker: 'riju',
-      text: "Come back soon! I could use more sparring partners who aren't afraid to challenge me.",
+      text: "*whispers hotly in your ear* The desert is cold at night. My chambers are warm. Come after midnight... and leave your clothing at the door.",
       emotion: 'happy',
       action: { type: 'location', value: 'castle-town' }
     },
@@ -681,46 +686,46 @@ function createRijuDialogues(): DialogueNode[] {
     {
       id: 'riju-d2-start',
       speaker: 'riju',
-      text: "Link! Perfect timing. I was just... hiding from my advisors. Don't tell anyone!",
-      emotion: 'blush',
+      text: "*in a steaming bath, only shadows preserving modesty* You're late, Champion. The water's getting cold... come warm it up.",
+      emotion: 'happy',
       next: 'riju-d2-2'
     },
     {
       id: 'riju-d2-2',
       speaker: 'riju',
-      text: "Sometimes I wonder if I can really fill my mother's sandals. She was so strong, so wise...",
-      emotion: 'sad',
+      text: "*extends a bare leg from the water* Gerudo massage techniques are legendary. They're even better when applied to a body as sculpted as yours...",
+      emotion: 'blush',
       choices: [
-        { text: "You're strong in your own way, Riju.", next: 'riju-d2-encourage', affectionChange: 15 },
-        { text: "Your people believe in you. So do I.", next: 'riju-d2-believe', affectionChange: 10 },
-        { text: "Maybe you should listen to your advisors more.", next: 'riju-d2-dismiss', affectionChange: -10 }
+        { text: "*strips and joins her in the bath*", next: 'riju-d2-join', affectionChange: 20 },
+        { text: "I want to learn these legendary techniques.", next: 'riju-d2-learn', affectionChange: 15 },
+        { text: "This feels like a trap...", next: 'riju-d2-suspicious', affectionChange: -10 }
       ]
     },
     {
-      id: 'riju-d2-encourage',
+      id: 'riju-d2-join',
       speaker: 'riju',
-      text: "Link... when you say it, I almost believe it. You have a way of making me feel brave.",
+      text: "*wraps legs around you in the water* Mmm, finally. *runs nails down your back* Gerudo women take what we want. And I want you. All night.",
       emotion: 'blush',
       next: 'riju-d2-end'
     },
     {
-      id: 'riju-d2-believe',
+      id: 'riju-d2-learn',
       speaker: 'riju',
-      text: "The Champion believes in me? Ha! Now I HAVE to succeed. Can't let you down.",
+      text: "*pulls you into the water* Then let me teach you. *positions your hands* We start here... and gradually move lower. Much lower...",
       emotion: 'happy',
       next: 'riju-d2-end'
     },
     {
-      id: 'riju-d2-dismiss',
+      id: 'riju-d2-suspicious',
       speaker: 'riju',
-      text: "I get enough lectures from them already! I thought you were different...",
-      emotion: 'angry',
+      text: "*pouts then smirks* The only trap here is between my thighs, hero. Now stop overthinking and get in this water before I drag you in.",
+      emotion: 'blush',
       next: 'riju-d2-end'
     },
     {
       id: 'riju-d2-end',
       speaker: 'riju',
-      text: "Thanks for listening, Link. Now, I should probably go face those advisors. See you around!",
+      text: "*breathless, water splashing* You've earned a place in my bedchamber, Champion. Come back tomorrow... I have silks that need someone to share them with.",
       emotion: 'happy',
       action: { type: 'location', value: 'castle-town' }
     },
@@ -729,32 +734,32 @@ function createRijuDialogues(): DialogueNode[] {
     {
       id: 'riju-high-start',
       speaker: 'riju',
-      text: "Link... I've been thinking. About what happens after Calamity Ganon is defeated.",
+      text: "*on her throne, guards dismissed* Link. I've sampled many pleasures as Chief. But none compare to you. I want more than one night.",
       emotion: 'blush',
       next: 'riju-high-2'
     },
     {
       id: 'riju-high-2',
       speaker: 'riju',
-      text: "The Gerudo have a saying: 'The desert tests all, but love conquers even the endless sands.' I think I understand it now.",
+      text: "*stands, letting her royal garments fall* I want every night. *walks to you, fully revealed* Be my king. Rule beside me. Love me until the desert turns to sea.",
       emotion: 'happy',
       choices: [
-        { text: "I'd cross any desert to be with you, Riju.", next: 'riju-confession', affectionChange: 20 },
-        { text: "You'll make a great Chief. That should be your focus.", next: 'riju-reject', affectionChange: -15 }
+        { text: "*lifts her onto the throne* My queen. My everything.", next: 'riju-confession', affectionChange: 25 },
+        { text: "I can't be tied to one kingdom, Riju.", next: 'riju-reject', affectionChange: -20 }
       ]
     },
     {
       id: 'riju-confession',
       speaker: 'riju',
-      text: "Then stay with me. Help me lead. Together, we can build a future as bright as the Gerudo sun!",
+      text: "*gasps as you claim her on the throne* Yes! My Champion, my king, my love! *screams with pleasure* Let all of Gerudo hear - their Chief has found her mate!",
       emotion: 'happy',
       action: { type: 'ending', value: 'riju' }
     },
     {
       id: 'riju-reject',
       speaker: 'riju',
-      text: "Right... yes, you're right. Duty first. Always duty first.",
-      emotion: 'sad',
+      text: "*coldly covers herself* Then you're no champion of mine. Guards! Escort this voe out of Gerudo Town. Permanently.",
+      emotion: 'angry',
       action: { type: 'location', value: 'castle-town' }
     }
   ];
@@ -765,47 +770,47 @@ function createPayaDialogues(): DialogueNode[] {
     {
       id: 'paya-d1-start',
       speaker: 'paya',
-      text: "M-Master Link?! You're here?! I-I wasn't expecting... oh my, I'm such a mess right now!",
+      text: "M-Master Link?! *drops the sheet she was folding* I was just... preparing your bed for... I mean, A bed! Not YOUR bed!",
       emotion: 'surprised',
       next: 'paya-d1-2'
     },
     {
       id: 'paya-d1-2',
       speaker: 'paya',
-      text: "I was just... cleaning Grandmother's shrine. P-please don't look at me, I must look terrible...",
+      text: "*face bright red* My birthmark... it's shaped like a papaya, but... it's in a place I can't show anyone! Unless... unless you wanted to see it someday...",
       emotion: 'blush',
       choices: [
-        { text: "You look lovely, Paya.", next: 'paya-d1-compliment', affectionChange: 10 },
-        { text: "No need to be nervous around me.", next: 'paya-d1-calm', affectionChange: 5 },
-        { text: "Where's Impa?", next: 'paya-d1-impa', affectionChange: -5 }
+        { text: "I'd be honored to see all of you, Paya.", next: 'paya-d1-forward', affectionChange: 15 },
+        { text: "You're adorable when you blush.", next: 'paya-d1-sweet', affectionChange: 10 },
+        { text: "Where is this birthmark exactly?", next: 'paya-d1-curious', affectionChange: 10 }
       ]
     },
     {
-      id: 'paya-d1-compliment',
+      id: 'paya-d1-forward',
       speaker: 'paya',
-      text: "L-L-LOVELY?! Oh goddesses, I'm going to faint! No one's ever said... I mean... thank you...",
+      text: "*nearly faints* H-HONORED?! Oh goddesses... *fans herself* I've written about this exact scenario in my diary! I need to go lie down... maybe with you...",
       emotion: 'blush',
       next: 'paya-d1-end'
     },
     {
-      id: 'paya-d1-calm',
+      id: 'paya-d1-sweet',
       speaker: 'paya',
-      text: "I-I know, but you're the HERO! And I'm just... me. But I'll try to be calmer. For you.",
+      text: "*squeaks* A-adorable?! I'm going to write that down! No one's ever... *trembling* ...Master Link, you're making my heart do dangerous things!",
       emotion: 'happy',
       next: 'paya-d1-end'
     },
     {
-      id: 'paya-d1-impa',
+      id: 'paya-d1-curious',
       speaker: 'paya',
-      text: "Grandmother is resting. I-I can help you if you need something! I know a lot about Sheikah history!",
-      emotion: 'sad',
+      text: "*voice tiny* It's... on my left... *trails finger down from hip* ...I CAN'T SAY IT! But if you stayed the night, maybe... maybe I could SHOW you?",
+      emotion: 'blush',
       next: 'paya-d1-end'
     },
     {
       id: 'paya-d1-end',
       speaker: 'paya',
-      text: "P-please come back anytime, Master Link! I'll... I'll try not to be so nervous next time!",
-      emotion: 'happy',
+      text: "*gathers courage* M-Master Link... my room is the one with the papaya carved on the door. If you ever wanted to visit... I sleep without... I mean... GOODBYE!",
+      emotion: 'blush',
       action: { type: 'location', value: 'castle-town' }
     },
 
@@ -813,46 +818,46 @@ function createPayaDialogues(): DialogueNode[] {
     {
       id: 'paya-d2-start',
       speaker: 'paya',
-      text: "Master Link! I've been practicing! Watch - I can say your name without stuttering now... Link!",
+      text: "*opens door in thin sleeping robe* Y-you came! I thought I dreamed it... *pulls you inside* Quick, before Grandmother wakes!",
       emotion: 'happy',
       next: 'paya-d2-2'
     },
     {
       id: 'paya-d2-2',
       speaker: 'paya',
-      text: "I wrote about you in my journal... oh no, I shouldn't have said that! Please forget I mentioned it!",
+      text: "*trembling against you* I've never done this before. But I've imagined it... hundreds of times... *looks up with desperate eyes* Will you be gentle with me?",
       emotion: 'blush',
       choices: [
-        { text: "What did you write about me?", next: 'paya-d2-journal', affectionChange: 15 },
-        { text: "That's sweet, Paya.", next: 'paya-d2-sweet', affectionChange: 10 },
-        { text: "You keep a journal about me?", next: 'paya-d2-weird', affectionChange: -10 }
+        { text: "*cups her face tenderly* I'll be whatever you need.", next: 'paya-d2-tender', affectionChange: 20 },
+        { text: "Show me that birthmark, Paya.", next: 'paya-d2-birthmark', affectionChange: 20 },
+        { text: "We should stop before we can't.", next: 'paya-d2-stop', affectionChange: -10 }
       ]
     },
     {
-      id: 'paya-d2-journal',
+      id: 'paya-d2-tender',
       speaker: 'paya',
-      text: "I-I wrote about how brave you are! And how your eyes shine like... like... I CAN'T SAY IT!",
+      text: "*tears of happiness* Oh, Master Link... *lets robe slip from one shoulder* I've saved myself for you. Only you. Please... make me yours...",
       emotion: 'blush',
       next: 'paya-d2-end'
     },
     {
-      id: 'paya-d2-sweet',
+      id: 'paya-d2-birthmark',
       speaker: 'paya',
-      text: "You... you think so? Grandmother says I should express my feelings more. This is my way of trying.",
-      emotion: 'happy',
+      text: "*slowly unties robe with shaking hands* H-here... *reveals papaya-shaped mark on inner thigh* Do you... do you like it? Do you like me?",
+      emotion: 'blush',
       next: 'paya-d2-end'
     },
     {
-      id: 'paya-d2-weird',
+      id: 'paya-d2-stop',
       speaker: 'paya',
-      text: "I-it's not weird! I keep a journal about everything! You just... come up a lot... oh no...",
+      text: "*clings to you* No! Don't stop! I've waited so long! *kisses you desperately* Please, Master Link... I need this. I need you!",
       emotion: 'sad',
       next: 'paya-d2-end'
     },
     {
       id: 'paya-d2-end',
       speaker: 'paya',
-      text: "Thank you for visiting, Master Link. Each time I see you, my heart feels... fuller.",
+      text: "*curled against you, glowing with happiness* That was... I didn't know it could feel like... *giggles* When can we do that again? Tomorrow? Tonight again?",
       emotion: 'happy',
       action: { type: 'location', value: 'castle-town' }
     },
@@ -861,31 +866,31 @@ function createPayaDialogues(): DialogueNode[] {
     {
       id: 'paya-high-start',
       speaker: 'paya',
-      text: "Master Link... I've decided to be brave. Like you. Even if my voice shakes, I need to say this...",
-      emotion: 'blush',
+      text: "*meets you at the door, completely changed - confident* Master Link. I'm done being shy. I know what I want now. And it's you.",
+      emotion: 'happy',
       next: 'paya-high-2'
     },
     {
       id: 'paya-high-2',
       speaker: 'paya',
-      text: "I love you! There, I said it! I've loved you since the moment you walked into Kakariko! Please... say something...",
+      text: "*pushes you onto the bed and straddles you* Grandmother said when a Sheikah finds their soulmate, they must claim them. *leans down* I'm claiming you.",
       emotion: 'blush',
       choices: [
-        { text: "I love you too, Paya.", next: 'paya-confession', affectionChange: 20 },
-        { text: "I'm sorry, Paya. I don't feel the same.", next: 'paya-reject', affectionChange: -15 }
+        { text: "*pulls her down for a deep kiss* Claim away.", next: 'paya-confession', affectionChange: 25 },
+        { text: "Paya, this is too fast...", next: 'paya-reject', affectionChange: -20 }
       ]
     },
     {
       id: 'paya-confession',
       speaker: 'paya',
-      text: "Y-you do?! I'm not dreaming?! Oh, Master Link... I promise to become someone worthy of your love!",
+      text: "*moans into the kiss* Master Link... no, just Link. MY Link. *moves rhythmically* I'll love you forever. Every day, every night, in every way!",
       emotion: 'happy',
       action: { type: 'ending', value: 'paya' }
     },
     {
       id: 'paya-reject',
       speaker: 'paya',
-      text: "I... I understand. Thank you for your honesty. I'll treasure our friendship always...",
+      text: "*old shyness returning* I... I misread everything. I'm so embarrassed... Please forget this happened. Please just... go.",
       emotion: 'sad',
       action: { type: 'location', value: 'castle-town' }
     }
@@ -894,38 +899,38 @@ function createPayaDialogues(): DialogueNode[] {
 
 export const endings: Record<string, { title: string; text: string; character: string }> = {
   zelda: {
-    title: 'The Wisdom of Love',
-    text: "As dawn breaks over Hyrule Castle, you stand beside Zelda, no longer just as her appointed knight, but as her chosen partner. Together, you'll face whatever the future holds - your courage matched by her wisdom, your bond unbreakable. The kingdom celebrates, for their princess has found not just a protector, but a soulmate.",
+    title: 'The Sacred Union',
+    text: "In the most private chamber of Hyrule Castle, lit only by moonlight, you and Zelda become one in ways the ancient texts only dreamed of. Crown and duty forgotten, she surrenders completely to you - her hero, her love, her everything. Dawn finds you tangled together, her head on your chest, both knowing that destiny has been rewritten in the most intimate way possible. The bloodline of Hyrule's royalty will continue... and it will carry your strength.",
     character: 'zelda'
   },
   midna: {
-    title: 'Between Light and Shadow',
-    text: "The Mirror of Twilight reforms, but this time it becomes a gateway, not a barrier. You step between worlds freely, your heart belonging to both realms. Midna's mischievous laugh echoes through the twilight as you explore your new existence together - the hero who brought light to shadow, and the princess who accepted his heart.",
+    title: 'Eternal Twilight Passion',
+    text: "Between realms of light and shadow, you and Midna create a new dimension - one built on insatiable desire and unending love. Her true form writhes with yours nightly, the twilight energies amplifying every sensation until you both scream with pleasure that echoes across worlds. The Twili speak in whispers of their princess and her light-dwelling lover, whose passion is legendary. Neither world can contain you - and neither wants to.",
     character: 'midna'
   },
   mipha: {
-    title: "Grace of the Waters",
-    text: "The waterfalls of Zora's Domain sing a new melody - one of joy and union. The Zora armor fits perfectly, a symbol of Mipha's love made manifest. Though challenges await, her healing light will always guide you home. In the crystal waters, two souls become one, and a new chapter of Zora history begins.",
+    title: 'Depths of Devotion',
+    text: "Beneath the sacred waters of Zora's Domain, the bonding ritual is complete. You feel Mipha's pleasure as your own, your souls permanently intertwined in ecstasy that never fades. Each night in the luminescent pools, you explore new depths of intimacy that only a Zora and her eternal mate can achieve. The other Zoras speak enviously of the princess who gasps with pleasure every time her Hylian husband merely thinks of her.",
     character: 'mipha'
   },
   malon: {
-    title: 'Song of the Ranch',
-    text: "The simple life calls you home. Each morning, you wake to Malon's gentle singing and Epona's happy neighs. The ranch flourishes under your combined care, and the nights are filled with laughter and love. Sometimes the greatest adventures are found not in far-off lands, but in the arms of the one you love.",
+    title: 'Harvest of Desire',
+    text: "Every sunset on Lon Lon Ranch ends the same way - with you and Malon tumbling into the hay, into her bed, onto any flat surface available. Her appetite for you is as endless as the Hyrulean fields, and you're happy to satisfy her every craving. Nine months later, the first of many children arrives. The ranch will be a dynasty, and every night Malon rewards your hard work in ways that leave you both exhausted and fulfilled.",
     character: 'malon'
   },
   riju: {
-    title: 'Rulers of the Desert',
-    text: "Gerudo Town has never been more prosperous. With you by her side, Riju leads with confidence and joy. Patricia the sand seal seems to approve, and the desert winds carry songs of the Chief and her Champion. Together, you'll build a legacy that outshines even the scorching sun.",
+    title: 'Desert Heat',
+    text: "As King of the Gerudo, your duties are twofold: to lead alongside Riju, and to ensure the tribe's future in the most pleasurable way possible. Every night in the royal chambers is an adventure - Riju's appetite is voracious and her creativity boundless. The Gerudo women whisper jealously about their Chief's stamina and her King's legendary endurance. In the desert heat, your love burns hottest of all.",
     character: 'riju'
   },
   paya: {
-    title: 'Keeper of Hearts',
-    text: "In the quiet village of Kakariko, love blooms like the eternal plum blossoms. Paya's shyness melts away in your presence, replaced by a gentle confidence. Impa smiles knowingly as you help tend to the shrine together. The Sheikah records will speak of this - the hero who found peace, and the devoted soul who gave him a home.",
+    title: 'Blooming Passion',
+    text: "Shy Paya transformed into an insatiable lover. Behind Kakariko's peaceful facade, she has become addicted to your touch, needing you multiple times daily. Her diary - now several volumes - chronicles every encounter in breathless detail. Impa pretends not to notice the sounds from her granddaughter's room, or the way you both emerge glowing. The papaya birthmark has become your favorite thing to kiss, right before exploring lower.",
     character: 'paya'
   },
   alone: {
-    title: 'The Solitary Hero',
-    text: "Your journey continues alone, as it always has. The hearts you touched remember you fondly, but your path leads ever onward. Perhaps someday you'll find where you truly belong. Until then, Hyrule's fields await, and adventure never ends for the Chosen Hero.",
+    title: 'The Unsatisfied Hero',
+    text: "Your journey continues, but something feels missing. At night, you remember the lovers you could have had - Zelda's gasps, Midna's moans, Mipha's otherworldly pleasure. You chose duty over desire, and now the nights are cold and lonely. Perhaps someday you'll return to one of them. Until then, only memories warm your bed, and your hand is poor company compared to what could have been.",
     character: ''
   }
 };
