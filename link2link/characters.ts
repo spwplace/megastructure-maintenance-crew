@@ -174,6 +174,25 @@ export const playerPersonas: Character[] = [
       blush: '💗',
       surprised: '🌊'
     }
+  },
+  {
+    id: 'postman',
+    name: 'The Postman',
+    title: 'Frantic Mail Carrier',
+    color: '#FFFFFF',
+    secondaryColor: '#E0E0E0',
+    description: "Neither rain, nor sleet, nor Ganon's forces shall stop the mail! But THIS hero? He might just stop your heart. You've delivered to him 47 times. You've counted.",
+    personality: ['Dedicated', 'Frantic', 'Obsessively punctual', 'Secretly pining'],
+    likes: ['Schedules', 'Running', 'Delivering to a certain green-clad recipient'],
+    dislikes: ['Late deliveries', 'Obstacles', 'When Link isn\'t home'],
+    sprite: {
+      base: '📮',
+      happy: '💌',
+      sad: '😰',
+      angry: '📯',
+      blush: '💗',
+      surprised: '❗'
+    }
   }
 ];
 
