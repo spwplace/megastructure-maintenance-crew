@@ -1,936 +1,941 @@
 import { Scene, DialogueNode } from './types';
 
 export const scenes: Record<string, Scene> = {
-  // Hub location - Castle Town
-  'castle-town': {
-    id: 'castle-town',
-    location: 'Castle Town',
-    background: 'bg-market',
-    availableCharacters: ['zelda'],
+  // Hub location - Where do you want to "accidentally" run into Link?
+  'hyrule-field': {
+    id: 'hyrule-field',
+    location: 'Hyrule Field',
+    background: 'bg-field',
+    availableCharacters: ['link'],
     dialogues: {},
     navigationOptions: [
-      { label: 'Hyrule Castle', targetScene: 'hyrule-castle' },
-      { label: 'Lon Lon Ranch', targetScene: 'lon-lon-ranch' },
-      { label: "Zora's Domain", targetScene: 'zoras-domain' },
-      { label: 'Twilight Realm', targetScene: 'twilight-realm' },
-      { label: 'Gerudo Town', targetScene: 'gerudo-town' },
-      { label: 'Kakariko Village', targetScene: 'kakariko-village' },
+      { label: 'Stables (Link visits often)', targetScene: 'stable' },
+      { label: 'Goron Hot Springs (He bathes here... naked)', targetScene: 'hot-spring' },
+      { label: 'Cooking Pot (He eats... a lot)', targetScene: 'cooking-pot' },
+      { label: 'Training Grounds', targetScene: 'training-grounds' },
+      { label: 'Fairy Fountain', targetScene: 'fairy-fountain' },
+      { label: 'His Camp (stalker mode)', targetScene: 'camp' },
       { label: 'Rest for the Day', targetScene: 'end-day' }
     ]
   },
 
-  // Zelda's location
-  'hyrule-castle': {
-    id: 'hyrule-castle',
-    location: 'Hyrule Castle',
-    background: 'bg-castle',
-    availableCharacters: ['zelda'],
-    dialogues: {
-      zelda: createZeldaDialogues()
-    },
-    navigationOptions: [
-      { label: 'Return to Castle Town', targetScene: 'castle-town' }
-    ]
-  },
-
-  // Malon's location
-  'lon-lon-ranch': {
-    id: 'lon-lon-ranch',
-    location: 'Lon Lon Ranch',
+  'stable': {
+    id: 'stable',
+    location: 'Dueling Peaks Stable',
     background: 'bg-ranch',
-    availableCharacters: ['malon'],
+    availableCharacters: ['link'],
     dialogues: {
-      malon: createMalonDialogues()
+      link: createStableDialogues()
     },
     navigationOptions: [
-      { label: 'Return to Castle Town', targetScene: 'castle-town' }
+      { label: 'Return to Hyrule Field', targetScene: 'hyrule-field' }
     ]
   },
 
-  // Mipha's location
-  'zoras-domain': {
-    id: 'zoras-domain',
-    location: "Zora's Domain",
-    background: 'bg-zora',
-    availableCharacters: ['mipha'],
+  'hot-spring': {
+    id: 'hot-spring',
+    location: 'Goron Hot Springs',
+    background: 'bg-hotspring',
+    availableCharacters: ['link'],
     dialogues: {
-      mipha: createMiphaDialogues()
+      link: createHotSpringDialogues()
     },
     navigationOptions: [
-      { label: 'Return to Castle Town', targetScene: 'castle-town' }
+      { label: 'Return to Hyrule Field', targetScene: 'hyrule-field' }
     ]
   },
 
-  // Midna's location
-  'twilight-realm': {
-    id: 'twilight-realm',
-    location: 'Twilight Realm',
+  'cooking-pot': {
+    id: 'cooking-pot',
+    location: 'Cooking Pot',
+    background: 'bg-market',
+    availableCharacters: ['link'],
+    dialogues: {
+      link: createCookingDialogues()
+    },
+    navigationOptions: [
+      { label: 'Return to Hyrule Field', targetScene: 'hyrule-field' }
+    ]
+  },
+
+  'training-grounds': {
+    id: 'training-grounds',
+    location: 'Training Grounds',
+    background: 'bg-castle',
+    availableCharacters: ['link'],
+    dialogues: {
+      link: createTrainingDialogues()
+    },
+    navigationOptions: [
+      { label: 'Return to Hyrule Field', targetScene: 'hyrule-field' }
+    ]
+  },
+
+  'fairy-fountain': {
+    id: 'fairy-fountain',
+    location: 'Great Fairy Fountain',
+    background: 'bg-forest',
+    availableCharacters: ['link'],
+    dialogues: {
+      link: createFairyFountainDialogues()
+    },
+    navigationOptions: [
+      { label: 'Return to Hyrule Field', targetScene: 'hyrule-field' }
+    ]
+  },
+
+  'camp': {
+    id: 'camp',
+    location: "Link's Campsite",
     background: 'bg-twilight',
-    availableCharacters: ['midna'],
+    availableCharacters: ['link'],
     dialogues: {
-      midna: createMidnaDialogues()
+      link: createCampDialogues()
     },
     navigationOptions: [
-      { label: 'Return to Castle Town', targetScene: 'castle-town' }
-    ]
-  },
-
-  // Riju's location
-  'gerudo-town': {
-    id: 'gerudo-town',
-    location: 'Gerudo Town',
-    background: 'bg-gerudo',
-    availableCharacters: ['riju'],
-    dialogues: {
-      riju: createRijuDialogues()
-    },
-    navigationOptions: [
-      { label: 'Return to Castle Town', targetScene: 'castle-town' }
-    ]
-  },
-
-  // Paya's location
-  'kakariko-village': {
-    id: 'kakariko-village',
-    location: 'Kakariko Village',
-    background: 'bg-kakariko',
-    availableCharacters: ['paya'],
-    dialogues: {
-      paya: createPayaDialogues()
-    },
-    navigationOptions: [
-      { label: 'Return to Castle Town', targetScene: 'castle-town' }
+      { label: 'Return to Hyrule Field', targetScene: 'hyrule-field' }
     ]
   }
 };
 
-function createZeldaDialogues(): DialogueNode[] {
+function createStableDialogues(): DialogueNode[] {
   return [
-    // Day 1 - First meeting
+    // Day 1
     {
-      id: 'zelda-d1-start',
-      speaker: 'zelda',
-      text: "Link! You startled me... I was just in my private chambers, reading. These ancient texts speak of... forbidden rituals.",
-      emotion: 'surprised',
-      next: 'zelda-d1-2'
+      id: 'link-d1-start',
+      speaker: 'link',
+      text: "*Link is brushing Epona, his tunic sleeves rolled up, forearms glistening with effort. He notices you and tilts his head curiously*",
+      emotion: 'happy',
+      next: 'link-d1-2'
     },
     {
-      id: 'zelda-d1-2',
-      speaker: 'zelda',
-      text: "*adjusts her dress* You know, as your princess, I could command you to stay... but I'd rather you choose to.",
-      emotion: 'blush',
+      id: 'link-d1-2',
+      speaker: 'link',
+      text: "...",
+      emotion: 'happy',
+      next: 'link-d1-3'
+    },
+    {
+      id: 'link-d1-3',
+      speaker: 'narrator',
+      text: "*He gestures toward Epona, offering you a brush. His eyes are impossibly blue up close.*",
       choices: [
-        { text: "I'd stay even without a command, Your Highness.", next: 'zelda-d1-flirt', affectionChange: 15 },
-        { text: "What kind of forbidden rituals?", next: 'zelda-d1-curious', affectionChange: 10 },
-        { text: "I should probably go...", next: 'zelda-d1-leave', affectionChange: -5 }
+        { text: "*Take the brush, fingers brushing his*", next: 'link-d1-touch', affectionChange: 15 },
+        { text: "She's beautiful. You must care for her a lot.", next: 'link-d1-compliment', affectionChange: 10 },
+        { text: "I'm more of a sand seal person.", next: 'link-d1-wrong', affectionChange: -5 }
       ]
     },
     {
-      id: 'zelda-d1-flirt',
-      speaker: 'zelda',
-      text: "*cheeks flushing* Such bold words from my knight... My heart is racing. Is this what the texts meant by 'divine connection'?",
+      id: 'link-d1-touch',
+      speaker: 'link',
+      text: "*His ears twitch - you swear they turn slightly pink. He doesn't pull his hand away.*",
       emotion: 'blush',
-      next: 'zelda-d1-end'
+      next: 'link-d1-end'
     },
     {
-      id: 'zelda-d1-curious',
-      speaker: 'zelda',
-      text: "Ancient bonding ceremonies... between heroes and princesses. The texts say souls can intertwine through... intimate prayer.",
-      emotion: 'blush',
-      next: 'zelda-d1-end'
+      id: 'link-d1-compliment',
+      speaker: 'link',
+      text: "*A genuine smile crosses his face. He pats Epona proudly, then looks at you with warmth in his eyes*",
+      emotion: 'happy',
+      next: 'link-d1-end'
     },
     {
-      id: 'zelda-d1-leave',
-      speaker: 'zelda',
-      text: "*catches your hand* Wait... perhaps just a moment longer? It gets lonely in this tower.",
+      id: 'link-d1-wrong',
+      speaker: 'link',
+      text: "*Link's expression doesn't change, but Epona gives you a LOOK. You've made a powerful enemy today.*",
       emotion: 'sad',
-      next: 'zelda-d1-end'
+      next: 'link-d1-end'
     },
     {
-      id: 'zelda-d1-end',
-      speaker: 'zelda',
-      text: "Come back soon, Link. These castle walls feel less cold when you're here... *touches your cheek briefly*",
+      id: 'link-d1-end',
+      speaker: 'link',
+      text: "*Link gives a small wave as you leave. Was that... did he watch you walk away?*",
       emotion: 'happy',
-      action: { type: 'location', value: 'castle-town' }
-    },
-
-    // Day 2+ dialogues
-    {
-      id: 'zelda-d2-start',
-      speaker: 'zelda',
-      text: "*opens door in a silk nightgown* Link! I... I wasn't expecting you so late. But please, come in...",
-      emotion: 'surprised',
-      next: 'zelda-d2-2'
-    },
-    {
-      id: 'zelda-d2-2',
-      speaker: 'zelda',
-      text: "I was just preparing for bed. *sits on the edge of mattress* But suddenly I'm not tired at all...",
-      emotion: 'blush',
-      choices: [
-        { text: "*sits beside her* Neither am I.", next: 'zelda-d2-close', affectionChange: 20 },
-        { text: "You look beautiful in the candlelight.", next: 'zelda-d2-compliment', affectionChange: 15 },
-        { text: "I should let you rest.", next: 'zelda-d2-leave', affectionChange: -10 }
-      ]
-    },
-    {
-      id: 'zelda-d2-close',
-      speaker: 'zelda',
-      text: "*breath catches* Link... when you're this close, I forget I'm supposed to be proper. I forget everything except wanting to be closer...",
-      emotion: 'blush',
-      next: 'zelda-d2-end'
-    },
-    {
-      id: 'zelda-d2-compliment',
-      speaker: 'zelda',
-      text: "*pulls you closer by your tunic* And you look like every fantasy I've had since you first walked into my throne room...",
-      emotion: 'blush',
-      next: 'zelda-d2-end'
-    },
-    {
-      id: 'zelda-d2-leave',
-      speaker: 'zelda',
-      text: "*grabs your wrist* Don't. Stay. That's a royal command... and a desperate plea.",
-      emotion: 'sad',
-      next: 'zelda-d2-end'
-    },
-    {
-      id: 'zelda-d2-end',
-      speaker: 'zelda',
-      text: "*presses forehead to yours* Promise me you'll come back tomorrow night. I'll leave my door unlocked...",
-      emotion: 'happy',
-      action: { type: 'location', value: 'castle-town' }
-    },
-
-    // High affection dialogue
-    {
-      id: 'zelda-high-start',
-      speaker: 'zelda',
-      text: "*pulls you into her chambers and locks the door* No more pretense, Link. No more princess and knight. Just us.",
-      emotion: 'blush',
-      next: 'zelda-high-2'
-    },
-    {
-      id: 'zelda-high-2',
-      speaker: 'zelda',
-      text: "*runs fingers through your hair* I've dreamed of this. Of us. Woken up aching for something I couldn't name... until now.",
-      emotion: 'happy',
-      choices: [
-        { text: "*pulls her close* Then let's stop dreaming.", next: 'zelda-confession', affectionChange: 25 },
-        { text: "Zelda, we shouldn't...", next: 'zelda-reject', affectionChange: -20 }
-      ]
-    },
-    {
-      id: 'zelda-confession',
-      speaker: 'zelda',
-      text: "*melts into your arms* Yes... Finally, yes. Tonight, you're not my knight. Tonight, you're mine. All mine...",
-      emotion: 'happy',
-      action: { type: 'ending', value: 'zelda' }
-    },
-    {
-      id: 'zelda-reject',
-      speaker: 'zelda',
-      text: "*steps back, eyes glistening* I see. Duty over desire. At least I know where your heart truly lies...",
-      emotion: 'sad',
-      action: { type: 'location', value: 'castle-town' }
-    }
-  ];
-}
-
-function createMidnaDialogues(): DialogueNode[] {
-  return [
-    {
-      id: 'midna-d1-start',
-      speaker: 'midna',
-      text: "Well, well... my favorite wolf wandered into my bedroom. *stretches languidly* Miss me that much?",
-      emotion: 'happy',
-      next: 'midna-d1-2'
-    },
-    {
-      id: 'midna-d1-2',
-      speaker: 'midna',
-      text: "*floats closer, trailing a finger down your chest* You know, I used to ride on your back for hours. I've thought about riding you in... other ways.",
-      emotion: 'blush',
-      choices: [
-        { text: "I've had similar thoughts.", next: 'midna-d1-flirt', affectionChange: 15 },
-        { text: "You're very forward, Princess.", next: 'midna-d1-tease', affectionChange: 10 },
-        { text: "*steps back* Midna...", next: 'midna-d1-shy', affectionChange: 0 }
-      ]
-    },
-    {
-      id: 'midna-d1-flirt',
-      speaker: 'midna',
-      text: "Ehehehe! Oh I LIKE this boldness. *wraps arms around your neck* The twilight hides nothing from me... including that look in your eyes.",
-      emotion: 'blush',
-      next: 'midna-d1-end'
-    },
-    {
-      id: 'midna-d1-tease',
-      speaker: 'midna',
-      text: "Forward? I spent months pressed against your warm fur, feeling your heartbeat. We're past 'forward,' hero.",
-      emotion: 'happy',
-      next: 'midna-d1-end'
-    },
-    {
-      id: 'midna-d1-shy',
-      speaker: 'midna',
-      text: "*pouts* Don't tell me you're shy NOW. Not after all the times I've seen you naked in that wolf form. Fur counts, you know.",
-      emotion: 'blush',
-      next: 'midna-d1-end'
-    },
-    {
-      id: 'midna-d1-end',
-      speaker: 'midna',
-      text: "*whispers in your ear* Come back soon, wolf-boy. The Twilight Realm gets... very cold at night. I could use something warm.",
-      emotion: 'happy',
-      action: { type: 'location', value: 'castle-town' }
+      action: { type: 'location', value: 'hyrule-field' }
     },
 
     // Day 2+
     {
-      id: 'midna-d2-start',
-      speaker: 'midna',
-      text: "*appears in her true form, tall and breathtaking* Surprised? This is what I really look like. Do you like what you see?",
+      id: 'link-d2-start',
+      speaker: 'narrator',
+      text: "*Link's face lights up when he sees you. He actually WAVES. Enthusiastically. The stable workers exchange knowing looks.*",
       emotion: 'happy',
-      next: 'midna-d2-2'
+      next: 'link-d2-2'
     },
     {
-      id: 'midna-d2-2',
-      speaker: 'midna',
-      text: "*turns slowly* I wanted you to see ALL of me. The curves I hid in that imp form... *traces her hips* Were worth hiding for this moment.",
+      id: 'link-d2-2',
+      speaker: 'link',
+      text: "*He pats the spot next to him on the hay bale. Very close next to him.*",
       emotion: 'blush',
       choices: [
-        { text: "*can't look away* You're stunning, Midna.", next: 'midna-d2-worship', affectionChange: 20 },
-        { text: "Come here. Now.", next: 'midna-d2-command', affectionChange: 20 },
-        { text: "I preferred the imp form, actually.", next: 'midna-d2-wrong', affectionChange: -15 }
+        { text: "*Sit so close your thighs touch*", next: 'link-d2-close', affectionChange: 20 },
+        { text: "*Sit down and lean against his shoulder*", next: 'link-d2-lean', affectionChange: 15 },
+        { text: "*Stay standing, playing hard to get*", next: 'link-d2-stand', affectionChange: 5 }
       ]
     },
     {
-      id: 'midna-d2-worship',
-      speaker: 'midna',
-      text: "*purrs and pulls you closer* Then worship me properly, hero. *presses against you* Show me what that Hylian passion feels like...",
+      id: 'link-d2-close',
+      speaker: 'link',
+      text: "*He doesn't move away. In fact, he shifts CLOSER. His hand finds yours in the hay. He squeezes once.*",
       emotion: 'blush',
-      next: 'midna-d2-end'
+      next: 'link-d2-end'
     },
     {
-      id: 'midna-d2-command',
-      speaker: 'midna',
-      text: "Ooh, commanding the Twilight Princess? *obeys with a smirk* I think I like being told what to do... by you. Only you.",
+      id: 'link-d2-lean',
+      speaker: 'link',
+      text: "*A small content sigh escapes him. He smells like horses and campfire and something uniquely Link. His arm slowly wraps around you.*",
       emotion: 'happy',
-      next: 'midna-d2-end'
+      next: 'link-d2-end'
     },
     {
-      id: 'midna-d2-wrong',
-      speaker: 'midna',
-      text: "...Really? You absolute- ! *turns away* Get out! Come back when you learn to appreciate a goddess standing before you!",
+      id: 'link-d2-stand',
+      speaker: 'link',
+      text: "*He looks up at you with those devastating eyes, pats the spot again more insistently. The man knows what he wants.*",
+      emotion: 'blush',
+      next: 'link-d2-end'
+    },
+    {
+      id: 'link-d2-end',
+      speaker: 'link',
+      text: "*As you leave, he catches your hand and presses something into it - a flower. A Silent Princess. He found it. For you.*",
+      emotion: 'happy',
+      action: { type: 'location', value: 'hyrule-field' }
+    },
+
+    // High affection
+    {
+      id: 'link-high-start',
+      speaker: 'narrator',
+      text: "*Link is waiting for you. He leads you to a private corner of the stable, hay scattered on the floor, lantern light golden.*",
+      emotion: 'blush',
+      next: 'link-high-2'
+    },
+    {
+      id: 'link-high-2',
+      speaker: 'link',
+      text: "*He cups your face in calloused hands. Those eyes search yours, asking a question words never could.*",
+      emotion: 'happy',
+      choices: [
+        { text: "*Kiss him*", next: 'link-confession', affectionChange: 25 },
+        { text: "Link, I... we shouldn't...", next: 'link-reject', affectionChange: -20 }
+      ]
+    },
+    {
+      id: 'link-confession',
+      speaker: 'link',
+      text: "*He pulls you into the hay, finally breaking his silence with a single breathless word:* ...Stay.",
+      emotion: 'happy',
+      action: { type: 'ending', value: 'stable' }
+    },
+    {
+      id: 'link-reject',
+      speaker: 'link',
+      text: "*His hands drop. For the first time, you see hurt in those eyes. He turns away, shoulders tense. Epona whinnies sadly.*",
+      emotion: 'sad',
+      action: { type: 'location', value: 'hyrule-field' }
+    }
+  ];
+}
+
+function createHotSpringDialogues(): DialogueNode[] {
+  return [
+    // Day 1
+    {
+      id: 'link-d1-start',
+      speaker: 'narrator',
+      text: "*The volcanic heat of Death Mountain has one benefit: the legendary Goron Hot Springs. And there, neck-deep in steaming water, is Link. Completely. Naked.*",
+      emotion: 'surprised',
+      next: 'link-d1-2'
+    },
+    {
+      id: 'link-d1-2',
+      speaker: 'narrator',
+      text: "*His tunic and those tiny Gerudo shorts are piled on a rock. Steam rises off his bronzed skin, water beading down abs that could stop a Lynel mid-charge. He hasn't noticed you yet. He stretches, muscles rippling, and lets out a satisfied groan that echoes off the volcanic rocks.*",
+      emotion: 'blush',
+      choices: [
+        { text: "*Clear your throat before you combust*", next: 'link-d1-polite', affectionChange: 10 },
+        { text: "*Memorize every detail. For research.*", next: 'link-d1-stare', affectionChange: 5 },
+        { text: "*Strip and slide in next to him*", next: 'link-d1-bold', affectionChange: 15 }
+      ]
+    },
+    {
+      id: 'link-d1-polite',
+      speaker: 'link',
+      text: "*He turns, completely unbothered by his nudity. Those blue eyes travel down your body slowly, appreciatively. He gestures to the water, one eyebrow raised. An invitation. A challenge.*",
+      emotion: 'happy',
+      next: 'link-d1-end'
+    },
+    {
+      id: 'link-d1-stare',
+      speaker: 'link',
+      text: "*He catches you looking and his lips curl into a knowing smirk. He stands up slowly - VERY slowly - water cascading down his body, flexing deliberately. The Gorons weren't kidding about this spring's healing properties because you're about to pass out.*",
+      emotion: 'blush',
+      next: 'link-d1-end'
+    },
+    {
+      id: 'link-d1-bold',
+      speaker: 'link',
+      text: "*His eyes go dark with hunger as he watches you undress. The moment you're in the water, he pulls you against him under the surface. Skin on skin. Heat on heat. His breath catches.*",
+      emotion: 'blush',
+      next: 'link-d1-end'
+    },
+    {
+      id: 'link-d1-end',
+      speaker: 'link',
+      text: "*As you eventually leave on shaky legs, he pulls you back for one moment - presses his wet body against yours and brushes lips against your ear. You feel his smirk. And... other things.*",
+      emotion: 'happy',
+      action: { type: 'location', value: 'hyrule-field' }
+    },
+
+    // Day 2+
+    {
+      id: 'link-d2-start',
+      speaker: 'link',
+      text: "*He's already in the spring when you arrive. Clearly waiting. Fire keese petals float on the water - they glow red in the volcanic light. He reaches for you.*",
+      emotion: 'happy',
+      next: 'link-d2-2'
+    },
+    {
+      id: 'link-d2-2',
+      speaker: 'narrator',
+      text: "*His hands find you underwater, pulling you into his lap. The heat of the spring is NOTHING compared to the heat between you. You can feel exactly how happy he is to see you.*",
+      emotion: 'blush',
+      choices: [
+        { text: "*Wrap your legs around him*", next: 'link-d2-embrace', affectionChange: 20 },
+        { text: "*Pull his hair and expose his throat*", next: 'link-d2-hair', affectionChange: 20 },
+        { text: "*Grind against him 'accidentally'*", next: 'link-d2-splash', affectionChange: 15 }
+      ]
+    },
+    {
+      id: 'link-d2-embrace',
+      speaker: 'link',
+      text: "*A guttural groan escapes him as your bodies lock together. His hands grip your hips, guiding your movements. The water churns. His restraint visibly crumbles.*",
+      emotion: 'blush',
+      next: 'link-d2-end'
+    },
+    {
+      id: 'link-d2-hair',
+      speaker: 'link',
+      text: "*His head falls back with a desperate sound, offering himself to you. When you bite down on his exposed throat, his whole body SHUDDERS. His fingers dig into your skin, leaving marks.*",
+      emotion: 'happy',
+      next: 'link-d2-end'
+    },
+    {
+      id: 'link-d2-splash',
+      speaker: 'link',
+      text: "*His eyes roll back. His hips buck against you instinctively. He looks at you with pure, unbridled WANT. The 'accident' becomes very much on purpose as he returns the favor.*",
+      emotion: 'happy',
+      next: 'link-d2-end'
+    },
+    {
+      id: 'link-d2-end',
+      speaker: 'link',
+      text: "*Before you leave, he pins you against the hot rock wall, bodies pressed together, forehead against yours. His voice is wrecked:* ...More. Soon.",
+      emotion: 'blush',
+      action: { type: 'location', value: 'hyrule-field' }
+    },
+
+    // High affection - THE SPICY SCENE
+    {
+      id: 'link-high-start',
+      speaker: 'narrator',
+      text: "*Midnight at the Goron Hot Springs. The volcanic glow paints everything red. Link is waiting, and he's done pretending this is just bathing. His expression is raw, hungry, FERAL.*",
+      emotion: 'blush',
+      next: 'link-high-2'
+    },
+    {
+      id: 'link-high-2',
+      speaker: 'link',
+      text: "*He rises from the water like a god. Steam curls around his body as he stalks toward you, water streaming down every perfect muscle. He's not hiding anything anymore. Not his body. Not his desire. Not the effect you have on him. He pulls you against him, both of you bare, skin burning, and speaks in a voice like gravel:* ...Need you. Now.",
+      emotion: 'happy',
+      choices: [
+        { text: "*Devour him completely*", next: 'link-confession', affectionChange: 25 },
+        { text: "Link, we can't...", next: 'link-reject', affectionChange: -20 }
+      ]
+    },
+    {
+      id: 'link-confession',
+      speaker: 'link',
+      text: "*The water ERUPTS around you as he lifts you onto the heated rocks and shows you exactly what a hero with infinite stamina can do. The Gorons will have to rename this place after tonight. That stamina wheel refills three times. THREE. By the time the sun rises, you've both lost count, lost your voices, lost your minds. His silent nature breaks completely - your name is the only word he knows anymore.*",
+      emotion: 'happy',
+      action: { type: 'ending', value: 'hotspring' }
+    },
+    {
+      id: 'link-reject',
+      speaker: 'link',
+      text: "*He freezes, chest heaving, body trembling with restrained need. The hurt in those blue eyes is devastating. He sinks back into the water alone, and the steam suddenly feels cold.*",
+      emotion: 'sad',
+      action: { type: 'location', value: 'hyrule-field' }
+    }
+  ];
+}
+
+function createCookingDialogues(): DialogueNode[] {
+  return [
+    // Day 1
+    {
+      id: 'link-d1-start',
+      speaker: 'narrator',
+      text: "*Link is aggressively cooking. He's thrown a diamond, three apples, and a live frog into the pot. He seems confident.*",
+      emotion: 'surprised',
+      next: 'link-d1-2'
+    },
+    {
+      id: 'link-d1-2',
+      speaker: 'link',
+      text: "*He offers you the resulting... dish? It's glowing. That's probably fine.*",
+      emotion: 'happy',
+      choices: [
+        { text: "*Eat it. For him. For love.*", next: 'link-d1-eat', affectionChange: 15 },
+        { text: "Maybe I could show you some recipes?", next: 'link-d1-teach', affectionChange: 10 },
+        { text: "I'm... not hungry. Ever again.", next: 'link-d1-refuse', affectionChange: -5 }
+      ]
+    },
+    {
+      id: 'link-d1-eat',
+      speaker: 'link',
+      text: "*His face LIGHTS UP as you choke it down. You gain three hearts and lose your dignity. Worth it for that smile.*",
+      emotion: 'happy',
+      next: 'link-d1-end'
+    },
+    {
+      id: 'link-d1-teach',
+      speaker: 'link',
+      text: "*He nods eagerly, scooting close to watch you cook. VERY close. His chin practically on your shoulder.*",
+      emotion: 'blush',
+      next: 'link-d1-end'
+    },
+    {
+      id: 'link-d1-refuse',
+      speaker: 'link',
+      text: "*He eats the whole thing himself without breaking eye contact. Power move. The man is immune to poison at this point.*",
+      emotion: 'sad',
+      next: 'link-d1-end'
+    },
+    {
+      id: 'link-d1-end',
+      speaker: 'link',
+      text: "*He saves you the last bite of his next creation. It's somehow worse. But he's watching so hopefully...*",
+      emotion: 'happy',
+      action: { type: 'location', value: 'hyrule-field' }
+    },
+
+    // Day 2+
+    {
+      id: 'link-d2-start',
+      speaker: 'narrator',
+      text: "*Link has prepared a whole feast. It's actually... edible? He looks at you expectantly, ears practically vibrating.*",
+      emotion: 'happy',
+      next: 'link-d2-2'
+    },
+    {
+      id: 'link-d2-2',
+      speaker: 'link',
+      text: "*He made your favorite. How did he know? Has he been watching you eat? Is that creepy or romantic? ...Yes.*",
+      emotion: 'blush',
+      choices: [
+        { text: "*Feed him a bite from your fork*", next: 'link-d2-feed', affectionChange: 20 },
+        { text: "This is delicious! You learned!", next: 'link-d2-praise', affectionChange: 15 },
+        { text: "*Critique the plating*", next: 'link-d2-critique', affectionChange: -5 }
+      ]
+    },
+    {
+      id: 'link-d2-feed',
+      speaker: 'link',
+      text: "*He leans forward to take the bite, maintaining eye contact the entire time. His lips brush your fingers. 'Accidentally.'*",
+      emotion: 'blush',
+      next: 'link-d2-end'
+    },
+    {
+      id: 'link-d2-praise',
+      speaker: 'link',
+      text: "*He practically glows with pride. Then immediately throws a rock into the pot for his next dish. Baby steps.*",
+      emotion: 'happy',
+      next: 'link-d2-end'
+    },
+    {
+      id: 'link-d2-critique',
+      speaker: 'link',
+      text: "*He looks at the plate. At you. At the plate. Pushes everything onto the ground and walks away. Deserved.*",
       emotion: 'angry',
-      next: 'midna-d2-end'
+      next: 'link-d2-end'
     },
     {
-      id: 'midna-d2-end',
-      speaker: 'midna',
-      text: "*breathless* Next time you visit... don't bother knocking. Just come straight to my bedroom. I'll be waiting.",
-      emotion: 'blush',
-      action: { type: 'location', value: 'castle-town' }
+      id: 'link-d2-end',
+      speaker: 'link',
+      text: "*He packs up the leftovers and presses them into your hands, lingering. The way to his heart is through his stomach. Literally.*",
+      emotion: 'happy',
+      action: { type: 'location', value: 'hyrule-field' }
     },
 
     // High affection
     {
-      id: 'midna-high-start',
-      speaker: 'midna',
-      text: "*pulls you through a portal into her private chambers* No more games, Link. I need you. Really need you.",
+      id: 'link-high-start',
+      speaker: 'narrator',
+      text: "*Link has set up a candlelit dinner. There's a tablecloth. Flowers. He's TRYING. The food only glows a little.*",
       emotion: 'blush',
-      next: 'midna-high-2'
+      next: 'link-high-2'
     },
     {
-      id: 'midna-high-2',
-      speaker: 'midna',
-      text: "*voice trembling* I broke that mirror because I was terrified. Of this. Of wanting someone so badly it burns. But I can't run anymore...",
-      emotion: 'sad',
+      id: 'link-high-2',
+      speaker: 'link',
+      text: "*After dinner, he pulls out a small box. Inside is a hearty meal he's clearly been saving. He offers it:* ...Forever?",
+      emotion: 'happy',
       choices: [
-        { text: "*kisses her deeply* Then stop running.", next: 'midna-confession', affectionChange: 25 },
-        { text: "This can never work between our worlds.", next: 'midna-reject', affectionChange: -20 }
+        { text: "*Take the meal. Take him.*", next: 'link-confession', affectionChange: 25 },
+        { text: "I can't accept this, Link.", next: 'link-reject', affectionChange: -20 }
       ]
     },
     {
-      id: 'midna-confession',
-      speaker: 'midna',
-      text: "*moans softly against your lips* Yes... Oh goddesses, yes. Take me, hero. In every way. I'm yours... completely yours.",
+      id: 'link-confession',
+      speaker: 'link',
+      text: "*He sweeps everything off the table, pulls you onto it, and shows you that his appetite isn't just for food. Best. Meal. Ever.*",
       emotion: 'happy',
-      action: { type: 'ending', value: 'midna' }
+      action: { type: 'ending', value: 'cooking' }
     },
     {
-      id: 'midna-reject',
-      speaker: 'midna',
-      text: "*tears streaming* Then go. Get out! And don't ever come back... because I can't bear to see you and not have you.",
+      id: 'link-reject',
+      speaker: 'link',
+      text: "*He slowly closes the box. Eats the meal himself while staring at you. Spite-eating. Iconic but sad.*",
       emotion: 'sad',
-      action: { type: 'location', value: 'castle-town' }
+      action: { type: 'location', value: 'hyrule-field' }
     }
   ];
 }
 
-function createMiphaDialogues(): DialogueNode[] {
+function createTrainingDialogues(): DialogueNode[] {
   return [
+    // Day 1
     {
-      id: 'mipha-d1-start',
-      speaker: 'mipha',
-      text: "*emerges from the water, glistening* Link! I was bathing in the sacred pool... You're not supposed to see me like this...",
+      id: 'link-d1-start',
+      speaker: 'narrator',
+      text: "*Link is training shirtless because of course he is. His sword work is flawless. His form is devastating. Your focus is... elsewhere.*",
+      emotion: 'blush',
+      next: 'link-d1-2'
+    },
+    {
+      id: 'link-d1-2',
+      speaker: 'link',
+      text: "*He notices you watching. Throws his sword, catches it behind his back, winks. WINKS. This man knows exactly what he's doing.*",
+      emotion: 'happy',
+      choices: [
+        { text: "Teach me? I want to learn... sword stuff.", next: 'link-d1-teach', affectionChange: 15 },
+        { text: "*Slow clap*", next: 'link-d1-clap', affectionChange: 10 },
+        { text: "Show-off.", next: 'link-d1-tease', affectionChange: 10 }
+      ]
+    },
+    {
+      id: 'link-d1-teach',
+      speaker: 'link',
+      text: "*He moves behind you, positioning your stance. His chest against your back, hands over yours on the sword. 'Teaching.'*",
+      emotion: 'blush',
+      next: 'link-d1-end'
+    },
+    {
+      id: 'link-d1-clap',
+      speaker: 'link',
+      text: "*He takes a dramatic bow, then does a backflip for absolutely no reason. Maximum showing off. You're into it.*",
+      emotion: 'happy',
+      next: 'link-d1-end'
+    },
+    {
+      id: 'link-d1-tease',
+      speaker: 'link',
+      text: "*He grins - actually GRINS - and beckons you forward. Challenge accepted. He likes your attitude.*",
+      emotion: 'happy',
+      next: 'link-d1-end'
+    },
+    {
+      id: 'link-d1-end',
+      speaker: 'link',
+      text: "*Training ends with both of you breathless. He hands you a water bottle, fingers lingering. Eye contact intense.*",
+      emotion: 'blush',
+      action: { type: 'location', value: 'hyrule-field' }
+    },
+
+    // Day 2+
+    {
+      id: 'link-d2-start',
+      speaker: 'link',
+      text: "*Link's waiting with two practice swords. But the way he's looking at you isn't about fighting.*",
+      emotion: 'happy',
+      next: 'link-d2-2'
+    },
+    {
+      id: 'link-d2-2',
+      speaker: 'narrator',
+      text: "*The sparring gets intense. You end up pinned beneath him on the training mat, his breath hot on your neck.*",
+      emotion: 'blush',
+      choices: [
+        { text: "*Pull him closer by his hair*", next: 'link-d2-pull', affectionChange: 20 },
+        { text: "*Flip positions, pin HIM*", next: 'link-d2-flip', affectionChange: 20 },
+        { text: "I yield...", next: 'link-d2-yield', affectionChange: 10 }
+      ]
+    },
+    {
+      id: 'link-d2-pull',
+      speaker: 'link',
+      text: "*A sound escapes him that is DEFINITELY not appropriate for a training ground. His eyes are all pupil.*",
+      emotion: 'blush',
+      next: 'link-d2-end'
+    },
+    {
+      id: 'link-d2-flip',
+      speaker: 'link',
+      text: "*He looks up at you in shock. Then grins. He LET you win and you both know it. But he stays down, waiting.*",
+      emotion: 'happy',
+      next: 'link-d2-end'
+    },
+    {
+      id: 'link-d2-yield',
+      speaker: 'link',
+      text: "*He stays hovering over you longer than necessary. Much longer. Then slowly helps you up, hand not letting go.*",
+      emotion: 'blush',
+      next: 'link-d2-end'
+    },
+    {
+      id: 'link-d2-end',
+      speaker: 'link',
+      text: "*He walks you home, keeping close. At your door, he tucks a strand of hair behind your ear and just... looks.*",
+      emotion: 'happy',
+      action: { type: 'location', value: 'hyrule-field' }
+    },
+
+    // High affection
+    {
+      id: 'link-high-start',
+      speaker: 'narrator',
+      text: "*Late night training. Just you and Link. The tension is thick enough to cut with the Master Sword.*",
+      emotion: 'blush',
+      next: 'link-high-2'
+    },
+    {
+      id: 'link-high-2',
+      speaker: 'link',
+      text: "*He drops his sword. Walks toward you with predator's grace. Pulls you close and whispers:* ...Spar differently?",
+      emotion: 'happy',
+      choices: [
+        { text: "*Drop your sword. Drop everything.*", next: 'link-confession', affectionChange: 25 },
+        { text: "Link, this isn't... we're here to train.", next: 'link-reject', affectionChange: -20 }
+      ]
+    },
+    {
+      id: 'link-confession',
+      speaker: 'link',
+      text: "*He proves that combat skills translate VERY well to other activities. That stamina isn't just for fighting. Three words: Par. Ry. This.*",
+      emotion: 'happy',
+      action: { type: 'ending', value: 'training' }
+    },
+    {
+      id: 'link-reject',
+      speaker: 'link',
+      text: "*He picks up his sword in silence. The rest of training is cold, professional. You've never seen him look so defeated. Not even against Ganon.*",
+      emotion: 'sad',
+      action: { type: 'location', value: 'hyrule-field' }
+    }
+  ];
+}
+
+function createFairyFountainDialogues(): DialogueNode[] {
+  return [
+    // Day 1
+    {
+      id: 'link-d1-start',
+      speaker: 'narrator',
+      text: "*Link is getting a fairy to heal him. The Great Fairy is being VERY handsy about it. You feel a strange urge to intervene.*",
       emotion: 'surprised',
-      next: 'mipha-d1-2'
+      next: 'link-d1-2'
     },
     {
-      id: 'mipha-d1-2',
-      speaker: 'mipha',
-      text: "*doesn't cover herself* ...But I'm glad you did. I've imagined you seeing me... all of me... so many times.",
-      emotion: 'blush',
+      id: 'link-d1-2',
+      speaker: 'link',
+      text: "*He spots you and immediately escapes the Great Fairy's grasp, looking relieved. He mouths 'help me.'*",
+      emotion: 'surprised',
       choices: [
-        { text: "*wades into the water with her*", next: 'mipha-d1-join', affectionChange: 15 },
-        { text: "You're the most beautiful thing I've ever seen.", next: 'mipha-d1-compliment', affectionChange: 10 },
-        { text: "I should turn around!", next: 'mipha-d1-shy', affectionChange: 0 }
+        { text: "*Grab his hand and pull him away*", next: 'link-d1-rescue', affectionChange: 15 },
+        { text: "I think she likes you~", next: 'link-d1-tease', affectionChange: 5 },
+        { text: "*Just watch. It's kind of funny.*", next: 'link-d1-watch', affectionChange: -5 }
       ]
     },
     {
-      id: 'mipha-d1-join',
-      speaker: 'mipha',
-      text: "*gasps as you enter the water* Link... the way you look at me makes my scales tingle. Come closer... let me heal any wounds you have...",
+      id: 'link-d1-rescue',
+      speaker: 'link',
+      text: "*He squeezes your hand gratefully, pulling you both behind a rock. Close. Hiding. Breathing the same air.*",
       emotion: 'blush',
-      next: 'mipha-d1-end'
+      next: 'link-d1-end'
     },
     {
-      id: 'mipha-d1-compliment',
-      speaker: 'mipha',
-      text: "*swims closer* Then look your fill, my love. Everything I am... is for you. It's always been for you.",
-      emotion: 'happy',
-      next: 'mipha-d1-end'
-    },
-    {
-      id: 'mipha-d1-shy',
-      speaker: 'mipha',
-      text: "*gently turns your face back* Don't. I want you to look. I've hidden my feelings too long... but never my body. Not from you.",
-      emotion: 'blush',
-      next: 'mipha-d1-end'
-    },
-    {
-      id: 'mipha-d1-end',
-      speaker: 'mipha',
-      text: "*traces patterns on your chest with wet fingers* The waters here are warmer at night. Come back then... and I'll show you why Zoras make the best lovers.",
-      emotion: 'happy',
-      action: { type: 'location', value: 'castle-town' }
-    },
-
-    // Day 2+
-    {
-      id: 'mipha-d2-start',
-      speaker: 'mipha',
-      text: "*waiting in a secluded grotto* I prepared this place for us. Private. Intimate. *the water glows softly* My healing powers can do more than fix wounds...",
-      emotion: 'blush',
-      next: 'mipha-d2-2'
-    },
-    {
-      id: 'mipha-d2-2',
-      speaker: 'mipha',
-      text: "*pulls you into the water* They can heighten sensation... pleasure... *hands glowing as she touches you* Feel that?",
-      emotion: 'happy',
-      choices: [
-        { text: "*shudders* That's incredible...", next: 'mipha-d2-sensation', affectionChange: 20 },
-        { text: "Teach me everything about Zora intimacy.", next: 'mipha-d2-learn', affectionChange: 15 },
-        { text: "This is moving fast, Mipha...", next: 'mipha-d2-slow', affectionChange: -5 }
-      ]
-    },
-    {
-      id: 'mipha-d2-sensation',
-      speaker: 'mipha',
-      text: "*presses against you in the water* And that's just my hands. Imagine... everywhere. Zoras bond deeply, Link. Completely. Would you bond with me?",
-      emotion: 'blush',
-      next: 'mipha-d2-end'
-    },
-    {
-      id: 'mipha-d2-learn',
-      speaker: 'mipha',
-      text: "*whispers* We mate for life. When we choose someone, we give ourselves entirely. *nuzzles your neck* I chose you long ago.",
-      emotion: 'happy',
-      next: 'mipha-d2-end'
-    },
-    {
-      id: 'mipha-d2-slow',
-      speaker: 'mipha',
-      text: "*gentle but persistent* I've waited a hundred years, Link. Watched you sleep in that shrine, dreaming of this. I can't wait anymore...",
+      id: 'link-d1-tease',
+      speaker: 'link',
+      text: "*He shoots you a betrayed look. The Great Fairy giggles. Link has seen things. Terrible things. He needs comfort later.*",
       emotion: 'sad',
-      next: 'mipha-d2-end'
+      next: 'link-d1-end'
     },
     {
-      id: 'mipha-d2-end',
-      speaker: 'mipha',
-      text: "*kisses you softly, healing energy flowing between you* Come back soon. I'll be waiting in the moonlit pool... ready to show you what true devotion feels like.",
-      emotion: 'happy',
-      action: { type: 'location', value: 'castle-town' }
-    },
-
-    // High affection
-    {
-      id: 'mipha-high-start',
-      speaker: 'mipha',
-      text: "*in the deepest sacred pool* Link... I've prepared the ancient bonding ritual. *water swirls around you both* This will join us forever. Body and soul.",
-      emotion: 'blush',
-      next: 'mipha-high-2'
-    },
-    {
-      id: 'mipha-high-2',
-      speaker: 'mipha',
-      text: "*naked under the moonlight, surrounded by glowing water* If you accept me... we'll feel each other's pleasure. Always. Are you ready to be mine eternally?",
-      emotion: 'happy',
-      choices: [
-        { text: "*embraces her in the sacred water* Make me yours.", next: 'mipha-confession', affectionChange: 25 },
-        { text: "Forever is a long time, Mipha...", next: 'mipha-reject', affectionChange: -20 }
-      ]
-    },
-    {
-      id: 'mipha-confession',
-      speaker: 'mipha',
-      text: "*the water explodes with light as your souls intertwine* Yes! Oh, Link... I can feel you inside me... your heart, your pleasure... we're one now. Forever one!",
-      emotion: 'happy',
-      action: { type: 'ending', value: 'mipha' }
-    },
-    {
-      id: 'mipha-reject',
-      speaker: 'mipha',
-      text: "*the glow fades* I... I understand. A Zora's lifespan is long. Perhaps too long to bind a Hylian... *sinks beneath the water to hide her tears*",
-      emotion: 'sad',
-      action: { type: 'location', value: 'castle-town' }
-    }
-  ];
-}
-
-function createMalonDialogues(): DialogueNode[] {
-  return [
-    {
-      id: 'malon-d1-start',
-      speaker: 'malon',
-      text: "*wiping sweat from her brow, shirt clinging* Whew! Link! Caught me in the middle of hard work... *stretches, fabric riding up* This heat is somethin' else!",
-      emotion: 'happy',
-      next: 'malon-d1-2'
-    },
-    {
-      id: 'malon-d1-2',
-      speaker: 'malon',
-      text: "*notices your gaze and smirks* Like what you see, fairy boy? Ranch work keeps a girl fit... *flexes playfully* Wanna feel?",
-      emotion: 'blush',
-      choices: [
-        { text: "*reaches out to touch* I'd love to.", next: 'malon-d1-touch', affectionChange: 15 },
-        { text: "You're gorgeous, Malon.", next: 'malon-d1-compliment', affectionChange: 10 },
-        { text: "I should help with the work.", next: 'malon-d1-help', affectionChange: 5 }
-      ]
-    },
-    {
-      id: 'malon-d1-touch',
-      speaker: 'malon',
-      text: "*guides your hand* Mmm... strong hands. A girl could get used to these... *leans closer* The hayloft is empty right now, you know...",
-      emotion: 'blush',
-      next: 'malon-d1-end'
-    },
-    {
-      id: 'malon-d1-compliment',
-      speaker: 'malon',
-      text: "*fans herself* Well now you're makin' me hotter than the sun! *unbuttons top button* Better. Much better. Your turn to cool off?",
-      emotion: 'happy',
-      next: 'malon-d1-end'
-    },
-    {
-      id: 'malon-d1-help',
-      speaker: 'malon',
-      text: "Such a gentleman! *grabs your hand* But first... *pulls you behind the barn* ...let's take a water break. Just the two of us.",
-      emotion: 'blush',
-      next: 'malon-d1-end'
-    },
-    {
-      id: 'malon-d1-end',
-      speaker: 'malon',
-      text: "*whispers* Come back after sundown. Dad sleeps early, and my room's right above the stable. I'll leave the window open... *winks*",
-      emotion: 'happy',
-      action: { type: 'location', value: 'castle-town' }
-    },
-
-    // Day 2+
-    {
-      id: 'malon-d2-start',
-      speaker: 'malon',
-      text: "*catches you climbing through the window* You came! *in just a thin nightdress* Lock the door. We don't want any... interruptions.",
-      emotion: 'happy',
-      next: 'malon-d2-2'
-    },
-    {
-      id: 'malon-d2-2',
-      speaker: 'malon',
-      text: "*pulls you onto her bed* I've thought about this... about YOU... every night. *runs hands down your chest* Show me what heroes do after saving the world...",
-      emotion: 'blush',
-      choices: [
-        { text: "*pins her gently against the pillows*", next: 'malon-d2-passionate', affectionChange: 20 },
-        { text: "You're everything I want, Malon.", next: 'malon-d2-sweet', affectionChange: 15 },
-        { text: "Maybe we should talk first...", next: 'malon-d2-slow', affectionChange: -5 }
-      ]
-    },
-    {
-      id: 'malon-d2-passionate',
-      speaker: 'malon',
-      text: "*gasps* Yes, Link! I ain't some delicate princess - don't hold back with me. I want all of you, rough and real...",
-      emotion: 'blush',
-      next: 'malon-d2-end'
-    },
-    {
-      id: 'malon-d2-sweet',
-      speaker: 'malon',
-      text: "*melts into your arms* And you're everythin' I've dreamed of since I was a little girl singin' to the horses. Make those dreams come true...",
-      emotion: 'happy',
-      next: 'malon-d2-end'
-    },
-    {
-      id: 'malon-d2-slow',
-      speaker: 'malon',
-      text: "*puts finger on your lips* Shh. We've talked enough. *kisses you deeply* Tonight we communicate different...",
-      emotion: 'blush',
-      next: 'malon-d2-end'
-    },
-    {
-      id: 'malon-d2-end',
-      speaker: 'malon',
-      text: "*nestled against you, catching breath* Don't you dare leave before sunrise. And tomorrow night? Same time. I'm nowhere near done with you...",
-      emotion: 'happy',
-      action: { type: 'location', value: 'castle-town' }
-    },
-
-    // High affection
-    {
-      id: 'malon-high-start',
-      speaker: 'malon',
-      text: "*leads you to a blanket under the stars* Link... I've given you my body. But tonight I want to give you somethin' more.",
-      emotion: 'blush',
-      next: 'malon-high-2'
-    },
-    {
-      id: 'malon-high-2',
-      speaker: 'malon',
-      text: "*places your hand over her heart* This. Forever. I want to wake up with you every mornin', make love under every sunset. Be mine, Link. Officially.",
-      emotion: 'happy',
-      choices: [
-        { text: "*kisses her under the stars* I'm yours. Always.", next: 'malon-confession', affectionChange: 25 },
-        { text: "I can't settle down yet, Malon.", next: 'malon-reject', affectionChange: -20 }
-      ]
-    },
-    {
-      id: 'malon-confession',
-      speaker: 'malon',
-      text: "*tears of joy* Then make love to me like it's our wedding night. Because in my heart... *pulls you down* ...it already is.",
-      emotion: 'happy',
-      action: { type: 'ending', value: 'malon' }
-    },
-    {
-      id: 'malon-reject',
-      speaker: 'malon',
-      text: "*heart breaking* I knew a hero couldn't love a simple farm girl forever. At least I'll have these memories... Go. Before I beg.",
-      emotion: 'sad',
-      action: { type: 'location', value: 'castle-town' }
-    }
-  ];
-}
-
-function createRijuDialogues(): DialogueNode[] {
-  return [
-    {
-      id: 'riju-d1-start',
-      speaker: 'riju',
-      text: "*lounging on silk cushions in revealing Gerudo attire* Champion! Finally, a vai worthy of my attention enters Gerudo Town... Oh wait, you're a voe. Even better.",
-      emotion: 'happy',
-      next: 'riju-d1-2'
-    },
-    {
-      id: 'riju-d1-2',
-      speaker: 'riju',
-      text: "*stands, hips swaying as she approaches* The Gerudo have a tradition... we choose the finest voe to continue our bloodline. And you, hero, are VERY fine...",
-      emotion: 'blush',
-      choices: [
-        { text: "And you're the most exotic beauty I've ever seen.", next: 'riju-d1-flirt', affectionChange: 15 },
-        { text: "Is the Chief allowed to flirt this openly?", next: 'riju-d1-tease', affectionChange: 10 },
-        { text: "I'm flattered, but isn't this forward?", next: 'riju-d1-shy', affectionChange: 0 }
-      ]
-    },
-    {
-      id: 'riju-d1-flirt',
-      speaker: 'riju',
-      text: "*circles you slowly* Exotic? You haven't seen anything yet. *trails finger across your shoulder* Stay one night in Gerudo Town, and I'll show you pleasures that would make goddesses blush.",
-      emotion: 'blush',
-      next: 'riju-d1-end'
-    },
-    {
-      id: 'riju-d1-tease',
-      speaker: 'riju',
-      text: "I'm the Chief. I'm EXPECTED to sample the finest the world offers. *winks* Consider it... diplomatic relations.",
-      emotion: 'happy',
-      next: 'riju-d1-end'
-    },
-    {
-      id: 'riju-d1-shy',
-      speaker: 'riju',
-      text: "*laughs* Forward? In Gerudo culture, this is demure. If I were truly forward, I'd already have you in my private bath. *pauses* ...Want to see my private bath?",
-      emotion: 'blush',
-      next: 'riju-d1-end'
-    },
-    {
-      id: 'riju-d1-end',
-      speaker: 'riju',
-      text: "*whispers hotly in your ear* The desert is cold at night. My chambers are warm. Come after midnight... and leave your clothing at the door.",
-      emotion: 'happy',
-      action: { type: 'location', value: 'castle-town' }
-    },
-
-    // Day 2+
-    {
-      id: 'riju-d2-start',
-      speaker: 'riju',
-      text: "*in a steaming bath, only shadows preserving modesty* You're late, Champion. The water's getting cold... come warm it up.",
-      emotion: 'happy',
-      next: 'riju-d2-2'
-    },
-    {
-      id: 'riju-d2-2',
-      speaker: 'riju',
-      text: "*extends a bare leg from the water* Gerudo massage techniques are legendary. They're even better when applied to a body as sculpted as yours...",
-      emotion: 'blush',
-      choices: [
-        { text: "*strips and joins her in the bath*", next: 'riju-d2-join', affectionChange: 20 },
-        { text: "I want to learn these legendary techniques.", next: 'riju-d2-learn', affectionChange: 15 },
-        { text: "This feels like a trap...", next: 'riju-d2-suspicious', affectionChange: -10 }
-      ]
-    },
-    {
-      id: 'riju-d2-join',
-      speaker: 'riju',
-      text: "*wraps legs around you in the water* Mmm, finally. *runs nails down your back* Gerudo women take what we want. And I want you. All night.",
-      emotion: 'blush',
-      next: 'riju-d2-end'
-    },
-    {
-      id: 'riju-d2-learn',
-      speaker: 'riju',
-      text: "*pulls you into the water* Then let me teach you. *positions your hands* We start here... and gradually move lower. Much lower...",
-      emotion: 'happy',
-      next: 'riju-d2-end'
-    },
-    {
-      id: 'riju-d2-suspicious',
-      speaker: 'riju',
-      text: "*pouts then smirks* The only trap here is between my thighs, hero. Now stop overthinking and get in this water before I drag you in.",
-      emotion: 'blush',
-      next: 'riju-d2-end'
-    },
-    {
-      id: 'riju-d2-end',
-      speaker: 'riju',
-      text: "*breathless, water splashing* You've earned a place in my bedchamber, Champion. Come back tomorrow... I have silks that need someone to share them with.",
-      emotion: 'happy',
-      action: { type: 'location', value: 'castle-town' }
-    },
-
-    // High affection
-    {
-      id: 'riju-high-start',
-      speaker: 'riju',
-      text: "*on her throne, guards dismissed* Link. I've sampled many pleasures as Chief. But none compare to you. I want more than one night.",
-      emotion: 'blush',
-      next: 'riju-high-2'
-    },
-    {
-      id: 'riju-high-2',
-      speaker: 'riju',
-      text: "*stands, letting her royal garments fall* I want every night. *walks to you, fully revealed* Be my king. Rule beside me. Love me until the desert turns to sea.",
-      emotion: 'happy',
-      choices: [
-        { text: "*lifts her onto the throne* My queen. My everything.", next: 'riju-confession', affectionChange: 25 },
-        { text: "I can't be tied to one kingdom, Riju.", next: 'riju-reject', affectionChange: -20 }
-      ]
-    },
-    {
-      id: 'riju-confession',
-      speaker: 'riju',
-      text: "*gasps as you claim her on the throne* Yes! My Champion, my king, my love! *screams with pleasure* Let all of Gerudo hear - their Chief has found her mate!",
-      emotion: 'happy',
-      action: { type: 'ending', value: 'riju' }
-    },
-    {
-      id: 'riju-reject',
-      speaker: 'riju',
-      text: "*coldly covers herself* Then you're no champion of mine. Guards! Escort this voe out of Gerudo Town. Permanently.",
+      id: 'link-d1-watch',
+      speaker: 'link',
+      text: "*The Great Fairy KISSES him. Link's soul visibly leaves his body. When she releases him, he's traumatized. But sparkly.*",
       emotion: 'angry',
-      action: { type: 'location', value: 'castle-town' }
-    }
-  ];
-}
-
-function createPayaDialogues(): DialogueNode[] {
-  return [
-    {
-      id: 'paya-d1-start',
-      speaker: 'paya',
-      text: "M-Master Link?! *drops the sheet she was folding* I was just... preparing your bed for... I mean, A bed! Not YOUR bed!",
-      emotion: 'surprised',
-      next: 'paya-d1-2'
+      next: 'link-d1-end'
     },
     {
-      id: 'paya-d1-2',
-      speaker: 'paya',
-      text: "*face bright red* My birthmark... it's shaped like a papaya, but... it's in a place I can't show anyone! Unless... unless you wanted to see it someday...",
-      emotion: 'blush',
-      choices: [
-        { text: "I'd be honored to see all of you, Paya.", next: 'paya-d1-forward', affectionChange: 15 },
-        { text: "You're adorable when you blush.", next: 'paya-d1-sweet', affectionChange: 10 },
-        { text: "Where is this birthmark exactly?", next: 'paya-d1-curious', affectionChange: 10 }
-      ]
-    },
-    {
-      id: 'paya-d1-forward',
-      speaker: 'paya',
-      text: "*nearly faints* H-HONORED?! Oh goddesses... *fans herself* I've written about this exact scenario in my diary! I need to go lie down... maybe with you...",
-      emotion: 'blush',
-      next: 'paya-d1-end'
-    },
-    {
-      id: 'paya-d1-sweet',
-      speaker: 'paya',
-      text: "*squeaks* A-adorable?! I'm going to write that down! No one's ever... *trembling* ...Master Link, you're making my heart do dangerous things!",
+      id: 'link-d1-end',
+      speaker: 'link',
+      text: "*Later, away from the fountain, he bumps his shoulder against yours. His way of saying thanks. Or sorry. Or both.*",
       emotion: 'happy',
-      next: 'paya-d1-end'
-    },
-    {
-      id: 'paya-d1-curious',
-      speaker: 'paya',
-      text: "*voice tiny* It's... on my left... *trails finger down from hip* ...I CAN'T SAY IT! But if you stayed the night, maybe... maybe I could SHOW you?",
-      emotion: 'blush',
-      next: 'paya-d1-end'
-    },
-    {
-      id: 'paya-d1-end',
-      speaker: 'paya',
-      text: "*gathers courage* M-Master Link... my room is the one with the papaya carved on the door. If you ever wanted to visit... I sleep without... I mean... GOODBYE!",
-      emotion: 'blush',
-      action: { type: 'location', value: 'castle-town' }
+      action: { type: 'location', value: 'hyrule-field' }
     },
 
     // Day 2+
     {
-      id: 'paya-d2-start',
-      speaker: 'paya',
-      text: "*opens door in thin sleeping robe* Y-you came! I thought I dreamed it... *pulls you inside* Quick, before Grandmother wakes!",
+      id: 'link-d2-start',
+      speaker: 'narrator',
+      text: "*Link brings you to the fountain at night. It's beautiful. The Great Fairy is asleep. He looks relieved.*",
       emotion: 'happy',
-      next: 'paya-d2-2'
+      next: 'link-d2-2'
     },
     {
-      id: 'paya-d2-2',
-      speaker: 'paya',
-      text: "*trembling against you* I've never done this before. But I've imagined it... hundreds of times... *looks up with desperate eyes* Will you be gentle with me?",
+      id: 'link-d2-2',
+      speaker: 'link',
+      text: "*He sits by the water's edge, pats the spot next to him. Fairy lights dance around you both.*",
       emotion: 'blush',
       choices: [
-        { text: "*cups her face tenderly* I'll be whatever you need.", next: 'paya-d2-tender', affectionChange: 20 },
-        { text: "Show me that birthmark, Paya.", next: 'paya-d2-birthmark', affectionChange: 20 },
-        { text: "We should stop before we can't.", next: 'paya-d2-stop', affectionChange: -10 }
+        { text: "*Rest your head on his shoulder*", next: 'link-d2-rest', affectionChange: 20 },
+        { text: "*Catch a fairy light for him*", next: 'link-d2-fairy', affectionChange: 15 },
+        { text: "Why did you bring me here?", next: 'link-d2-ask', affectionChange: 10 }
       ]
     },
     {
-      id: 'paya-d2-tender',
-      speaker: 'paya',
-      text: "*tears of happiness* Oh, Master Link... *lets robe slip from one shoulder* I've saved myself for you. Only you. Please... make me yours...",
-      emotion: 'blush',
-      next: 'paya-d2-end'
-    },
-    {
-      id: 'paya-d2-birthmark',
-      speaker: 'paya',
-      text: "*slowly unties robe with shaking hands* H-here... *reveals papaya-shaped mark on inner thigh* Do you... do you like it? Do you like me?",
-      emotion: 'blush',
-      next: 'paya-d2-end'
-    },
-    {
-      id: 'paya-d2-stop',
-      speaker: 'paya',
-      text: "*clings to you* No! Don't stop! I've waited so long! *kisses you desperately* Please, Master Link... I need this. I need you!",
-      emotion: 'sad',
-      next: 'paya-d2-end'
-    },
-    {
-      id: 'paya-d2-end',
-      speaker: 'paya',
-      text: "*curled against you, glowing with happiness* That was... I didn't know it could feel like... *giggles* When can we do that again? Tomorrow? Tonight again?",
+      id: 'link-d2-rest',
+      speaker: 'link',
+      text: "*He rests his head atop yours. You feel him breathe deeply, contentedly. In this moment, there's no Calamity. Just this.*",
       emotion: 'happy',
-      action: { type: 'location', value: 'castle-town' }
+      next: 'link-d2-end'
+    },
+    {
+      id: 'link-d2-fairy',
+      speaker: 'link',
+      text: "*He watches you with wonder as the light dances on your palm. He cups his hands around yours, trapping the glow between you.*",
+      emotion: 'blush',
+      next: 'link-d2-end'
+    },
+    {
+      id: 'link-d2-ask',
+      speaker: 'link',
+      text: "*He touches his chest, then points to you, then to the beautiful scene around you. Even silent, the message is clear: he wanted to share this with YOU.*",
+      emotion: 'blush',
+      next: 'link-d2-end'
+    },
+    {
+      id: 'link-d2-end',
+      speaker: 'link',
+      text: "*As you leave, he tucks a tiny fairy light into your hair. It glows like a piece of his heart, gifted to you.*",
+      emotion: 'happy',
+      action: { type: 'location', value: 'hyrule-field' }
     },
 
     // High affection
     {
-      id: 'paya-high-start',
-      speaker: 'paya',
-      text: "*meets you at the door, completely changed - confident* Master Link. I'm done being shy. I know what I want now. And it's you.",
-      emotion: 'happy',
-      next: 'paya-high-2'
+      id: 'link-high-start',
+      speaker: 'narrator',
+      text: "*The fountain glows with magic. Link leads you into the shallow water, fairy lights swirling around you both.*",
+      emotion: 'blush',
+      next: 'link-high-2'
     },
     {
-      id: 'paya-high-2',
-      speaker: 'paya',
-      text: "*pushes you onto the bed and straddles you* Grandmother said when a Sheikah finds their soulmate, they must claim them. *leans down* I'm claiming you.",
-      emotion: 'blush',
+      id: 'link-high-2',
+      speaker: 'link',
+      text: "*He places both hands over his heart, then over yours. The fairy magic pulses. He's giving you his blessing. His heart. Him.*",
+      emotion: 'happy',
       choices: [
-        { text: "*pulls her down for a deep kiss* Claim away.", next: 'paya-confession', affectionChange: 25 },
-        { text: "Paya, this is too fast...", next: 'paya-reject', affectionChange: -20 }
+        { text: "*Kiss him in the fairy light*", next: 'link-confession', affectionChange: 25 },
+        { text: "I can't accept your heart, Link.", next: 'link-reject', affectionChange: -20 }
       ]
     },
     {
-      id: 'paya-confession',
-      speaker: 'paya',
-      text: "*moans into the kiss* Master Link... no, just Link. MY Link. *moves rhythmically* I'll love you forever. Every day, every night, in every way!",
+      id: 'link-confession',
+      speaker: 'link',
+      text: "*The fairy magic explodes around you as you kiss. When it fades, you're both glowing. Bonded. His one word, breathed against your lips:* ...Yours.",
       emotion: 'happy',
-      action: { type: 'ending', value: 'paya' }
+      action: { type: 'ending', value: 'fairy' }
     },
     {
-      id: 'paya-reject',
-      speaker: 'paya',
-      text: "*old shyness returning* I... I misread everything. I'm so embarrassed... Please forget this happened. Please just... go.",
+      id: 'link-reject',
+      speaker: 'link',
+      text: "*The fairy lights dim. He withdraws into himself, walking away into the darkness. Even the Great Fairy looks sad. (She was watching. Creepy.)*",
       emotion: 'sad',
-      action: { type: 'location', value: 'castle-town' }
+      action: { type: 'location', value: 'hyrule-field' }
+    }
+  ];
+}
+
+function createCampDialogues(): DialogueNode[] {
+  return [
+    // Day 1
+    {
+      id: 'link-d1-start',
+      speaker: 'narrator',
+      text: "*You find Link's campsite. He's sleeping by the fire, face peaceful, chest rising slowly. He looks vulnerable. Soft.*",
+      emotion: 'happy',
+      next: 'link-d1-2'
+    },
+    {
+      id: 'link-d1-2',
+      speaker: 'narrator',
+      text: "*He stirs, eyes opening. For a moment, pure joy crosses his face at seeing you. Then he remembers to be cool.*",
+      emotion: 'blush',
+      choices: [
+        { text: "Couldn't sleep. Can I join you?", next: 'link-d1-join', affectionChange: 15 },
+        { text: "*Sit down without asking*", next: 'link-d1-bold', affectionChange: 10 },
+        { text: "I followed you here.", next: 'link-d1-honest', affectionChange: 5 }
+      ]
+    },
+    {
+      id: 'link-d1-join',
+      speaker: 'link',
+      text: "*He lifts his blanket in invitation. It's a two-person sleeping bag. Did he... plan this?*",
+      emotion: 'blush',
+      next: 'link-d1-end'
+    },
+    {
+      id: 'link-d1-bold',
+      speaker: 'link',
+      text: "*He nods approvingly, scooting over to make room. Throws you an apple from his inventory. Hospitality.*",
+      emotion: 'happy',
+      next: 'link-d1-end'
+    },
+    {
+      id: 'link-d1-honest',
+      speaker: 'link',
+      text: "*He blinks. Processes that information. Then smiles and pats the ground next to him. Not creeped out. Flattered?*",
+      emotion: 'happy',
+      next: 'link-d1-end'
+    },
+    {
+      id: 'link-d1-end',
+      speaker: 'link',
+      text: "*You stay until dawn, watching stars, stealing glances. He 'accidentally' falls asleep on your shoulder. Sure, hero. 'Accidentally.'*",
+      emotion: 'happy',
+      action: { type: 'location', value: 'hyrule-field' }
+    },
+
+    // Day 2+
+    {
+      id: 'link-d2-start',
+      speaker: 'link',
+      text: "*He's set up a second bedroll. Next to his. Touching distance. He gestures to it with forced casualness.*",
+      emotion: 'blush',
+      next: 'link-d2-2'
+    },
+    {
+      id: 'link-d2-2',
+      speaker: 'narrator',
+      text: "*The fire crackles. Stars wheel overhead. He reaches across the gap between bedrolls, hand searching for yours.*",
+      emotion: 'happy',
+      choices: [
+        { text: "*Intertwine your fingers with his*", next: 'link-d2-hold', affectionChange: 20 },
+        { text: "*Scoot your bedroll against his*", next: 'link-d2-closer', affectionChange: 20 },
+        { text: "*Just let him find your hand*", next: 'link-d2-find', affectionChange: 15 }
+      ]
+    },
+    {
+      id: 'link-d2-hold',
+      speaker: 'link',
+      text: "*He squeezes tight. His thumb traces circles on your palm. Neither of you sleep, and neither of you mind.*",
+      emotion: 'happy',
+      next: 'link-d2-end'
+    },
+    {
+      id: 'link-d2-closer',
+      speaker: 'link',
+      text: "*He immediately pulls you against him, your back to his chest, arm wrapped around you. Big spoon energy from the Hero of Hyrule.*",
+      emotion: 'blush',
+      next: 'link-d2-end'
+    },
+    {
+      id: 'link-d2-find',
+      speaker: 'link',
+      text: "*When he finds it, his breath catches. He brings your hand to his lips, presses a kiss to your knuckles. Courtly. Romantic. Devastating.*",
+      emotion: 'blush',
+      next: 'link-d2-end'
+    },
+    {
+      id: 'link-d2-end',
+      speaker: 'link',
+      text: "*In the morning, he makes you breakfast in bed(roll). Eggs and mushrooms. No rocks this time. Growth.*",
+      emotion: 'happy',
+      action: { type: 'location', value: 'hyrule-field' }
+    },
+
+    // High affection
+    {
+      id: 'link-high-start',
+      speaker: 'narrator',
+      text: "*One bedroll tonight. Link's already in it, holding it open for you. His intent couldn't be clearer.*",
+      emotion: 'blush',
+      next: 'link-high-2'
+    },
+    {
+      id: 'link-high-2',
+      speaker: 'link',
+      text: "*He pulls you in, wrapping around you completely. Face inches from yours. He breaks his silence:* ...Stay. Always.",
+      emotion: 'happy',
+      choices: [
+        { text: "*Kiss him under the stars*", next: 'link-confession', affectionChange: 25 },
+        { text: "I can't be with you like this, Link.", next: 'link-reject', affectionChange: -20 }
+      ]
+    },
+    {
+      id: 'link-confession',
+      speaker: 'link',
+      text: "*Under the Hyrulean stars, the Hero of Time becomes YOUR hero. Every touch speaks volumes his voice never could. By dawn, you're his. He's yours.*",
+      emotion: 'happy',
+      action: { type: 'ending', value: 'camp' }
+    },
+    {
+      id: 'link-reject',
+      speaker: 'link',
+      text: "*He releases you immediately. Rolls over. You hear no sound, but his shoulders shake. You broke the hero. Good job.*",
+      emotion: 'sad',
+      action: { type: 'location', value: 'hyrule-field' }
     }
   ];
 }
 
 export const endings: Record<string, { title: string; text: string; character: string }> = {
-  zelda: {
-    title: 'The Sacred Union',
-    text: "In the most private chamber of Hyrule Castle, lit only by moonlight, you and Zelda become one in ways the ancient texts only dreamed of. Crown and duty forgotten, she surrenders completely to you - her hero, her love, her everything. Dawn finds you tangled together, her head on your chest, both knowing that destiny has been rewritten in the most intimate way possible. The bloodline of Hyrule's royalty will continue... and it will carry your strength.",
-    character: 'zelda'
+  stable: {
+    title: 'Wild Hearts',
+    text: "You and Link build a life at the stable. By day, you ride across Hyrule together. By night, well... the hay loft sees a lot of action. Epona learns to sleep with earplugs. He never says much, but when he looks at you, you hear every word his heart speaks. The hero of legend chose YOU. And honestly? The silent type is really working for you.",
+    character: 'link'
   },
-  midna: {
-    title: 'Eternal Twilight Passion',
-    text: "Between realms of light and shadow, you and Midna create a new dimension - one built on insatiable desire and unending love. Her true form writhes with yours nightly, the twilight energies amplifying every sensation until you both scream with pleasure that echoes across worlds. The Twili speak in whispers of their princess and her light-dwelling lover, whose passion is legendary. Neither world can contain you - and neither wants to.",
-    character: 'midna'
+  hotspring: {
+    title: 'Steamy Ever After',
+    text: "The Goron Hot Springs become YOUR place. You visit so often the Gorons start charging you rent. Link's legendary stamina finds its true purpose - and it's not fighting Ganon. That stamina wheel gets a WORKOUT. The steam, the heat, his hands, his mouth, his everything... you've never been so thoroughly wrecked or so completely satisfied. When he finally gasps 'I love you' against your skin, you're both pruned, breathless, and ruined for anyone else. The Gorons learn to avoid the springs at night. Worth it.",
+    character: 'link'
   },
-  mipha: {
-    title: 'Depths of Devotion',
-    text: "Beneath the sacred waters of Zora's Domain, the bonding ritual is complete. You feel Mipha's pleasure as your own, your souls permanently intertwined in ecstasy that never fades. Each night in the luminescent pools, you explore new depths of intimacy that only a Zora and her eternal mate can achieve. The other Zoras speak enviously of the princess who gasps with pleasure every time her Hylian husband merely thinks of her.",
-    character: 'mipha'
+  cooking: {
+    title: 'A Recipe for Love',
+    text: "You become Link's official taste tester and cooking partner. The food gets better. Mostly. He still occasionally adds rocks 'for crunch.' But the meals cooked together, the mess fights in the kitchen, the way he feeds you his best bites... you've never been so well-fed or so well-loved. He proposes with a dubious meat pie. You say yes anyway.",
+    character: 'link'
   },
-  malon: {
-    title: 'Harvest of Desire',
-    text: "Every sunset on Lon Lon Ranch ends the same way - with you and Malon tumbling into the hay, into her bed, onto any flat surface available. Her appetite for you is as endless as the Hyrulean fields, and you're happy to satisfy her every craving. Nine months later, the first of many children arrives. The ranch will be a dynasty, and every night Malon rewards your hard work in ways that leave you both exhausted and fulfilled.",
-    character: 'malon'
+  training: {
+    title: 'Combat Partners',
+    text: "You become his sparring partner in every sense. The training ground. The bedroom. The random field when you both get the urge. He teaches you to fight; you teach him to love. Your battles always end the same way - tangled together, breathless, victorious. Nobody defeats you two. In combat or in how disgustingly cute you are together.",
+    character: 'link'
   },
-  riju: {
-    title: 'Desert Heat',
-    text: "As King of the Gerudo, your duties are twofold: to lead alongside Riju, and to ensure the tribe's future in the most pleasurable way possible. Every night in the royal chambers is an adventure - Riju's appetite is voracious and her creativity boundless. The Gerudo women whisper jealously about their Chief's stamina and her King's legendary endurance. In the desert heat, your love burns hottest of all.",
-    character: 'riju'
+  fairy: {
+    title: 'Blessed Union',
+    text: "The fairy magic bonded you that night, and you feel him always - his joy, his fears, his INTENSE feelings for you. The Great Fairy officiates your wedding and only gets a LITTLE too handsy with the groom. Link speaks his vows in the most words he's ever said: 'Yours. Always. Forever.' Six words. The best six words of your life.",
+    character: 'link'
   },
-  paya: {
-    title: 'Blooming Passion',
-    text: "Shy Paya transformed into an insatiable lover. Behind Kakariko's peaceful facade, she has become addicted to your touch, needing you multiple times daily. Her diary - now several volumes - chronicles every encounter in breathless detail. Impa pretends not to notice the sounds from her granddaughter's room, or the way you both emerge glowing. The papaya birthmark has become your favorite thing to kiss, right before exploring lower.",
-    character: 'paya'
+  camp: {
+    title: 'Wanderers Together',
+    text: "You travel Hyrule together now. Every night under the stars, every morning in each other's arms. The bedroll is too small for two people but you don't mind. He saves you from monsters; you save him from his own cooking. It's a partnership. A love story. An adventure. His silence speaks volumes, and every word says 'I love you.'",
+    character: 'link'
   },
   alone: {
-    title: 'The Unsatisfied Hero',
-    text: "Your journey continues, but something feels missing. At night, you remember the lovers you could have had - Zelda's gasps, Midna's moans, Mipha's otherworldly pleasure. You chose duty over desire, and now the nights are cold and lonely. Perhaps someday you'll return to one of them. Until then, only memories warm your bed, and your hand is poor company compared to what could have been.",
+    title: 'The One That Got Away',
+    text: "Link continues his journey alone. But sometimes, by campfires across Hyrule, he pulls out a small memento and just... stares at it. He had something precious. Someone precious. And you let him slip away. The hero of legend nurses a broken heart, and somewhere in Hyrule, so do you. At least you'll always have the memories of what could have been.",
     character: ''
   }
 };

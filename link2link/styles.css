@@ -167,8 +167,16 @@ body {
   text-align: center;
   color: var(--primary-gold);
   font-family: Georgia, serif;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   font-size: 1.5rem;
+}
+
+.select-subtitle {
+  text-align: center;
+  color: var(--text-dim);
+  font-style: italic;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
 }
 
 #character-grid {
@@ -498,6 +506,23 @@ body {
     #1B4332 30%,
     #2D6A4F 60%,
     #40916C 100%);
+}
+
+.bg-field {
+  background: linear-gradient(180deg,
+    #87CEEB 0%,
+    #98FB98 30%,
+    #228B22 60%,
+    #1B4332 100%);
+}
+
+.bg-hotspring {
+  background: linear-gradient(180deg,
+    #FF6B35 0%,
+    #FF8C42 20%,
+    #FFB366 40%,
+    #E8E8E8 60%,
+    #C9E4F8 100%);
 }
 
 /* Ending Screen */

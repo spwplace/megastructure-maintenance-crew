@@ -1,16 +1,17 @@
-import { GameState, DialogueNode, SaveData, Character } from './types';
-import { characters, characterList } from './characters';
+import { GameState, DialogueNode, SaveData } from './types';
+import { characters, characterList, link } from './characters';
 import { scenes, endings } from './scenes';
 
 // Character emoji representations
 const characterEmojis: Record<string, string> = {
-  zelda: '👸',
-  midna: '🌙',
-  mipha: '🐟',
-  malon: '🌾',
-  riju: '⚔️',
-  paya: '🌸',
-  link: '🗡️'
+  link: '🧝',
+  traveler: '🎒',
+  merchant: '💰',
+  stablehand: '🐴',
+  fairy: '🧚',
+  knight: '⚔️',
+  chef: '🍳',
+  narrator: '📖'
 };
 
 class DatingSimulator {
@@ -42,18 +43,13 @@ class DatingSimulator {
 
   private createInitialState(): GameState {
     return {
-      currentScene: 'castle-town',
+      currentScene: 'hyrule-field',
       currentDialogue: null,
       dialogueIndex: 0,
       selectedCharacter: null,
       day: 1,
       affection: {
-        zelda: 0,
-        midna: 0,
-        mipha: 0,
-        malon: 0,
-        riju: 0,
-        paya: 0
+        link: 0  // Only tracking Link's affection now!
       },
       flags: {},
       seenDialogues: [],
@@ -84,7 +80,7 @@ class DatingSimulator {
     this.dayDisplay = document.getElementById('day-display')!;
     this.characterGrid = document.getElementById('character-grid')!;
 
-    // Populate character grid
+    // Populate character grid (player personas)
     this.populateCharacterGrid();
   }
 
@@ -101,6 +97,7 @@ class DatingSimulator {
         </div>
         <h3>${char.name}</h3>
         <div class="title">${char.title}</div>
+        <div class="description" style="font-size: 0.7rem; color: #778DA9; margin-top: 5px;">${char.description}</div>
       `;
       card.addEventListener('click', () => this.selectCharacter(char.id));
       this.characterGrid.appendChild(card);
@@ -204,7 +201,7 @@ class DatingSimulator {
     this.hideChoices();
     this.hideNavigation();
 
-    // Check if there's a character to interact with
+    // Check if there's a character to interact with (Link!)
     const availableChar = scene.availableCharacters[0];
     if (availableChar && scene.dialogues[availableChar]) {
       this.showCharacter(availableChar);
@@ -217,10 +214,15 @@ class DatingSimulator {
   }
 
   private showCharacter(characterId: string) {
-    const char = characters[characterId];
-    if (char) {
-      this.characterSprite.innerHTML = characterEmojis[characterId] || '❤️';
-      this.characterSprite.style.color = char.color;
+    if (characterId === 'link') {
+      this.characterSprite.innerHTML = '🧝';
+      this.characterSprite.style.color = link.color;
+    } else {
+      const char = characters[characterId];
+      if (char) {
+        this.characterSprite.innerHTML = characterEmojis[characterId] || '❤️';
+        this.characterSprite.style.color = char.color;
+      }
     }
   }
 
@@ -232,28 +234,30 @@ class DatingSimulator {
   }
 
   private startCharacterDialogue(characterId: string, dialogues: DialogueNode[]) {
-    const affection = this.state.affection[characterId] || 0;
-    const dialogueKey = `${characterId}-${this.state.currentScene}-${this.state.day}`;
+    const affection = this.state.affection.link || 0;
+    const sceneKey = this.state.currentScene;
 
     // Determine which dialogue to show based on day and affection
     let startNode: DialogueNode | undefined;
 
-    if (affection >= 50 && !this.state.seenDialogues.includes(`${characterId}-high`)) {
-      // High affection route
-      startNode = dialogues.find(d => d.id === `${characterId}-high-start`);
+    // Check for high affection route first
+    if (affection >= 50 && !this.state.seenDialogues.includes(`${sceneKey}-high`)) {
+      startNode = dialogues.find(d => d.id === 'link-high-start');
       if (startNode) {
-        this.state.seenDialogues.push(`${characterId}-high`);
+        this.state.seenDialogues.push(`${sceneKey}-high`);
       }
     }
 
+    // Otherwise check for day-based dialogues
     if (!startNode) {
-      if (this.state.day === 1 || !this.state.seenDialogues.includes(`${characterId}-d1`)) {
-        startNode = dialogues.find(d => d.id === `${characterId}-d1-start`);
+      const d1Key = `${sceneKey}-d1`;
+      if (!this.state.seenDialogues.includes(d1Key)) {
+        startNode = dialogues.find(d => d.id === 'link-d1-start');
         if (startNode) {
-          this.state.seenDialogues.push(`${characterId}-d1`);
+          this.state.seenDialogues.push(d1Key);
         }
       } else {
-        startNode = dialogues.find(d => d.id === `${characterId}-d2-start`);
+        startNode = dialogues.find(d => d.id === 'link-d2-start');
       }
     }
 
@@ -274,13 +278,17 @@ class DatingSimulator {
 
     // Set speaker
     if (node.speaker) {
-      const char = characters[node.speaker];
-      if (char) {
-        this.speakerName.textContent = char.name;
-        this.speakerName.style.color = char.color;
-      } else if (node.speaker === 'link') {
+      if (node.speaker === 'link') {
         this.speakerName.textContent = 'Link';
         this.speakerName.style.color = '#4CAF50';
+      } else if (node.speaker === 'narrator') {
+        this.speakerName.textContent = '';
+      } else {
+        const char = characters[node.speaker];
+        if (char) {
+          this.speakerName.textContent = char.name;
+          this.speakerName.style.color = char.color;
+        }
       }
     } else {
       this.speakerName.textContent = '';
@@ -385,17 +393,13 @@ class DatingSimulator {
   }
 
   private selectChoice(choice: { text: string; next: string; affectionChange?: number; flag?: string }) {
-    // Apply affection change
-    if (choice.affectionChange && this.state.selectedCharacter) {
-      const scene = scenes[this.state.currentScene];
-      const charId = scene.availableCharacters[0];
-      if (charId) {
-        this.state.affection[charId] = (this.state.affection[charId] || 0) + choice.affectionChange;
-        this.updateStats();
+    // Apply affection change to Link
+    if (choice.affectionChange) {
+      this.state.affection.link = (this.state.affection.link || 0) + choice.affectionChange;
+      this.updateStats();
 
-        // Show affection change
-        this.showAffectionChange(choice.affectionChange);
-      }
+      // Show affection change
+      this.showAffectionChange(choice.affectionChange);
     }
 
     // Set flag
@@ -438,10 +442,8 @@ class DatingSimulator {
         this.loadScene(action.value as string);
         break;
       case 'affection':
-        if (action.target) {
-          this.state.affection[action.target] = (this.state.affection[action.target] || 0) + (action.value as number);
-          this.updateStats();
-        }
+        this.state.affection.link = (this.state.affection.link || 0) + (action.value as number);
+        this.updateStats();
         break;
       case 'flag':
         if (action.target) {
@@ -469,12 +471,12 @@ class DatingSimulator {
 
       // Add icons based on destination
       let icon = '➤';
-      if (opt.label.includes('Castle')) icon = '🏰';
-      else if (opt.label.includes('Ranch')) icon = '🐴';
-      else if (opt.label.includes('Zora')) icon = '🌊';
-      else if (opt.label.includes('Twilight')) icon = '🌙';
-      else if (opt.label.includes('Gerudo')) icon = '🏜️';
-      else if (opt.label.includes('Kakariko')) icon = '🏘️';
+      if (opt.label.includes('Stable')) icon = '🐴';
+      else if (opt.label.includes('Hot Spring')) icon = '♨️';
+      else if (opt.label.includes('Cooking')) icon = '🍳';
+      else if (opt.label.includes('Training')) icon = '⚔️';
+      else if (opt.label.includes('Fairy')) icon = '🧚';
+      else if (opt.label.includes('Camp')) icon = '🏕️';
       else if (opt.label.includes('Rest')) icon = '🌙';
       else if (opt.label.includes('Return')) icon = '↩️';
 
@@ -489,6 +491,8 @@ class DatingSimulator {
 
   private endDay() {
     this.state.day++;
+    // Reset seen dialogues for location-specific ones (so you can visit again)
+    this.state.seenDialogues = this.state.seenDialogues.filter(d => d.includes('-high'));
     this.updateStats();
 
     // Check for ending conditions
@@ -515,7 +519,7 @@ class DatingSimulator {
     `;
     overlay.innerHTML = `
       <div style="color: #FFD700; font-family: Georgia, serif; font-size: 2rem; margin-bottom: 20px;">Day ${this.state.day}</div>
-      <div style="color: #778DA9; font-size: 1rem;">A new day in Hyrule...</div>
+      <div style="color: #778DA9; font-size: 1rem;">Where will you find Link today?</div>
     `;
     document.body.appendChild(overlay);
 
@@ -523,25 +527,25 @@ class DatingSimulator {
       overlay.style.animation = 'fadeOut 1s';
       setTimeout(() => {
         overlay.remove();
-        this.loadScene('castle-town');
+        this.loadScene('hyrule-field');
       }, 1000);
     }, 2000);
   }
 
   private checkEndings() {
-    // Find highest affection character
-    let highestChar = '';
-    let highestAffection = 0;
+    const linkAffection = this.state.affection.link || 0;
 
-    Object.entries(this.state.affection).forEach(([char, aff]) => {
-      if (aff > highestAffection) {
-        highestAffection = aff;
-        highestChar = char;
+    if (linkAffection >= 50) {
+      // Get a random ending based on most visited location, or default to camp
+      const visitedLocations = this.state.seenDialogues
+        .filter(d => d.includes('-high'))
+        .map(d => d.replace('-high', ''));
+
+      if (visitedLocations.length > 0) {
+        this.triggerEnding(visitedLocations[visitedLocations.length - 1]);
+      } else {
+        this.triggerEnding('camp');
       }
-    });
-
-    if (highestAffection >= 50) {
-      this.triggerEnding(highestChar);
     } else {
       this.triggerEnding('alone');
     }
@@ -565,30 +569,23 @@ class DatingSimulator {
     endingTitle.textContent = ending.title;
     endingText.textContent = ending.text;
 
-    if (ending.character) {
-      const char = characters[ending.character];
-      endingCharacter.innerHTML = characterEmojis[ending.character] || '❤️';
-      endingCharacter.style.background = char ? `${char.color}30` : 'transparent';
-      endingCharacter.style.borderColor = char ? char.color : '#FFD700';
+    if (ending.character === 'link') {
+      endingCharacter.innerHTML = '🧝';
+      endingCharacter.style.background = `${link.color}30`;
+      endingCharacter.style.borderColor = link.color;
     } else {
-      endingCharacter.innerHTML = '🗡️';
+      endingCharacter.innerHTML = '💔';
       endingCharacter.style.background = 'transparent';
+      endingCharacter.style.borderColor = '#FFD700';
     }
 
     this.showScreen('ending');
   }
 
   private updateStats() {
-    // Show affection for currently selected character route
-    const scene = scenes[this.state.currentScene];
-    if (scene && scene.availableCharacters[0]) {
-      const charAffection = this.state.affection[scene.availableCharacters[0]] || 0;
-      this.affectionDisplay.textContent = charAffection.toString();
-    } else if (this.state.selectedCharacter) {
-      const charAffection = this.state.affection[this.state.selectedCharacter] || 0;
-      this.affectionDisplay.textContent = charAffection.toString();
-    }
-
+    // Show Link's affection
+    const linkAffection = this.state.affection.link || 0;
+    this.affectionDisplay.textContent = linkAffection.toString();
     this.dayDisplay.textContent = this.state.day.toString();
   }
 

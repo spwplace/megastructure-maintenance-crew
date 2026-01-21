@@ -1,120 +1,185 @@
 import { Character } from './types';
 
-export const characters: Record<string, Character> = {
-  zelda: {
-    id: 'zelda',
-    name: 'Princess Zelda',
-    title: 'Bearer of Wisdom',
-    color: '#FFD700',
-    secondaryColor: '#4A2C7D',
-    description: 'The wise and graceful princess of Hyrule. Beneath her royal demeanor lies a curious scholar with a passion for ancient artifacts.',
-    personality: ['Intelligent', 'Graceful', 'Determined', 'Caring'],
-    likes: ['Ancient texts', 'Silent princesses', 'Research', 'Protecting her kingdom'],
-    dislikes: ['Carelessness', 'Shortcuts', 'Being underestimated'],
-    sprite: {
-      base: 'zelda-neutral',
-      happy: 'zelda-happy',
-      sad: 'zelda-sad',
-      angry: 'zelda-angry',
-      blush: 'zelda-blush',
-      surprised: 'zelda-surprised'
-    }
-  },
-  midna: {
-    id: 'midna',
-    name: 'Midna',
-    title: 'Twilight Princess',
-    color: '#FF6B35',
-    secondaryColor: '#1A1A2E',
-    description: 'The mischievous ruler of the Twilight Realm. Sharp-tongued and sarcastic, but fiercely loyal to those who earn her trust.',
-    personality: ['Sarcastic', 'Playful', 'Fierce', 'Secretly caring'],
-    likes: ['Teasing', 'Twilight', 'Clever people', 'Independence'],
-    dislikes: ['Being pitied', 'Bright light', 'Boring conversations'],
-    sprite: {
-      base: 'midna-neutral',
-      happy: 'midna-happy',
-      sad: 'midna-sad',
-      angry: 'midna-angry',
-      blush: 'midna-blush',
-      surprised: 'midna-surprised'
-    }
-  },
-  mipha: {
-    id: 'mipha',
-    name: 'Mipha',
-    title: 'Zora Princess',
-    color: '#E63946',
-    secondaryColor: '#457B9D',
-    description: 'The gentle Zora princess with healing powers. Known for her kindness and unwavering devotion to those she loves.',
-    personality: ['Gentle', 'Devoted', 'Skilled healer', 'Quietly strong'],
-    likes: ['Swimming', 'Healing others', 'Quality time', 'Cooking'],
-    dislikes: ['Violence', 'Seeing loved ones hurt', 'Being unable to help'],
-    sprite: {
-      base: 'mipha-neutral',
-      happy: 'mipha-happy',
-      sad: 'mipha-sad',
-      angry: 'mipha-angry',
-      blush: 'mipha-blush',
-      surprised: 'mipha-surprised'
-    }
-  },
-  malon: {
-    id: 'malon',
-    name: 'Malon',
-    title: 'Ranch Girl',
-    color: '#FF8C42',
-    secondaryColor: '#4A7C59',
-    description: 'The cheerful daughter of Lon Lon Ranch. Her singing can be heard across Hyrule Field, and her heart is as warm as a summer day.',
-    personality: ['Cheerful', 'Hardworking', 'Musical', 'Down-to-earth'],
-    likes: ['Horses', 'Singing', 'Farm life', 'Honest people'],
-    dislikes: ['Cruelty to animals', 'Laziness', 'City pretension'],
-    sprite: {
-      base: 'malon-neutral',
-      happy: 'malon-happy',
-      sad: 'malon-sad',
-      angry: 'malon-angry',
-      blush: 'malon-blush',
-      surprised: 'malon-surprised'
-    }
-  },
-  riju: {
-    id: 'riju',
-    name: 'Riju',
-    title: 'Gerudo Chief',
-    color: '#C9184A',
-    secondaryColor: '#FFB627',
-    description: 'The young but capable chief of the Gerudo. Despite her age, she carries the weight of leadership with remarkable poise.',
-    personality: ['Confident', 'Responsible', 'Playful in private', 'Brave'],
-    likes: ['Sand seals', 'Proving herself', 'Adventure', 'Sweet treats'],
-    dislikes: ['Being treated like a child', 'Threats to her people', 'Formal events'],
-    sprite: {
-      base: 'riju-neutral',
-      happy: 'riju-happy',
-      sad: 'riju-sad',
-      angry: 'riju-angry',
-      blush: 'riju-blush',
-      surprised: 'riju-surprised'
-    }
-  },
-  paya: {
-    id: 'paya',
-    name: 'Paya',
-    title: 'Sheikah Attendant',
-    color: '#9D4EDD',
-    secondaryColor: '#E0AAFF',
-    description: 'The shy granddaughter of Impa. Her bashful exterior hides a dedicated and hardworking soul devoted to the Sheikah ways.',
-    personality: ['Shy', 'Devoted', 'Hardworking', 'Sweet'],
-    likes: ['Helping others', 'Sheikah history', 'Quiet moments', 'Journaling'],
-    dislikes: ['Being the center of attention', 'Loud noises', 'Rudeness'],
-    sprite: {
-      base: 'paya-neutral',
-      happy: 'paya-happy',
-      sad: 'paya-sad',
-      angry: 'paya-angry',
-      blush: 'paya-blush',
-      surprised: 'paya-surprised'
-    }
+// Link - THE love interest. The one. The only. The silent hottie.
+export const link: Character = {
+  id: 'link',
+  name: 'Link',
+  title: 'The Silent Hero',
+  color: '#4CAF50',
+  secondaryColor: '#2E7D32',
+  description: 'A brave hero who speaks little but feels deeply. Those blue eyes say what words cannot. Abs you could grate cheese on.',
+  personality: ['Silent', 'Brave', 'Loyal', 'Hungry'],
+  likes: ['Apples', 'Horses', 'Climbing', 'YOU'],
+  dislikes: ['Ganon', 'Rain while climbing', 'Being ignored'],
+  sprite: {
+    base: '🧝',
+    happy: '😊',
+    sad: '😢',
+    angry: '😠',
+    blush: '😳',
+    surprised: '😲'
   }
 };
 
-export const characterList = Object.values(characters);
+// Player persona options - who do YOU want to be while wooing the hero?
+export const playerPersonas: Character[] = [
+  {
+    id: 'traveler',
+    name: 'Wandering Traveler',
+    title: 'Mysterious Stranger',
+    color: '#9C27B0',
+    secondaryColor: '#7B1FA2',
+    description: 'A traveler from distant lands who crossed paths with destiny... and a very attractive Hylian.',
+    personality: ['Mysterious', 'Adventurous', 'Curious'],
+    likes: ['New experiences', 'Stargazing', 'The unknown'],
+    dislikes: ['Staying in one place', 'Small talk'],
+    sprite: {
+      base: '🚶',
+      happy: '😊',
+      sad: '😢',
+      angry: '😠',
+      blush: '😳',
+      surprised: '😲'
+    }
+  },
+  {
+    id: 'merchant',
+    name: 'Enthusiastic Merchant',
+    title: 'Purveyor of Goods',
+    color: '#FF9800',
+    secondaryColor: '#F57C00',
+    description: "A traveling merchant who's noticed this one customer buys A LOT of arrows. And looks VERY good in green.",
+    personality: ['Charismatic', 'Observant', 'Enterprising'],
+    likes: ['Rupees', 'Good deals', 'Regular customers'],
+    dislikes: ['Thieves', 'Bad haggling'],
+    sprite: {
+      base: '🧑‍💼',
+      happy: '😊',
+      sad: '😢',
+      angry: '😠',
+      blush: '😳',
+      surprised: '😲'
+    }
+  },
+  {
+    id: 'stablehand',
+    name: 'Stable Worker',
+    title: 'Horse Whisperer',
+    color: '#795548',
+    secondaryColor: '#5D4037',
+    description: 'Works at the stable. Definitely not just hanging around hoping that cute hero shows up again...',
+    personality: ['Patient', 'Kind', 'Down-to-earth'],
+    likes: ['Horses', 'Open fields', 'Carrots'],
+    dislikes: ['Horse thieves', 'City folk'],
+    sprite: {
+      base: '🧑‍🌾',
+      happy: '😊',
+      sad: '😢',
+      angry: '😠',
+      blush: '😳',
+      surprised: '😲'
+    }
+  },
+  {
+    id: 'fairy',
+    name: 'Escaped Fairy',
+    title: 'Tiny Admirer',
+    color: '#E91E63',
+    secondaryColor: '#C2185B',
+    description: "A fairy who escaped from a bottle and decided to stick around. For reasons. Definitely not because he's cute.",
+    personality: ['Sparkly', 'Devoted', 'Slightly obsessive'],
+    likes: ['Freedom', 'Glowing', 'Link'],
+    dislikes: ['Bottles', 'Being caught'],
+    sprite: {
+      base: '🧚',
+      happy: '✨',
+      sad: '😢',
+      angry: '😠',
+      blush: '💫',
+      surprised: '⭐'
+    }
+  },
+  {
+    id: 'knight',
+    name: 'Fellow Knight',
+    title: 'Sparring Partner',
+    color: '#3F51B5',
+    secondaryColor: '#303F9F',
+    description: 'Trained alongside Link. Lost every match. Won something else entirely... maybe.',
+    personality: ['Competitive', 'Honorable', 'Determined'],
+    likes: ['Training', 'Swordplay', 'Winning (rare)'],
+    dislikes: ['Losing', 'Cowardice'],
+    sprite: {
+      base: '⚔️',
+      happy: '😊',
+      sad: '😢',
+      angry: '😠',
+      blush: '😳',
+      surprised: '😲'
+    }
+  },
+  {
+    id: 'chef',
+    name: 'Traveling Chef',
+    title: 'Culinary Artist',
+    color: '#F44336',
+    secondaryColor: '#D32F2F',
+    description: "Discovered Link will eat literally anything. Including rocks. It's weirdly endearing???",
+    personality: ['Creative', 'Passionate', 'Horrified'],
+    likes: ['Good ingredients', 'Happy eaters', 'NOT rocks'],
+    dislikes: ['Food waste', "Link's cooking"],
+    sprite: {
+      base: '👨‍🍳',
+      happy: '😊',
+      sad: '😢',
+      angry: '😠',
+      blush: '😳',
+      surprised: '😲'
+    }
+  },
+  {
+    id: 'zora',
+    name: 'Curious Zora',
+    title: 'Aquatic Admirer',
+    color: '#00BCD4',
+    secondaryColor: '#0097A7',
+    description: "A Zora who's fascinated by this Hylian who can swim surprisingly well for a land-dweller. Those legs though... Zoras don't have those.",
+    personality: ['Graceful', 'Curious', 'Flirty'],
+    likes: ['Swimming', 'Fish', 'Land-dwellers with nice... legs'],
+    dislikes: ['Pollution', 'Droughts', 'Electric enemies'],
+    sprite: {
+      base: '🐟',
+      happy: '💙',
+      sad: '😢',
+      angry: '😠',
+      blush: '💗',
+      surprised: '🌊'
+    }
+  },
+  {
+    id: 'zora-guard',
+    name: 'Zora Royal Guard',
+    title: 'Protector of the Domain',
+    color: '#1565C0',
+    secondaryColor: '#0D47A1',
+    description: "Tasked with protecting Zora's Domain, but keeps getting distracted by a certain hero who visits to climb waterfalls. Watching him climb is... educational.",
+    personality: ['Stoic', 'Duty-bound', 'Secretly romantic'],
+    likes: ['Order', 'The Domain', 'Watching Link climb (for security reasons)'],
+    dislikes: ['Threats to the Domain', 'Lynel attacks'],
+    sprite: {
+      base: '🛡️',
+      happy: '💙',
+      sad: '😢',
+      angry: '⚔️',
+      blush: '💗',
+      surprised: '🌊'
+    }
+  }
+];
+
+export const characters: Record<string, Character> = {
+  link,
+  ...Object.fromEntries(playerPersonas.map(p => [p.id, p]))
+};
+
+export const characterList = playerPersonas;
