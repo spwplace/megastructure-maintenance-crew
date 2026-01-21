@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Link2Link - A Legend of Zelda Dating Simulator</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div id="game-container">
+    <!-- Title Screen -->
+    <div id="title-screen" class="screen active">
+      <div class="title-content">
+        <div class="triforce">
+          <div class="triforce-piece top"></div>
+          <div class="triforce-piece left"></div>
+          <div class="triforce-piece right"></div>
+        </div>
+        <h1 class="game-title">Link2Link</h1>
+        <p class="subtitle">A Hyrulean Romance</p>
+        <div class="menu-buttons">
+          <button id="new-game-btn" class="menu-btn">New Game</button>
+          <button id="continue-btn" class="menu-btn">Continue</button>
+          <button id="credits-btn" class="menu-btn">Credits</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="game-screen" class="screen">
+      <div id="background-layer"></div>
+      <div id="character-layer">
+        <div id="character-sprite"></div>
+      </div>
+      <div id="ui-layer">
+        <div id="location-label"></div>
+        <div id="stats-bar">
+          <div class="stat">
+            <span class="stat-icon">&#9825;</span>
+            <span id="affection-display">0</span>
+          </div>
+          <div class="stat">
+            <span class="stat-icon">&#9788;</span>
+            Day <span id="day-display">1</span>
+          </div>
+        </div>
+        <div id="dialogue-box">
+          <div id="speaker-name"></div>
+          <div id="dialogue-text"></div>
+          <div id="dialogue-indicator">&#9660;</div>
+        </div>
+        <div id="choices-container"></div>
+        <div id="navigation-menu"></div>
+      </div>
+    </div>
+
+    <!-- Character Select Screen -->
+    <div id="character-select" class="screen">
+      <h2>Choose Your Heart's Desire</h2>
+      <div id="character-grid"></div>
+      <button id="back-to-title" class="menu-btn">Back</button>
+    </div>
+
+    <!-- Ending Screen -->
+    <div id="ending-screen" class="screen">
+      <div id="ending-content">
+        <h2 id="ending-title"></h2>
+        <div id="ending-character"></div>
+        <p id="ending-text"></p>
+        <button id="ending-return-btn" class="menu-btn">Return to Title</button>
+      </div>
+    </div>
+
+    <!-- Credits Screen -->
+    <div id="credits-screen" class="screen">
+      <div class="credits-content">
+        <h2>Credits</h2>
+        <p>Link2Link: A Hyrulean Romance</p>
+        <p class="credit-line">A fan-made dating simulator</p>
+        <p class="credit-line">Featuring characters from The Legend of Zelda</p>
+        <p class="credit-line small">The Legend of Zelda is property of Nintendo</p>
+        <p class="credit-line small">This is a non-commercial fan project</p>
+        <button id="credits-back-btn" class="menu-btn">Back</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./main.ts"></script>
+</body>
+</html>

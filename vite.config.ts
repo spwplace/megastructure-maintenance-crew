@@ -12,6 +12,12 @@ export default defineConfig({
     outDir: 'dist',
     assetsDir: 'assets',
     sourcemap: true,
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),
+        link2link: resolve(__dirname, 'link2link/index.html'),
+      },
+    },
   },
   server: {
     host: true,
